@@ -3,11 +3,12 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Calendar, Filter, MapPin, Search, Users } from "lucide-react"
+import { Calendar, MapPin, Users } from "lucide-react"
 import Image from "next/image"
 import { MobileNavigation } from "@/components/mobile-navigation"
 import { useNotifications } from "@/contexts/notification-context"
 import { useEffect } from "react"
+import { Header } from "@/components/header"
 
 export default function EventsPage() {
   const { markAsRead } = useNotifications()
@@ -85,19 +86,7 @@ export default function EventsPage() {
 
   return (
     <main className="min-h-screen flex flex-col pb-16 md:pb-0">
-      <header className="border-b sticky top-0 z-10 bg-background/80 backdrop-blur-md">
-        <div className="container flex items-center justify-between h-16">
-          <h1 className="font-bold text-xl">Événements</h1>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon" className="rounded-full">
-              <Search className="h-4 w-4" />
-            </Button>
-            <Button variant="outline" size="icon" className="rounded-full">
-              <Filter className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       <div className="container py-6 flex-1">
         <Tabs defaultValue="all" className="w-full">
