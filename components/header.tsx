@@ -23,9 +23,11 @@ export function Header() {
               Événements
             </Button>
           </Link>
-          <Button variant="ghost" size="sm">
-            Love Hotel
-          </Button>
+          <Link href="/love-rooms">
+            <Button variant="ghost" size="sm">
+              Love Room
+            </Button>
+          </Link>
           <Link href="/messages">
             <Button variant="ghost" size="sm">
               Messages
