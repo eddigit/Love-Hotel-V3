@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next"
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "LoveConnect - Rencontres et Événements",
-    short_name: "LoveConnect",
+    name: "Love Hotel Rencontres - Rencontres et Événements",
+    short_name: "Love Hotel",
     description: "Rejoignez notre communauté de 40 000 personnes pour des rencontres et événements exclusifs",
     start_url: "/",
     display: "standalone",

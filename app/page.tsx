@@ -69,7 +69,7 @@ export default function Home() {
         <div className="container flex items-center justify-between h-16">
           <Link href="/" className="flex items-center gap-2">
             <Heart className="h-6 w-6 text-primary" />
-            <span className="font-bold text-xl">LoveConnect</span>
+            <span className="font-bold text-xl">Love Hotel Rencontres</span>
           </Link>
           <div className="hidden md:flex items-center gap-4">
             <Button variant="ghost" size="sm">
