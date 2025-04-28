@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { Calendar, Heart, MapPin, MessageCircle, Share2, Star, Users } from "lucide-react"
 import Image from "next/image"
 import { MobileNavigation } from "@/components/mobile-navigation"
+import { Header } from "@/components/header"
 
 export default function ProfilePage({ params }: { params: { username: string } }) {
   // Simuler des données de profil
@@ -20,9 +21,9 @@ export default function ProfilePage({ params }: { params: { username: string } }
     rating: 4.8,
     interests: ["Voyages", "Cuisine", "Danse", "Cinéma", "Musique"],
     photos: [
-      "/placeholder.svg?height=300&width=300&query=woman with purple background 1",
-      "/placeholder.svg?height=300&width=300&query=woman with purple background 2",
-      "/placeholder.svg?height=300&width=300&query=woman with purple background 3",
+      "/placeholder.svg?key=zkiof",
+      "/serene-woman-purple.png",
+      "/serene-woman-purple.png",
       "/placeholder.svg?height=300&width=300&query=woman with purple background 4",
     ],
     events: [
@@ -39,6 +40,7 @@ export default function ProfilePage({ params }: { params: { username: string } }
 
   return (
     <main className="min-h-screen flex flex-col pb-16 md:pb-0">
+      <Header />
       <div className="relative">
         <div className="h-40 md:h-60 w-full gradient-bg"></div>
         <div className="absolute top-4 left-4 flex gap-2">
@@ -72,7 +74,7 @@ export default function ProfilePage({ params }: { params: { username: string } }
             <div className="relative">
               <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-background overflow-hidden">
                 <Image
-                  src="/placeholder.svg?height=160&width=160&query=woman with purple background portrait"
+                  src="/amethyst-portrait.png"
                   alt={profile.name}
                   width={160}
                   height={160}

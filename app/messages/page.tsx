@@ -1,14 +1,13 @@
 "use client"
-
-import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Edit, Search } from "lucide-react"
+import { Search } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { MobileNavigation } from "@/components/mobile-navigation"
 import { useNotifications } from "@/contexts/notification-context"
 import { useEffect } from "react"
+import { Header } from "@/components/header"
 
 export default function MessagesPage() {
   const { markAsRead } = useNotifications()
@@ -69,19 +68,7 @@ export default function MessagesPage() {
 
   return (
     <main className="min-h-screen flex flex-col pb-16 md:pb-0">
-      <header className="border-b sticky top-0 z-10 bg-background/80 backdrop-blur-md">
-        <div className="container flex items-center justify-between h-16">
-          <h1 className="font-bold text-xl">Messages</h1>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon" className="rounded-full">
-              <Search className="h-4 w-4" />
-            </Button>
-            <Button variant="outline" size="icon" className="rounded-full">
-              <Edit className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       <div className="container py-6 flex-1">
         <div className="relative mb-6">

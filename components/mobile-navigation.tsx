@@ -12,7 +12,7 @@ export function MobileNavigation() {
   const { counts } = useNotifications()
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 border-t bg-background/80 backdrop-blur-md z-10">
+    <div className="md:hidden fixed bottom-0 left-0 right-0 border-t bg-background/80 backdrop-blur-md z-20">
       <div className="flex items-center justify-around h-16">
         <Link
           href="/"

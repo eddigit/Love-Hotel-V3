@@ -1,6 +1,4 @@
 "use client"
-
-import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Bell, Calendar, Heart, MessageCircle, UserPlus } from "lucide-react"
@@ -11,6 +9,7 @@ import { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { usePathname, useSearchParams } from "next/navigation"
 import { useNotifications } from "@/contexts/notification-context"
+import { Header } from "@/components/header"
 
 export default function NotificationsPage() {
   const { notifications, markAsRead, markAllAsRead } = useNotifications()
@@ -78,35 +77,7 @@ export default function NotificationsPage() {
 
   return (
     <main className="min-h-screen flex flex-col pb-16 md:pb-0">
-      <header className="border-b sticky top-0 z-10 bg-background/80 backdrop-blur-md">
-        <div className="container flex items-center justify-between h-16">
-          <div className="flex items-center gap-2">
-            <Link href="/">
-              <Button variant="ghost" size="sm" className="gap-2">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="h-4 w-4"
-                >
-                  <path d="m15 18-6-6 6-6" />
-                </svg>
-                Retour
-              </Button>
-            </Link>
-            <h1 className="font-bold text-xl">Notifications</h1>
-          </div>
-          <Button variant="outline" size="sm" onClick={markAllAsRead}>
-            Tout marquer comme lu
-          </Button>
-        </div>
-      </header>
+      <Header />
 
       <div className="container py-6 flex-1">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">

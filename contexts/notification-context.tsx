@@ -58,10 +58,18 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     })
   }, [notifications])
 
+  // Update the markAsRead function to avoid unnecessary re-renders
   const markAsRead = (id: string) => {
-    setNotifications((prev) =>
-      prev.map((notification) => (notification.id === id ? { ...notification, read: true } : notification)),
-    )
+    setNotifications((prev) => {
+      // Check if the notification exists and is not already read
+      const notification = prev.find((n) => n.id === id)
+      if (!notification || notification.read) {
+        return prev // Return the same array if no changes needed
+      }
+
+      // Only update if the notification exists and needs to be marked as read
+      return prev.map((notification) => (notification.id === id ? { ...notification, read: true } : notification))
+    })
   }
 
   const markAllAsRead = () => {

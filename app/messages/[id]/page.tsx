@@ -4,10 +4,9 @@ import type React from "react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { ArrowLeft, ImageIcon, Mic, Phone, Send, Video } from "lucide-react"
-import Image from "next/image"
-import Link from "next/link"
+import { ImageIcon, Mic, Send } from "lucide-react"
 import { useState } from "react"
+import { Header } from "@/components/header"
 
 export default function ConversationPage({ params }: { params: { id: string } }) {
   const [message, setMessage] = useState("")
@@ -16,7 +15,7 @@ export default function ConversationPage({ params }: { params: { id: string } })
   const conversation = {
     id: Number.parseInt(params.id),
     name: "Sophie",
-    avatar: "/placeholder.svg?height=40&width=40&query=woman with purple background portrait",
+    avatar: "/amethyst-portrait.png",
     online: true,
     messages: [
       {
@@ -62,41 +61,7 @@ export default function ConversationPage({ params }: { params: { id: string } })
 
   return (
     <main className="min-h-screen flex flex-col">
-      <header className="border-b sticky top-0 z-10 bg-background/80 backdrop-blur-md">
-        <div className="container flex items-center h-16">
-          <Link href="/messages" className="mr-4">
-            <Button variant="ghost" size="icon" className="rounded-full">
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-          </Link>
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <Image
-                src={conversation.avatar || "/placeholder.svg"}
-                alt={conversation.name}
-                width={40}
-                height={40}
-                className="rounded-full object-cover"
-              />
-              {conversation.online && (
-                <div className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-green-500 border-2 border-background"></div>
-              )}
-            </div>
-            <div>
-              <h1 className="font-semibold">{conversation.name}</h1>
-              {conversation.online && <div className="text-xs text-muted-foreground">En ligne</div>}
-            </div>
-          </div>
-          <div className="ml-auto flex items-center gap-2">
-            <Button variant="ghost" size="icon" className="rounded-full">
-              <Phone className="h-5 w-5" />
-            </Button>
-            <Button variant="ghost" size="icon" className="rounded-full">
-              <Video className="h-5 w-5" />
-            </Button>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {conversation.messages.map((msg) => (

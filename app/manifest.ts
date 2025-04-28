@@ -4,7 +4,8 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Love Hotel Rencontres - Rencontres et Événements",
     short_name: "Love Hotel",
-    description: "Rejoignez notre communauté de 40 000 personnes pour des rencontres et événements exclusifs",
+    description:
+      "Love Hotel Rencontres vous propose des rencontres exclusives et des événements privés dans nos établissements de luxe. Rejoignez notre communauté de 40 000 membres.",
     start_url: "/",
     display: "standalone",
     background_color: "#1e1e2e",
