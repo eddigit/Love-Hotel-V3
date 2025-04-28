@@ -179,18 +179,6 @@ export default function LoveRoomsPage() {
             </div>
           </TabsContent>
 
-          <TabsContent value="reserve" className="space-y-6">
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-4">Réserver une Love Room</h3>
-                <p className="text-muted-foreground mb-4">
-                  Sélectionnez une date et un créneau horaire pour votre réservation.
-                </p>
-                <Button className="w-full">Confirmer la réservation</Button>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
           <TabsContent value="my-reservations" className="space-y-6">
             {myReservations.length > 0 ? (
               <motion.div
