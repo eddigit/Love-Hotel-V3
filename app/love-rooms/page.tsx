@@ -173,43 +173,51 @@ export default function LoveRoomsPage() {
           </TabsContent>
 
           <TabsContent value="reserve" className="space-y-6">
-            <motion.div variants={container} initial="hidden" animate="show" className="max-w-md mx-auto">
-              <Card>
-                <CardContent className="p-6 space-y-4">
-                  <h3 className="text-xl font-bold">Réserver une Love Room</h3>
-                  <p className="text-muted-foreground">
-                    Sélectionnez une date et un créneau horaire pour votre réservation.
-                  </p>
+            <Card>
+              <CardContent className="p-6 space-y-4">
+                <h3 className="text-xl font-bold">Réserver une Love Room</h3>
+                <p className="text-muted-foreground">
+                  Sélectionnez une date et un créneau horaire pour votre réservation.
+                </p>
 
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Choisir une Love Room</label>
-                    <select className="w-full p-2 rounded-md border border-input bg-background">
-                      <option value="">Sélectionner une Love Room</option>
-                      <option value="1">Suite Romantique - Paris</option>
-                      <option value="2">Love Room Deluxe - Lyon</option>
-                      <option value="3">Suite Passion - Marseille</option>
-                    </select>
-                  </div>
+                <div className="space-y-2">
+                  <label htmlFor="room-select" className="text-sm font-medium">
+                    Choisir une Love Room
+                  </label>
+                  <select id="room-select" className="w-full p-2 rounded-md border border-input bg-background">
+                    <option value="">Sélectionner une Love Room</option>
+                    <option value="1">Suite Romantique - Paris</option>
+                    <option value="2">Love Room Deluxe - Lyon</option>
+                    <option value="3">Suite Passion - Marseille</option>
+                  </select>
+                </div>
 
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Date</label>
-                    <input type="date" className="w-full p-2 rounded-md border border-input bg-background" />
-                  </div>
+                <div className="space-y-2">
+                  <label htmlFor="date-select" className="text-sm font-medium">
+                    Date
+                  </label>
+                  <input
+                    id="date-select"
+                    type="date"
+                    className="w-full p-2 rounded-md border border-input bg-background"
+                  />
+                </div>
 
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Créneau horaire</label>
-                    <select className="w-full p-2 rounded-md border border-input bg-background">
-                      <option value="">Sélectionner un créneau</option>
-                      <option value="1">14:00 - 17:00</option>
-                      <option value="2">18:00 - 21:00</option>
-                      <option value="3">22:00 - 01:00</option>
-                    </select>
-                  </div>
+                <div className="space-y-2">
+                  <label htmlFor="time-select" className="text-sm font-medium">
+                    Créneau horaire
+                  </label>
+                  <select id="time-select" className="w-full p-2 rounded-md border border-input bg-background">
+                    <option value="">Sélectionner un créneau</option>
+                    <option value="1">14:00 - 17:00</option>
+                    <option value="2">18:00 - 21:00</option>
+                    <option value="3">22:00 - 01:00</option>
+                  </select>
+                </div>
 
-                  <Button className="w-full mt-4">Confirmer la réservation</Button>
-                </CardContent>
-              </Card>
-            </motion.div>
+                <Button className="w-full mt-4">Confirmer la réservation</Button>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="my-reservations" className="space-y-6">
