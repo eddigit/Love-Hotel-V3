@@ -36,7 +36,7 @@ export function Header() {
   return (
     <header className="border-b sticky top-0 z-40 bg-background/95 backdrop-blur-md">
       <div className="container flex items-center justify-between h-16">
-        <Link href="/" className="flex items-center gap-2 z-10">
+        <Link href={isLoggedIn ? "/discover" : "/"} className="flex items-center gap-2 z-10">
           <Heart className="h-5 w-5 text-primary" />
           <span className="font-bold text-lg">Love Hotel</span>
         </Link>
