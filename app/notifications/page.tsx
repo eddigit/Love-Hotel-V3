@@ -9,7 +9,6 @@ import { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { usePathname, useSearchParams } from "next/navigation"
 import { useNotifications } from "@/contexts/notification-context"
-import { Header } from "@/components/header"
 
 export default function NotificationsPage() {
   const { notifications, markAsRead, markAllAsRead } = useNotifications()
@@ -58,7 +57,7 @@ export default function NotificationsPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen flex flex-col items-center justify-center">
+      <div className="min-h-screen flex flex-col items-center justify-center">
         <motion.div
           animate={{
             rotate: 360,
@@ -71,14 +70,12 @@ export default function NotificationsPage() {
           className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full"
         />
         <p className="mt-4 text-muted-foreground">Chargement des notifications...</p>
-      </main>
+      </div>
     )
   }
 
   return (
-    <main className="min-h-screen flex flex-col pb-16 md:pb-0">
-      <Header />
-
+    <div className="min-h-screen flex flex-col pb-16 md:pb-0">
       <div className="container py-6 flex-1">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-5 mb-6">
@@ -160,7 +157,7 @@ export default function NotificationsPage() {
       </div>
 
       <MobileNavigation />
-    </main>
+    </div>
   )
 }
 

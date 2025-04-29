@@ -8,7 +8,6 @@ import Image from "next/image"
 import { MobileNavigation } from "@/components/mobile-navigation"
 import { useNotifications } from "@/contexts/notification-context"
 import { useEffect } from "react"
-import { Header } from "@/components/header"
 
 export default function EventsPage() {
   const { markAsRead } = useNotifications()
@@ -85,9 +84,7 @@ export default function EventsPage() {
   ]
 
   return (
-    <main className="min-h-screen flex flex-col pb-16 md:pb-0">
-      <Header />
-
+    <div className="min-h-screen flex flex-col pb-16 md:pb-0">
       <div className="container py-6 flex-1">
         <Tabs defaultValue="all" className="w-full">
           <TabsList className="grid w-full grid-cols-4 mb-6">
@@ -238,6 +235,6 @@ export default function EventsPage() {
       </div>
 
       <MobileNavigation />
-    </main>
+    </div>
   )
 }

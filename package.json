@@ -59,8 +59,7 @@
     "vaul": "^0.9.6",
     "zod": "^3.24.1",
     "@emotion/is-prop-valid": "latest",
-    "framer-motion": "latest",
-    "ui": "latest"
+    "framer-motion": "latest"
   },
   "devDependencies": {
     "@types/node": "^22",

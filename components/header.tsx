@@ -11,8 +11,8 @@ export function Header() {
     <header className="border-b sticky top-0 z-10 bg-background/80 backdrop-blur-md">
       <div className="container flex items-center justify-between h-16">
         <Link href="/" className="flex items-center gap-2">
-          <Heart className="h-6 w-6 text-primary" />
-          <span className="font-bold text-xl">Love Hotel Rencontres</span>
+          <Heart className="h-5 w-5 text-primary" />
+          <span className="font-bold text-lg">Love Hotel Rencontres</span>
         </Link>
         <div className="hidden md:flex items-center gap-4">
           <Button variant="ghost" size="sm">

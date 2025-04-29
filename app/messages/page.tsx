@@ -7,7 +7,6 @@ import Link from "next/link"
 import { MobileNavigation } from "@/components/mobile-navigation"
 import { useNotifications } from "@/contexts/notification-context"
 import { useEffect } from "react"
-import { Header } from "@/components/header"
 
 export default function MessagesPage() {
   const { markAsRead } = useNotifications()
@@ -67,9 +66,7 @@ export default function MessagesPage() {
   ]
 
   return (
-    <main className="min-h-screen flex flex-col pb-16 md:pb-0">
-      <Header />
-
+    <div className="min-h-screen flex flex-col pb-16 md:pb-0">
       <div className="container py-6 flex-1">
         <div className="relative mb-6">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -115,6 +112,6 @@ export default function MessagesPage() {
       </div>
 
       <MobileNavigation />
-    </main>
+    </div>
   )
 }

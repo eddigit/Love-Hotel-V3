@@ -4,8 +4,7 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { NotificationProvider } from "@/contexts/notification-context"
-// Import the Footer component
-import { Footer } from "@/components/footer"
+import { MainLayout } from "@/components/layout/main-layout"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -43,7 +42,6 @@ export const metadata: Metadata = {
     generator: 'v0.dev'
 }
 
-// Update the RootLayout function to include the Footer component
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -54,10 +52,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} disableTransitionOnChange>
           <NotificationProvider>
-            <div className="flex flex-col min-h-screen">
-              <div className="flex-1">{children}</div>
-              <Footer />
-            </div>
+            <MainLayout>{children}</MainLayout>
           </NotificationProvider>
         </ThemeProvider>
       </body>

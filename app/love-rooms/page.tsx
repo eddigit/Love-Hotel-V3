@@ -8,7 +8,6 @@ import { Calendar, Clock, MapPin } from "lucide-react"
 import Image from "next/image"
 import { MobileNavigation } from "@/components/mobile-navigation"
 import { Badge } from "@/components/ui/badge"
-import { Header } from "@/components/header"
 import { motion } from "framer-motion"
 
 export default function LoveRoomsPage() {
@@ -93,9 +92,7 @@ export default function LoveRoomsPage() {
   }
 
   return (
-    <main className="min-h-screen flex flex-col pb-16 md:pb-0">
-      <Header />
-
+    <div className="min-h-screen flex flex-col pb-16 md:pb-0">
       <div className="container py-6 flex-1">
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">Love Rooms</h1>
@@ -258,6 +255,6 @@ export default function LoveRoomsPage() {
       </div>
 
       <MobileNavigation />
-    </main>
+    </div>
   )
 }

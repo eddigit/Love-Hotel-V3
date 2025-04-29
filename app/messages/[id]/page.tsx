@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ImageIcon, Mic, Send } from "lucide-react"
 import { useState } from "react"
-import { Header } from "@/components/header"
 
 export default function ConversationPage({ params }: { params: { id: string } }) {
   const [message, setMessage] = useState("")
@@ -60,9 +59,7 @@ export default function ConversationPage({ params }: { params: { id: string } })
   }
 
   return (
-    <main className="min-h-screen flex flex-col">
-      <Header />
-
+    <div className="min-h-screen flex flex-col">
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {conversation.messages.map((msg) => (
           <div key={msg.id} className={`flex ${msg.sender === "me" ? "justify-end" : "justify-start"}`}>
@@ -103,6 +100,6 @@ export default function ConversationPage({ params }: { params: { id: string } })
           </Button>
         </form>
       </div>
-    </main>
+    </div>
   )
 }

@@ -5,7 +5,6 @@ import { Badge } from "@/components/ui/badge"
 import { Calendar, Heart, MapPin, MessageCircle, Share2, Star, Users } from "lucide-react"
 import Image from "next/image"
 import { MobileNavigation } from "@/components/mobile-navigation"
-import { Header } from "@/components/header"
 
 export default function ProfilePage({ params }: { params: { username: string } }) {
   // Simuler des données de profil
@@ -24,7 +23,7 @@ export default function ProfilePage({ params }: { params: { username: string } }
       "/placeholder.svg?key=zkiof",
       "/serene-woman-purple.png",
       "/serene-woman-purple.png",
-      "/placeholder.svg?height=300&width=300&query=woman with purple background 4",
+      "/serene-woman-purple.png",
     ],
     events: [
       {
@@ -39,8 +38,7 @@ export default function ProfilePage({ params }: { params: { username: string } }
   }
 
   return (
-    <main className="min-h-screen flex flex-col pb-16 md:pb-0">
-      <Header />
+    <div className="min-h-screen flex flex-col pb-16 md:pb-0">
       <div className="relative">
         <div className="h-40 md:h-60 w-full gradient-bg"></div>
         <div className="absolute top-4 left-4 flex gap-2">
@@ -201,6 +199,6 @@ export default function ProfilePage({ params }: { params: { username: string } }
       </div>
 
       <MobileNavigation />
-    </main>
+    </div>
   )
 }
