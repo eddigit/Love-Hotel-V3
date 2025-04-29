@@ -17,12 +17,11 @@ export default function LandingPage() {
           <div className="space-y-8 -mt-[10vh]">
             <div className="space-y-4">
               <div className="flex items-start gap-4">
-                <span className="text-5xl">🔥</span>
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-black uppercase text-white leading-tight tracking-tight">
                   LE FRISSON DE <br />
                   LA <span className="text-[#ff3b8b]">RENCONTRE</span>, <br />
                   LE PLAISIR DU <br />
-                  <span className="text-[#ff3b8b]">RÉEL</span>
+                  <span className="text-[#ff3b8b]">RÉEL</span> <span className="text-5xl">🔥</span>
                 </h1>
               </div>
 
