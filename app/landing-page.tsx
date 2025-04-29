@@ -36,9 +36,14 @@ export default function LandingPage() {
             </Link>
           </nav>
 
-          <Button asChild className="bg-[#ff3b8b] hover:bg-[#ff3b8b]/90 text-white rounded-full px-6">
-            <Link href="/dashboard">Se connecter</Link>
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button asChild variant="ghost" className="text-white hover:text-white hover:bg-white/10">
+              <Link href="/login">Se connecter</Link>
+            </Button>
+            <Button asChild className="bg-[#ff3b8b] hover:bg-[#ff3b8b]/90 text-white rounded-full px-6">
+              <Link href="/register">Devenir membre</Link>
+            </Button>
+          </div>
         </div>
       </header>
 
