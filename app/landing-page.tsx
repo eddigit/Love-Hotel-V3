@@ -3,49 +3,13 @@
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import Image from "next/image"
-import { Heart } from "lucide-react"
+import { LandingHeader } from "@/components/landing-header"
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[#120821]">
       {/* Header */}
-      <header className="py-4">
-        <div className="container mx-auto px-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="bg-[#ff3b8b] p-2 rounded-lg">
-              <Heart className="h-5 w-5 text-white" />
-            </div>
-            <span className="font-bold text-xl text-white">Love Hôtel Rencontres</span>
-          </div>
-
-          <nav className="hidden md:flex items-center gap-8">
-            <Link href="#" className="text-white hover:text-[#ff3b8b] transition-colors">
-              Accueil
-            </Link>
-            <Link href="#" className="text-white hover:text-[#ff3b8b] transition-colors">
-              Rencontres
-            </Link>
-            <Link href="#" className="text-white hover:text-[#ff3b8b] transition-colors">
-              En direct
-            </Link>
-            <Link href="#" className="text-white hover:text-[#ff3b8b] transition-colors">
-              Événements
-            </Link>
-            <Link href="#" className="text-white hover:text-[#ff3b8b] transition-colors">
-              Premium
-            </Link>
-          </nav>
-
-          <div className="flex items-center gap-3">
-            <Button asChild variant="ghost" className="text-white hover:text-white hover:bg-white/10">
-              <Link href="/login">Se connecter</Link>
-            </Button>
-            <Button asChild className="bg-[#ff3b8b] hover:bg-[#ff3b8b]/90 text-white rounded-full px-6">
-              <Link href="/register">Devenir membre</Link>
-            </Button>
-          </div>
-        </div>
-      </header>
+      <LandingHeader />
 
       {/* Hero Section */}
       <section className="py-16">

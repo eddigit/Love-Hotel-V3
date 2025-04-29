@@ -15,7 +15,7 @@ export function Header() {
   const { user, logout } = useAuth()
   const isLoggedIn = !!user
 
-  // Modifier la condition isPresentationPage pour inclure la page register
+  // Modifier la condition isPresentationPage pour inclure les nouvelles pages de présentation
 
   // Vérifier si nous sommes sur la landing page, une page de présentation, la page de login ou la page d'inscription
   const isPresentationPage =
@@ -24,7 +24,10 @@ export function Header() {
     pathname === "/features" ||
     pathname === "/pricing" ||
     pathname === "/login" ||
-    pathname === "/register"
+    pathname === "/register" ||
+    pathname === "/rencontres" ||
+    pathname === "/en-direct" ||
+    pathname === "/premium"
 
   // Si nous sommes sur une page de présentation ou la page de login, ne pas afficher ce header
   if (isPresentationPage) {
