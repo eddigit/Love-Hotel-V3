@@ -1,13 +1,9 @@
 "use client"
-
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Calendar, MapPin, Users } from "lucide-react"
-import Image from "next/image"
 import { MobileNavigation } from "@/components/mobile-navigation"
 import { useNotifications } from "@/contexts/notification-context"
 import { useEffect } from "react"
+import { EventCard } from "@/components/event-card"
 
 export default function EventsPage() {
   const { markAsRead } = useNotifications()
@@ -85,149 +81,75 @@ export default function EventsPage() {
 
   return (
     <div className="min-h-screen flex flex-col pb-16 md:pb-0">
-      <div className="container py-6 flex-1">
+      <div className="container py-4 md:py-6 flex-1">
+        <h1 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6">Événements</h1>
+
         <Tabs defaultValue="all" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-6">
+          <TabsList className="grid w-full grid-cols-4 mb-4 md:mb-6">
             <TabsTrigger value="all">Tous</TabsTrigger>
             <TabsTrigger value="speed-dating">Speed Dating</TabsTrigger>
             <TabsTrigger value="jacuzzi">Jacuzzi</TabsTrigger>
             <TabsTrigger value="restaurant">Restaurant</TabsTrigger>
           </TabsList>
-          <TabsContent value="all" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <TabsContent value="all" className="space-y-4 md:space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {events.map((event) => (
-                <Card key={event.id} className="overflow-hidden">
-                  <div className="relative h-48">
-                    <Image src={event.image || "/placeholder.svg"} alt={event.title} fill className="object-cover" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">
-                      <div className="text-white">
-                        <h3 className="font-bold text-lg">{event.title}</h3>
-                        <div className="flex items-center gap-1 text-sm">
-                          <MapPin className="h-3 w-3" />
-                          <span>{event.location}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <CardContent className="p-4 space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                        <Calendar className="h-3 w-3" />
-                        <span>{event.date}</span>
-                      </div>
-                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                        <Users className="h-3 w-3" />
-                        <span>{event.attendees} participants</span>
-                      </div>
-                    </div>
-                    <Button className="w-full">Participer</Button>
-                  </CardContent>
-                </Card>
+                <EventCard
+                  key={event.id}
+                  title={event.title}
+                  location={event.location}
+                  date={event.date}
+                  image={event.image}
+                  attendees={event.attendees}
+                />
               ))}
             </div>
           </TabsContent>
-          <TabsContent value="speed-dating" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <TabsContent value="speed-dating" className="space-y-4 md:space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {events
                 .filter((event) => event.category === "speed-dating")
                 .map((event) => (
-                  <Card key={event.id} className="overflow-hidden">
-                    <div className="relative h-48">
-                      <Image src={event.image || "/placeholder.svg"} alt={event.title} fill className="object-cover" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">
-                        <div className="text-white">
-                          <h3 className="font-bold text-lg">{event.title}</h3>
-                          <div className="flex items-center gap-1 text-sm">
-                            <MapPin className="h-3 w-3" />
-                            <span>{event.location}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <CardContent className="p-4 space-y-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                          <Calendar className="h-3 w-3" />
-                          <span>{event.date}</span>
-                        </div>
-                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                          <Users className="h-3 w-3" />
-                          <span>{event.attendees} participants</span>
-                        </div>
-                      </div>
-                      <Button className="w-full">Participer</Button>
-                    </CardContent>
-                  </Card>
+                  <EventCard
+                    key={event.id}
+                    title={event.title}
+                    location={event.location}
+                    date={event.date}
+                    image={event.image}
+                    attendees={event.attendees}
+                  />
                 ))}
             </div>
           </TabsContent>
-          <TabsContent value="jacuzzi" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <TabsContent value="jacuzzi" className="space-y-4 md:space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {events
                 .filter((event) => event.category === "jacuzzi")
                 .map((event) => (
-                  <Card key={event.id} className="overflow-hidden">
-                    <div className="relative h-48">
-                      <Image src={event.image || "/placeholder.svg"} alt={event.title} fill className="object-cover" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">
-                        <div className="text-white">
-                          <h3 className="font-bold text-lg">{event.title}</h3>
-                          <div className="flex items-center gap-1 text-sm">
-                            <MapPin className="h-3 w-3" />
-                            <span>{event.location}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <CardContent className="p-4 space-y-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                          <Calendar className="h-3 w-3" />
-                          <span>{event.date}</span>
-                        </div>
-                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                          <Users className="h-3 w-3" />
-                          <span>{event.attendees} participants</span>
-                        </div>
-                      </div>
-                      <Button className="w-full">Participer</Button>
-                    </CardContent>
-                  </Card>
+                  <EventCard
+                    key={event.id}
+                    title={event.title}
+                    location={event.location}
+                    date={event.date}
+                    image={event.image}
+                    attendees={event.attendees}
+                  />
                 ))}
             </div>
           </TabsContent>
-          <TabsContent value="restaurant" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <TabsContent value="restaurant" className="space-y-4 md:space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {events
                 .filter((event) => event.category === "restaurant")
                 .map((event) => (
-                  <Card key={event.id} className="overflow-hidden">
-                    <div className="relative h-48">
-                      <Image src={event.image || "/placeholder.svg"} alt={event.title} fill className="object-cover" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">
-                        <div className="text-white">
-                          <h3 className="font-bold text-lg">{event.title}</h3>
-                          <div className="flex items-center gap-1 text-sm">
-                            <MapPin className="h-3 w-3" />
-                            <span>{event.location}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <CardContent className="p-4 space-y-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                          <Calendar className="h-3 w-3" />
-                          <span>{event.date}</span>
-                        </div>
-                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                          <Users className="h-3 w-3" />
-                          <span>{event.attendees} participants</span>
-                        </div>
-                      </div>
-                      <Button className="w-full">Participer</Button>
-                    </CardContent>
-                  </Card>
+                  <EventCard
+                    key={event.id}
+                    title={event.title}
+                    location={event.location}
+                    date={event.date}
+                    image={event.image}
+                    attendees={event.attendees}
+                  />
                 ))}
             </div>
           </TabsContent>

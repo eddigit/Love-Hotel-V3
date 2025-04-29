@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
-import { Mail, Lock, Eye, EyeOff } from "lucide-react"
+import { Mail, Lock, Eye, EyeOff, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 
 // Ajouter les imports nécessaires
@@ -57,6 +57,15 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <header className="py-4 border-b">
+        <div className="container flex items-center">
+          <Link href="/" className="flex items-center gap-2">
+            <ArrowLeft className="h-5 w-5" />
+            <span className="text-sm font-medium">Retour</span>
+          </Link>
+        </div>
+      </header>
+
       <main className="flex-1 flex items-center justify-center p-4">
         <div className="w-full max-w-md">
           <Card>
@@ -111,7 +120,7 @@ export default function LoginPage() {
                   </div>
                 </div>
                 {/* Modifier le bouton de connexion pour afficher l'état de chargement */}
-                <Button type="submit" className="w-full" disabled={isLoading}>
+                <Button type="submit" className="w-full h-11" disabled={isLoading}>
                   {isLoading ? "Connexion en cours..." : "Se connecter"}
                 </Button>
               </form>
@@ -126,7 +135,7 @@ export default function LoginPage() {
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <Button variant="outline" className="w-full">
+                <Button variant="outline" className="w-full h-11">
                   <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
                     <path
                       d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -147,7 +156,7 @@ export default function LoginPage() {
                   </svg>
                   Google
                 </Button>
-                <Button variant="outline" className="w-full">
+                <Button variant="outline" className="w-full h-11">
                   <svg className="mr-2 h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" />
                   </svg>
@@ -163,7 +172,6 @@ export default function LoginPage() {
                 </Link>
               </div>
               {/* Ajouter des informations de test en bas du formulaire */}
-              {/* Ajouter après la div "Vous n'avez pas de compte?" */}
               <div className="mt-4 p-4 bg-muted/30 rounded-lg">
                 <h3 className="text-sm font-medium mb-2">Comptes de test:</h3>
                 <div className="text-xs text-muted-foreground space-y-1">

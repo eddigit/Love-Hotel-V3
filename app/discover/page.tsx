@@ -59,33 +59,33 @@ export default function DiscoverPage() {
 
   return (
     <div className="min-h-screen flex flex-col pb-16 md:pb-0">
-      <div className="container py-6 flex-1">
-        <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold">Découvrir</h1>
-          <div className="w-full md:w-auto flex gap-2">
+      <div className="container py-4 md:py-6 flex-1">
+        <div className="flex flex-col gap-4 mb-4 md:mb-6">
+          <h1 className="text-2xl md:text-3xl font-bold">Découvrir</h1>
+          <div className="flex gap-2 w-full">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Rechercher..."
-                className="pl-10 pr-4 w-full md:w-[300px]"
+                className="pl-10 pr-4 w-full"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <Button variant="outline" size="icon">
+            <Button variant="outline" size="icon" className="flex-shrink-0">
               <Filter className="h-4 w-4" />
             </Button>
           </div>
         </div>
 
         <Tabs defaultValue="nearby" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-6">
+          <TabsList className="grid w-full grid-cols-3 mb-4 md:mb-6">
             <TabsTrigger value="nearby">À proximité</TabsTrigger>
             <TabsTrigger value="online">En ligne</TabsTrigger>
             <TabsTrigger value="new">Nouveaux</TabsTrigger>
           </TabsList>
-          <TabsContent value="nearby" className="space-y-6">
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <TabsContent value="nearby" className="space-y-4 md:space-y-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
               {profiles.map((profile, index) => (
                 <ProfileCard
                   key={index}
@@ -98,8 +98,8 @@ export default function DiscoverPage() {
               ))}
             </div>
           </TabsContent>
-          <TabsContent value="online" className="space-y-6">
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <TabsContent value="online" className="space-y-4 md:space-y-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
               {profiles
                 .filter((profile) => profile.online)
                 .map((profile, index) => (
@@ -114,8 +114,8 @@ export default function DiscoverPage() {
                 ))}
             </div>
           </TabsContent>
-          <TabsContent value="new" className="space-y-6">
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <TabsContent value="new" className="space-y-4 md:space-y-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
               {profiles.slice(0, 3).map((profile, index) => (
                 <ProfileCard
                   key={index}

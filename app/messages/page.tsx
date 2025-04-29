@@ -67,8 +67,10 @@ export default function MessagesPage() {
 
   return (
     <div className="min-h-screen flex flex-col pb-16 md:pb-0">
-      <div className="container py-6 flex-1">
-        <div className="relative mb-6">
+      <div className="container py-4 md:py-6 flex-1">
+        <h1 className="text-2xl md:text-3xl font-bold mb-4">Messages</h1>
+
+        <div className="relative mb-4 md:mb-6">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input placeholder="Rechercher dans les messages" className="pl-10 bg-muted border-none" />
         </div>
@@ -76,9 +78,9 @@ export default function MessagesPage() {
         <div className="space-y-2">
           {conversations.map((conversation) => (
             <Link href={`/messages/${conversation.id}`} key={conversation.id}>
-              <Card className="hover:bg-muted/50 transition-colors">
-                <CardContent className="p-4 flex items-center gap-4">
-                  <div className="relative">
+              <Card className="hover:bg-muted/50 transition-colors card-hover">
+                <CardContent className="p-3 md:p-4 flex items-center gap-3 md:gap-4">
+                  <div className="relative flex-shrink-0">
                     <Image
                       src={conversation.avatar || "/placeholder.svg"}
                       alt={conversation.name}
@@ -93,7 +95,7 @@ export default function MessagesPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
                       <h3 className="font-semibold truncate">{conversation.name}</h3>
-                      <span className="text-xs text-muted-foreground">{conversation.time}</span>
+                      <span className="text-xs text-muted-foreground ml-2 flex-shrink-0">{conversation.time}</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <p className="text-sm text-muted-foreground truncate">{conversation.lastMessage}</p>

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
-import { Heart, User, Mail, Lock, Eye, EyeOff, Calendar } from "lucide-react"
+import { User, Mail, Lock, Eye, EyeOff, Calendar, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -47,21 +47,15 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <header className="py-4 border-b">
-        <div className="container mx-auto px-4 flex items-center justify-between">
+        <div className="container flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <Heart className="h-5 w-5 text-primary" />
-            <span className="font-bold text-lg">Love Hotel Rencontres</span>
-          </Link>
-          <Link
-            href="/"
-            className="text-sm font-medium bg-primary text-white px-3 py-1 rounded-md hover:bg-primary/90 transition-colors"
-          >
-            Retour accueil
+            <ArrowLeft className="h-5 w-5" />
+            <span className="text-sm font-medium">Retour</span>
           </Link>
         </div>
       </header>
 
-      <main className="flex-1 flex items-center justify-center p-4 py-8">
+      <main className="flex-1 flex items-center justify-center p-4 py-6">
         <div className="w-full max-w-md">
           <Card>
             <CardHeader className="space-y-1">
@@ -126,7 +120,7 @@ export default function RegisterPage() {
                     </button>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="gender">Genre</Label>
                     <Select value={formData.gender} onValueChange={(value) => handleSelectChange("gender", value)}>
@@ -177,7 +171,7 @@ export default function RegisterPage() {
                     </Link>
                   </label>
                 </div>
-                <Button type="submit" className="w-full" disabled={!formData.agreeTerms}>
+                <Button type="submit" className="w-full h-11" disabled={!formData.agreeTerms}>
                   S&apos;inscrire
                 </Button>
               </form>
@@ -192,7 +186,7 @@ export default function RegisterPage() {
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <Button variant="outline" className="w-full">
+                <Button variant="outline" className="w-full h-11">
                   <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
                     <path
                       d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -213,7 +207,7 @@ export default function RegisterPage() {
                   </svg>
                   Google
                 </Button>
-                <Button variant="outline" className="w-full">
+                <Button variant="outline" className="w-full h-11">
                   <svg className="mr-2 h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" />
                   </svg>
@@ -232,12 +226,6 @@ export default function RegisterPage() {
           </Card>
         </div>
       </main>
-
-      <footer className="py-6 border-t">
-        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          &copy; {new Date().getFullYear()} Love Hotel Rencontres. Tous droits réservés.
-        </div>
-      </footer>
     </div>
   )
 }

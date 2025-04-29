@@ -76,19 +76,31 @@ export default function NotificationsPage() {
 
   return (
     <div className="min-h-screen flex flex-col pb-16 md:pb-0">
-      <div className="container py-6 flex-1">
+      <div className="container py-4 md:py-6 flex-1">
+        <h1 className="text-2xl md:text-3xl font-bold mb-4">Notifications</h1>
+
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-5 mb-6">
-            <TabsTrigger value="all">Toutes</TabsTrigger>
-            <TabsTrigger value="messages">Messages</TabsTrigger>
-            <TabsTrigger value="likes">J&apos;aime</TabsTrigger>
-            <TabsTrigger value="events">Événements</TabsTrigger>
-            <TabsTrigger value="system">Système</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-5 mb-4 md:mb-6 overflow-x-auto">
+            <TabsTrigger value="all" className="text-xs sm:text-sm">
+              Toutes
+            </TabsTrigger>
+            <TabsTrigger value="messages" className="text-xs sm:text-sm">
+              Messages
+            </TabsTrigger>
+            <TabsTrigger value="likes" className="text-xs sm:text-sm">
+              J&apos;aime
+            </TabsTrigger>
+            <TabsTrigger value="events" className="text-xs sm:text-sm">
+              Événements
+            </TabsTrigger>
+            <TabsTrigger value="system" className="text-xs sm:text-sm">
+              Système
+            </TabsTrigger>
           </TabsList>
 
           <AnimatePresence mode="wait">
-            <TabsContent key={activeTab} value="all" className="space-y-4">
-              <motion.div variants={container} initial="hidden" animate="show" className="space-y-4">
+            <TabsContent key={activeTab} value="all" className="space-y-3 md:space-y-4">
+              <motion.div variants={container} initial="hidden" animate="show" className="space-y-3 md:space-y-4">
                 {notifications.map((notification) => (
                   <motion.div key={notification.id} variants={item}>
                     <NotificationCard notification={notification} onMarkAsRead={markAsRead} />
@@ -97,8 +109,8 @@ export default function NotificationsPage() {
               </motion.div>
             </TabsContent>
 
-            <TabsContent key={`${activeTab}-messages`} value="messages" className="space-y-4">
-              <motion.div variants={container} initial="hidden" animate="show" className="space-y-4">
+            <TabsContent key={`${activeTab}-messages`} value="messages" className="space-y-3 md:space-y-4">
+              <motion.div variants={container} initial="hidden" animate="show" className="space-y-3 md:space-y-4">
                 {messageNotifications.length > 0 ? (
                   messageNotifications.map((notification) => (
                     <motion.div key={notification.id} variants={item}>
@@ -111,8 +123,8 @@ export default function NotificationsPage() {
               </motion.div>
             </TabsContent>
 
-            <TabsContent key={`${activeTab}-likes`} value="likes" className="space-y-4">
-              <motion.div variants={container} initial="hidden" animate="show" className="space-y-4">
+            <TabsContent key={`${activeTab}-likes`} value="likes" className="space-y-3 md:space-y-4">
+              <motion.div variants={container} initial="hidden" animate="show" className="space-y-3 md:space-y-4">
                 {likeNotifications.length > 0 ? (
                   likeNotifications.map((notification) => (
                     <motion.div key={notification.id} variants={item}>
@@ -125,8 +137,8 @@ export default function NotificationsPage() {
               </motion.div>
             </TabsContent>
 
-            <TabsContent key={`${activeTab}-events`} value="events" className="space-y-4">
-              <motion.div variants={container} initial="hidden" animate="show" className="space-y-4">
+            <TabsContent key={`${activeTab}-events`} value="events" className="space-y-3 md:space-y-4">
+              <motion.div variants={container} initial="hidden" animate="show" className="space-y-3 md:space-y-4">
                 {eventNotifications.length > 0 ? (
                   eventNotifications.map((notification) => (
                     <motion.div key={notification.id} variants={item}>
@@ -139,8 +151,8 @@ export default function NotificationsPage() {
               </motion.div>
             </TabsContent>
 
-            <TabsContent key={`${activeTab}-system`} value="system" className="space-y-4">
-              <motion.div variants={container} initial="hidden" animate="show" className="space-y-4">
+            <TabsContent key={`${activeTab}-system`} value="system" className="space-y-3 md:space-y-4">
+              <motion.div variants={container} initial="hidden" animate="show" className="space-y-3 md:space-y-4">
                 {systemNotifications.length > 0 ? (
                   systemNotifications.map((notification) => (
                     <motion.div key={notification.id} variants={item}>
@@ -193,7 +205,7 @@ function NotificationCard({ notification, onMarkAsRead }: { notification: any; o
         <Card
           className={`hover:bg-muted/50 transition-colors ${!notification.read ? "border-l-4 border-l-primary" : ""}`}
         >
-          <CardContent className="p-4 flex items-start gap-4">
+          <CardContent className="p-3 md:p-4 flex items-start gap-3 md:gap-4">
             <div className="relative flex-shrink-0">
               {notification.image ? (
                 <Image
@@ -219,10 +231,10 @@ function NotificationCard({ notification, onMarkAsRead }: { notification: any; o
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between">
-                <h3 className="font-semibold">{notification.title}</h3>
-                <span className="text-xs text-muted-foreground ml-2">{notification.time}</span>
+                <h3 className="font-semibold text-sm md:text-base line-clamp-1">{notification.title}</h3>
+                <span className="text-xs text-muted-foreground ml-2 flex-shrink-0">{notification.time}</span>
               </div>
-              <p className="text-sm text-muted-foreground">{notification.description}</p>
+              <p className="text-xs md:text-sm text-muted-foreground line-clamp-2">{notification.description}</p>
             </div>
           </CardContent>
         </Card>
@@ -237,7 +249,7 @@ function EmptyState({ message }: { message: string }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.2 }}
-      className="flex flex-col items-center justify-center py-12 text-center"
+      className="flex flex-col items-center justify-center py-8 md:py-12 text-center"
     >
       <motion.div
         initial={{ scale: 0 }}

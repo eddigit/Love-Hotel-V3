@@ -18,7 +18,7 @@ interface ProfileCardProps {
 export function ProfileCard({ name, age, location, image, online }: ProfileCardProps) {
   return (
     <Link href={`/profile/${name.toLowerCase()}`}>
-      <Card className="profile-card group overflow-hidden">
+      <Card className="profile-card group overflow-hidden card-hover">
         <div className="relative aspect-[3/4]">
           <Image
             src={image || "/placeholder.svg"}
@@ -36,28 +36,28 @@ export function ProfileCard({ name, age, location, image, online }: ProfileCardP
               }}
               className="absolute bottom-2 left-2 z-10"
             >
-              <Badge variant="secondary" className="bg-secondary/80 backdrop-blur-sm flex items-center gap-1.5">
+              <Badge variant="secondary" className="bg-secondary/80 backdrop-blur-sm flex items-center gap-1.5 text-xs">
                 <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
                 En ligne
               </Badge>
             </motion.div>
           )}
-          <div className="absolute bottom-0 left-0 right-0 p-4 profile-card-content">
+          <div className="absolute bottom-0 left-0 right-0 p-3 profile-card-content">
             <div className="text-white">
               <div className="flex items-center justify-between">
-                <h3 className="font-bold text-lg">
+                <h3 className="font-bold text-base sm:text-lg line-clamp-1">
                   {name}, {age}
                 </h3>
-                <div className="flex gap-2">
-                  <button className="p-1.5 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-colors">
-                    <MessageCircle className="h-4 w-4 text-white" />
+                <div className="flex gap-1.5">
+                  <button className="p-1.5 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-colors touch-target">
+                    <MessageCircle className="h-3.5 w-3.5 text-white" />
                   </button>
-                  <button className="p-1.5 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-colors">
-                    <Heart className="h-4 w-4 text-white" />
+                  <button className="p-1.5 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-colors touch-target">
+                    <Heart className="h-3.5 w-3.5 text-white" />
                   </button>
                 </div>
               </div>
-              <p className="text-sm text-white/80">{location}</p>
+              <p className="text-xs sm:text-sm text-white/80 line-clamp-1">{location}</p>
             </div>
           </div>
         </div>

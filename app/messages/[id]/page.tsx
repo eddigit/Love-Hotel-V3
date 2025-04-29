@@ -4,8 +4,10 @@ import type React from "react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { ImageIcon, Mic, Send } from "lucide-react"
+import { ImageIcon, Mic, Send, ArrowLeft } from "lucide-react"
 import { useState } from "react"
+import Image from "next/image"
+import Link from "next/link"
 
 export default function ConversationPage({ params }: { params: { id: string } }) {
   const [message, setMessage] = useState("")
@@ -60,15 +62,44 @@ export default function ConversationPage({ params }: { params: { id: string } })
 
   return (
     <div className="min-h-screen flex flex-col">
+      {/* Header de conversation */}
+      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-md border-b">
+        <div className="container py-3 flex items-center gap-3">
+          <Link href="/messages" className="md:hidden">
+            <Button variant="ghost" size="icon" className="rounded-full">
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+          </Link>
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <Image
+                src={conversation.avatar || "/placeholder.svg"}
+                alt={conversation.name}
+                width={40}
+                height={40}
+                className="rounded-full object-cover"
+              />
+              {conversation.online && (
+                <div className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-green-500 border-2 border-background"></div>
+              )}
+            </div>
+            <div>
+              <h2 className="font-semibold">{conversation.name}</h2>
+              {conversation.online && <p className="text-xs text-muted-foreground">En ligne</p>}
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {conversation.messages.map((msg) => (
           <div key={msg.id} className={`flex ${msg.sender === "me" ? "justify-end" : "justify-start"}`}>
             <div
-              className={`max-w-[80%] rounded-2xl p-3 ${
+              className={`max-w-[85%] sm:max-w-[75%] rounded-2xl p-3 ${
                 msg.sender === "me" ? "bg-primary text-primary-foreground rounded-br-none" : "bg-muted rounded-bl-none"
               }`}
             >
-              <div className="mb-1">{msg.text}</div>
+              <div className="mb-1 break-words">{msg.text}</div>
               <div
                 className={`text-xs ${
                   msg.sender === "me" ? "text-primary-foreground/70" : "text-muted-foreground"
@@ -81,9 +112,9 @@ export default function ConversationPage({ params }: { params: { id: string } })
         ))}
       </div>
 
-      <div className="border-t p-4 sticky bottom-0 bg-background">
+      <div className="border-t p-3 md:p-4 sticky bottom-0 bg-background">
         <form onSubmit={handleSendMessage} className="flex items-center gap-2">
-          <Button type="button" variant="ghost" size="icon" className="rounded-full">
+          <Button type="button" variant="ghost" size="icon" className="rounded-full flex-shrink-0">
             <ImageIcon className="h-5 w-5" />
           </Button>
           <Input
@@ -92,10 +123,10 @@ export default function ConversationPage({ params }: { params: { id: string } })
             placeholder="Écrivez un message..."
             className="flex-1 rounded-full bg-muted border-none"
           />
-          <Button type="submit" size="icon" className="rounded-full" disabled={!message.trim()}>
+          <Button type="submit" size="icon" className="rounded-full flex-shrink-0" disabled={!message.trim()}>
             <Send className="h-5 w-5" />
           </Button>
-          <Button type="button" variant="ghost" size="icon" className="rounded-full">
+          <Button type="button" variant="ghost" size="icon" className="rounded-full flex-shrink-0 hidden sm:flex">
             <Mic className="h-5 w-5" />
           </Button>
         </form>

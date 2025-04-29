@@ -93,65 +93,71 @@ export default function LoveRoomsPage() {
 
   return (
     <div className="min-h-screen flex flex-col pb-16 md:pb-0">
-      <div className="container py-6 flex-1">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Love Rooms</h1>
-          <p className="text-muted-foreground">
+      <div className="container py-4 md:py-6 flex-1">
+        <div className="mb-4 md:mb-8">
+          <h1 className="text-2xl md:text-3xl font-bold mb-2">Love Rooms</h1>
+          <p className="text-muted-foreground text-sm md:text-base">
             Réservez une Love Room pour un moment inoubliable dans l'un de nos établissements.
           </p>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-6">
-            <TabsTrigger value="available">Disponibles</TabsTrigger>
-            <TabsTrigger value="reserve">Réserver</TabsTrigger>
-            <TabsTrigger value="my-reservations">Mes réservations</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3 mb-4 md:mb-6">
+            <TabsTrigger value="available" className="text-xs sm:text-sm">
+              Disponibles
+            </TabsTrigger>
+            <TabsTrigger value="reserve" className="text-xs sm:text-sm">
+              Réserver
+            </TabsTrigger>
+            <TabsTrigger value="my-reservations" className="text-xs sm:text-sm">
+              Mes réservations
+            </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="available" className="space-y-6">
+          <TabsContent value="available" className="space-y-4 md:space-y-6">
             <motion.div
               variants={container}
               initial="hidden"
               animate="show"
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
             >
               {loveRooms.map((room) => (
                 <motion.div key={room.id} variants={item}>
-                  <Card className="overflow-hidden h-full flex flex-col">
-                    <div className="relative h-48">
+                  <Card className="overflow-hidden h-full flex flex-col card-hover">
+                    <div className="relative h-40 md:h-48">
                       <Image src={room.image || "/placeholder.svg"} alt={room.name} fill className="object-cover" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">
                         <div className="text-white">
-                          <h3 className="font-bold text-lg">{room.name}</h3>
+                          <h3 className="font-bold text-lg line-clamp-1">{room.name}</h3>
                           <div className="flex items-center gap-1 text-sm">
-                            <MapPin className="h-3 w-3" />
-                            <span>{room.location}</span>
+                            <MapPin className="h-3 w-3 flex-shrink-0" />
+                            <span className="line-clamp-1">{room.location}</span>
                           </div>
                         </div>
                       </div>
                       <div className="absolute top-2 right-2">
-                        <Badge variant="secondary" className="bg-secondary/80 backdrop-blur-sm">
+                        <Badge variant="secondary" className="bg-secondary/80 backdrop-blur-sm text-xs">
                           {room.price} {room.currency} / session
                         </Badge>
                       </div>
                     </div>
-                    <CardContent className="p-4 flex-grow">
-                      <div className="space-y-4">
+                    <CardContent className="p-3 md:p-4 flex-grow">
+                      <div className="space-y-3 md:space-y-4">
                         <div>
-                          <h4 className="font-medium mb-2">Caractéristiques</h4>
-                          <div className="flex flex-wrap gap-2">
+                          <h4 className="font-medium text-sm mb-2">Caractéristiques</h4>
+                          <div className="flex flex-wrap gap-1.5">
                             {room.features.map((feature, index) => (
-                              <Badge key={index} variant="outline">
+                              <Badge key={index} variant="outline" className="text-xs">
                                 {feature}
                               </Badge>
                             ))}
                           </div>
                         </div>
                         <div>
-                          <h4 className="font-medium mb-2">Créneaux horaires</h4>
-                          <div className="flex flex-wrap gap-2">
+                          <h4 className="font-medium text-sm mb-2">Créneaux horaires</h4>
+                          <div className="flex flex-wrap gap-1.5">
                             {room.timeSlots.map((slot, index) => (
-                              <Badge key={index} variant="outline" className="flex items-center gap-1">
+                              <Badge key={index} variant="outline" className="flex items-center gap-1 text-xs">
                                 <Clock className="h-3 w-3" />
                                 {slot}
                               </Badge>
@@ -160,7 +166,7 @@ export default function LoveRoomsPage() {
                         </div>
                       </div>
                     </CardContent>
-                    <CardFooter className="p-4 pt-0">
+                    <CardFooter className="p-3 md:p-4 pt-0">
                       <Button className="w-full">Réserver maintenant</Button>
                     </CardFooter>
                   </Card>
@@ -176,18 +182,18 @@ export default function LoveRoomsPage() {
             </div>
           </TabsContent>
 
-          <TabsContent value="my-reservations" className="space-y-6">
+          <TabsContent value="my-reservations" className="space-y-4 md:space-y-6">
             {myReservations.length > 0 ? (
               <motion.div
                 variants={container}
                 initial="hidden"
                 animate="show"
-                className="grid grid-cols-1 md:grid-cols-2 gap-6"
+                className="grid grid-cols-1 md:grid-cols-2 gap-4"
               >
                 {myReservations.map((reservation) => (
                   <motion.div key={reservation.id} variants={item}>
-                    <Card className="overflow-hidden">
-                      <div className="relative h-40">
+                    <Card className="overflow-hidden card-hover">
+                      <div className="relative h-32 md:h-40">
                         <Image
                           src={reservation.image || "/placeholder.svg"}
                           alt={reservation.roomName}
@@ -196,10 +202,10 @@ export default function LoveRoomsPage() {
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">
                           <div className="text-white">
-                            <h3 className="font-bold text-lg">{reservation.roomName}</h3>
+                            <h3 className="font-bold text-lg line-clamp-1">{reservation.roomName}</h3>
                             <div className="flex items-center gap-1 text-sm">
-                              <MapPin className="h-3 w-3" />
-                              <span>{reservation.location}</span>
+                              <MapPin className="h-3 w-3 flex-shrink-0" />
+                              <span className="line-clamp-1">{reservation.location}</span>
                             </div>
                           </div>
                         </div>
@@ -208,22 +214,22 @@ export default function LoveRoomsPage() {
                             variant={reservation.status === "confirmed" ? "secondary" : "outline"}
                             className={
                               reservation.status === "confirmed"
-                                ? "bg-secondary/80 backdrop-blur-sm"
-                                : "bg-yellow-500/80 text-white backdrop-blur-sm"
+                                ? "bg-secondary/80 backdrop-blur-sm text-xs"
+                                : "bg-yellow-500/80 text-white backdrop-blur-sm text-xs"
                             }
                           >
                             {reservation.status === "confirmed" ? "Confirmé" : "En attente"}
                           </Badge>
                         </div>
                       </div>
-                      <CardContent className="p-4 space-y-4">
-                        <div className="flex items-center justify-between">
+                      <CardContent className="p-3 md:p-4 space-y-3 md:space-y-4">
+                        <div className="flex items-center justify-between flex-wrap gap-y-2">
                           <div className="flex items-center gap-1 text-sm">
-                            <Calendar className="h-4 w-4" />
+                            <Calendar className="h-4 w-4 flex-shrink-0" />
                             <span>{reservation.date}</span>
                           </div>
                           <div className="flex items-center gap-1 text-sm">
-                            <Clock className="h-4 w-4" />
+                            <Clock className="h-4 w-4 flex-shrink-0" />
                             <span>{reservation.timeSlot}</span>
                           </div>
                         </div>
@@ -241,7 +247,7 @@ export default function LoveRoomsPage() {
                 ))}
               </motion.div>
             ) : (
-              <div className="text-center py-12">
+              <div className="text-center py-8 md:py-12">
                 <div className="mx-auto w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
                   <Calendar className="h-8 w-8 text-muted-foreground" />
                 </div>
