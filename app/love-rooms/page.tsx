@@ -10,6 +10,9 @@ import { MobileNavigation } from "@/components/mobile-navigation"
 import { Badge } from "@/components/ui/badge"
 import { motion } from "framer-motion"
 
+// Ajouter l'import du widget de réservation en haut du fichier
+import { LoveHotelBookingWidget } from "@/components/love-hotel-booking"
+
 export default function LoveRoomsPage() {
   const [activeTab, setActiveTab] = useState("available")
 
@@ -175,10 +178,17 @@ export default function LoveRoomsPage() {
             </motion.div>
           </TabsContent>
 
+          {/* Remplacer le contenu de l'onglet "reserve" par le widget de réservation */}
           <TabsContent value="reserve">
-            <div className="text-center p-6">
-              <h3 className="text-xl font-bold mb-2">Réserver une Love Room</h3>
-              <p className="text-muted-foreground mb-4">Formulaire de réservation à venir prochainement.</p>
+            <div className="p-4 md:p-6 bg-gradient-to-br from-[#2d1155]/70 to-[#3d1155]/50 backdrop-blur-sm rounded-lg shadow-lg shadow-purple-900/20 border border-purple-800/20">
+              <h3 className="text-xl font-bold mb-4">Réserver une Love Room</h3>
+              <p className="text-muted-foreground mb-6">
+                Utilisez notre système de réservation en ligne pour réserver votre Love Room préférée. Sélectionnez la
+                date, l'heure et la durée de votre séjour.
+              </p>
+              <div className="bg-[#1a0d2e]/50 rounded-lg shadow-lg overflow-hidden">
+                <LoveHotelBookingWidget />
+              </div>
             </div>
           </TabsContent>
 
