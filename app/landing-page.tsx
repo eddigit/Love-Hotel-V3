@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import Image from "next/image"
 import { LandingHeader } from "@/components/landing-header"
+import { AdvertisementBannerBottom } from "@/components/advertisement-banner-bottom"
 
 export default function LandingPage() {
   return (
@@ -295,6 +296,13 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Advertisement Banner Bottom */}
+      <section className="py-8 md:py-12">
+        <div className="container mx-auto px-4">
+          <AdvertisementBannerBottom />
         </div>
       </section>
 

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import Image from "next/image"
 import { LandingHeader } from "@/components/landing-header"
+import { AdvertisementBanner } from "@/components/advertisement-banner"
 
 export default function LoolyyBMemeCoinPage() {
   return (
@@ -287,6 +288,13 @@ export default function LoolyyBMemeCoinPage() {
               </p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Advertisement Banner */}
+      <section className="py-8 md:py-12">
+        <div className="container px-4">
+          <AdvertisementBanner />
         </div>
       </section>
 
