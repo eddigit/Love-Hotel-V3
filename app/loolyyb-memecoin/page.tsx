@@ -13,9 +13,9 @@ export default function LoolyyBMemeCoinPage() {
 
       {/* Hero Section */}
       <section className="py-8 md:py-16 relative overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#1a0d2e] via-[#3d1155] to-[#1a0d2e] opacity-90"></div>
-          <div className="absolute inset-0 bg-[url('/purple-glow-pattern.png')] opacity-20 mix-blend-overlay"></div>
+        <div className="absolute inset-0 z-0 w-full h-full">
+          <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-[#1a0d2e] via-[#3d1155] to-[#1a0d2e] opacity-90"></div>
+          <div className="absolute inset-0 w-full h-full bg-[url('/purple-glow-pattern.png')] bg-cover bg-center opacity-20 mix-blend-overlay"></div>
         </div>
         <div className="container px-4 relative z-10">
           <div className="text-center max-w-3xl mx-auto">
@@ -31,9 +31,9 @@ export default function LoolyyBMemeCoinPage() {
 
       {/* Features Section */}
       <section className="py-12 relative overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-b from-[#1a0d2e] to-[#3d1155]"></div>
-          <div className="absolute inset-0 bg-[url('/purple-glow-pattern.png')] opacity-20 mix-blend-overlay"></div>
+        <div className="absolute inset-0 z-0 w-full h-full">
+          <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-[#1a0d2e] via-[#3d1155] to-[#1a0d2e] opacity-90"></div>
+          <div className="absolute inset-0 w-full h-full bg-[url('/purple-glow-pattern.png')] bg-cover bg-center opacity-20 mix-blend-overlay"></div>
         </div>
         <div className="container px-4 relative z-10">
           <h2 className="text-3xl font-bold text-white text-center mb-12">
@@ -41,7 +41,7 @@ export default function LoolyyBMemeCoinPage() {
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-gradient-to-br from-[#2d1155]/70 to-[#3d1155]/50 backdrop-blur-sm p-6 rounded-2xl border border-purple-800/20 shadow-lg shadow-purple-900/20">
+            <div className="bg-gradient-to-br from-[#2d1155]/70 to-[#3d1155]/50 backdrop-blur-sm p-6 rounded-2xl border border-purple-800/20 shadow-lg shadow-purple-900/20 w-full">
               <div className="h-14 w-14 bg-gradient-to-br from-[#ff3b8b]/30 to-[#ff8cc8]/20 rounded-full flex items-center justify-center mb-6">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -64,7 +64,7 @@ export default function LoolyyBMemeCoinPage() {
               </p>
             </div>
 
-            <div className="bg-gradient-to-br from-[#2d1155]/70 to-[#3d1155]/50 backdrop-blur-sm p-6 rounded-2xl border border-purple-800/20 shadow-lg shadow-purple-900/20">
+            <div className="bg-gradient-to-br from-[#2d1155]/70 to-[#3d1155]/50 backdrop-blur-sm p-6 rounded-2xl border border-purple-800/20 shadow-lg shadow-purple-900/20 w-full">
               <div className="h-14 w-14 bg-gradient-to-br from-[#ff3b8b]/30 to-[#ff8cc8]/20 rounded-full flex items-center justify-center mb-6">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -87,7 +87,7 @@ export default function LoolyyBMemeCoinPage() {
               </p>
             </div>
 
-            <div className="bg-gradient-to-br from-[#2d1155]/70 to-[#3d1155]/50 backdrop-blur-sm p-6 rounded-2xl border border-purple-800/20 shadow-lg shadow-purple-900/20">
+            <div className="bg-gradient-to-br from-[#2d1155]/70 to-[#3d1155]/50 backdrop-blur-sm p-6 rounded-2xl border border-purple-800/20 shadow-lg shadow-purple-900/20 w-full">
               <div className="h-14 w-14 bg-gradient-to-br from-[#ff3b8b]/30 to-[#ff8cc8]/20 rounded-full flex items-center justify-center mb-6">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -119,9 +119,9 @@ export default function LoolyyBMemeCoinPage() {
 
       {/* Pricing Section */}
       <section className="py-12 md:py-16 relative overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-r from-[#1a0d2e] to-[#3d1155] opacity-90"></div>
-          <div className="absolute inset-0 bg-[url('https://t3.ftcdn.net/jpg/12/40/80/76/240_F_1240807692_IvVnohNpSPVxUXBLRrxuRLdRPWjuw9Vl.jpg')] bg-center bg-cover bg-no-repeat opacity-40"></div>
+        <div className="absolute inset-0 z-0 w-full h-full">
+          <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-[#1a0d2e] via-[#3d1155] to-[#1a0d2e] opacity-90"></div>
+          <div className="absolute inset-0 w-full h-full bg-[url('/purple-glow-pattern.png')] bg-cover bg-center opacity-20 mix-blend-overlay"></div>
         </div>
         <div className="container mx-auto px-4 relative z-10">
           <h2 className="text-3xl font-bold text-white text-center mb-12">
@@ -129,7 +129,7 @@ export default function LoolyyBMemeCoinPage() {
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-gradient-to-br from-[#2d1155]/80 to-[#3d1155]/60 backdrop-blur-sm p-6 rounded-2xl border border-purple-800/30 shadow-lg shadow-purple-900/20 flex flex-col">
+            <div className="bg-gradient-to-br from-[#2d1155]/80 to-[#3d1155]/60 backdrop-blur-sm p-6 rounded-2xl border border-purple-800/30 shadow-lg shadow-purple-900/20 flex flex-col w-full">
               <h3 className="text-2xl font-bold mb-2 text-white">Pack Découverte</h3>
               <div className="text-4xl font-black mb-4 text-white">
                 100 <span className="text-[#ff3b8b]">LOOLYYB</span>
@@ -161,7 +161,7 @@ export default function LoolyyBMemeCoinPage() {
               </Button>
             </div>
 
-            <div className="bg-gradient-to-br from-[#ff3b8b]/20 to-[#3d1155]/80 backdrop-blur-sm p-6 rounded-2xl border border-[#ff3b8b]/30 shadow-lg shadow-[#ff3b8b]/20 flex flex-col relative">
+            <div className="bg-gradient-to-br from-[#ff3b8b]/20 to-[#3d1155]/80 backdrop-blur-sm p-6 rounded-2xl border border-[#ff3b8b]/30 shadow-lg shadow-[#ff3b8b]/20 flex flex-col relative w-full">
               <div className="absolute -top-4 left-0 right-0 flex justify-center">
                 <span className="bg-[#ff3b8b] text-white text-sm font-bold px-4 py-1 rounded-full">POPULAIRE</span>
               </div>
@@ -202,7 +202,7 @@ export default function LoolyyBMemeCoinPage() {
               </Button>
             </div>
 
-            <div className="bg-gradient-to-br from-[#2d1155]/80 to-[#3d1155]/60 backdrop-blur-sm p-6 rounded-2xl border border-purple-800/30 shadow-lg shadow-purple-900/20 flex flex-col">
+            <div className="bg-gradient-to-br from-[#2d1155]/80 to-[#3d1155]/60 backdrop-blur-sm p-6 rounded-2xl border border-purple-800/30 shadow-lg shadow-purple-900/20 flex flex-col w-full">
               <h3 className="text-2xl font-bold mb-2 text-white">Pack VIP</h3>
               <div className="text-4xl font-black mb-4 text-white">
                 2000 <span className="text-[#ff3b8b]">LOOLYYB</span>
@@ -255,7 +255,7 @@ export default function LoolyyBMemeCoinPage() {
           <h2 className="text-3xl font-bold text-white text-center mb-12">Questions Fréquentes</h2>
 
           <div className="max-w-3xl mx-auto space-y-6">
-            <div className="bg-gradient-to-br from-[#2d1155]/70 to-[#3d1155]/50 backdrop-blur-sm p-6 rounded-2xl border border-purple-800/20 shadow-lg shadow-purple-900/20">
+            <div className="bg-gradient-to-br from-[#2d1155]/70 to-[#3d1155]/50 backdrop-blur-sm p-6 rounded-2xl border border-purple-800/20 shadow-lg shadow-purple-900/20 w-full">
               <h3 className="text-xl font-bold mb-3 text-white">Qu'est-ce que LOOLYYB ?</h3>
               <p className="text-gray-300">
                 LOOLYYB est une cryptomonnaie partenaire exclusive du Love Hotel. Elle offre des avantages uniques dans
@@ -263,7 +263,7 @@ export default function LoolyyBMemeCoinPage() {
               </p>
             </div>
 
-            <div className="bg-gradient-to-br from-[#2d1155]/70 to-[#3d1155]/50 backdrop-blur-sm p-6 rounded-2xl border border-purple-800/20 shadow-lg shadow-purple-900/20">
+            <div className="bg-gradient-to-br from-[#2d1155]/70 to-[#3d1155]/50 backdrop-blur-sm p-6 rounded-2xl border border-purple-800/20 shadow-lg shadow-purple-900/20 w-full">
               <h3 className="text-xl font-bold mb-3 text-white">Comment utiliser mes tokens LOOLYYB ?</h3>
               <p className="text-gray-300">
                 Vos tokens LOOLYYB peuvent être utilisés pour réserver des Love Rooms, accéder à des événements
@@ -271,7 +271,7 @@ export default function LoolyyBMemeCoinPage() {
               </p>
             </div>
 
-            <div className="bg-gradient-to-br from-[#2d1155]/70 to-[#3d1155]/50 backdrop-blur-sm p-6 rounded-2xl border border-purple-800/20 shadow-lg shadow-purple-900/20">
+            <div className="bg-gradient-to-br from-[#2d1155]/70 to-[#3d1155]/50 backdrop-blur-sm p-6 rounded-2xl border border-purple-800/20 shadow-lg shadow-purple-900/20 w-full">
               <h3 className="text-xl font-bold mb-3 text-white">Les tokens LOOLYYB ont-ils une valeur réelle ?</h3>
               <p className="text-gray-300">
                 Oui, les tokens LOOLYYB ont une valeur réelle au sein de l'écosystème Love Hotel. Leur valeur augmente
@@ -279,7 +279,7 @@ export default function LoolyyBMemeCoinPage() {
               </p>
             </div>
 
-            <div className="bg-gradient-to-br from-[#2d1155]/70 to-[#3d1155]/50 backdrop-blur-sm p-6 rounded-2xl border border-purple-800/20 shadow-lg shadow-purple-900/20">
+            <div className="bg-gradient-to-br from-[#2d1155]/70 to-[#3d1155]/50 backdrop-blur-sm p-6 rounded-2xl border border-purple-800/20 shadow-lg shadow-purple-900/20 w-full">
               <h3 className="text-xl font-bold mb-3 text-white">Comment acheter des tokens LOOLYYB ?</h3>
               <p className="text-gray-300">
                 Vous pouvez acheter des tokens LOOLYYB directement sur cette page en choisissant l'un de nos packs. Le
