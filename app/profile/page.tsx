@@ -1,5 +1,7 @@
 "use client"
 
+import type React from "react"
+
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -17,12 +19,30 @@ import {
   Settings,
   Shield,
   Users,
+  Camera,
 } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { MobileNavigation } from "@/components/mobile-navigation"
+import { useState } from "react"
 
 export default function ProfilePage() {
+  // Ajout de l'état pour l'image de couverture
+  const [coverImage, setCoverImage] = useState<string>(
+    "https://t4.ftcdn.net/jpg/05/74/88/35/240_F_574883541_Oori6Abhb3BjGviQjgsAONsCJi3cp7jk.jpg",
+  )
+
+  // Fonction pour gérer le changement d'image de couverture
+  const handleCoverImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      // Dans une application réelle, vous téléchargeriez le fichier sur un serveur
+      // Ici, nous créons simplement une URL d'objet pour la prévisualisation
+      const imageUrl = URL.createObjectURL(file)
+      setCoverImage(imageUrl)
+    }
+  }
+
   // Simuler des données de profil utilisateur
   const profile = {
     name: "Alex Durand",
@@ -85,7 +105,31 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen flex flex-col pb-16 md:pb-0">
       <div className="relative">
-        <div className="h-32 md:h-48 w-full gradient-bg"></div>
+        <div className="h-32 md:h-48 w-full relative overflow-hidden">
+          {coverImage.startsWith("http") ? (
+            <img
+              src={coverImage || "/placeholder.svg"}
+              alt="Couverture de profil"
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <Image src={coverImage || "/placeholder.svg"} alt="Couverture de profil" fill className="object-cover" />
+          )}
+          <div className="absolute inset-0 bg-black/10"></div>
+          <label
+            htmlFor="cover-upload"
+            className="absolute bottom-2 right-4 p-2 rounded-full bg-black/20 backdrop-blur-sm text-white cursor-pointer hover:bg-black/30 transition-colors"
+          >
+            <Camera className="h-5 w-5" />
+            <input
+              id="cover-upload"
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleCoverImageChange}
+            />
+          </label>
+        </div>
         <div className="absolute top-4 right-4 flex gap-2 z-10">
           <Button variant="ghost" size="icon" className="rounded-full bg-black/20 backdrop-blur-sm text-white">
             <Settings className="h-5 w-5" />
