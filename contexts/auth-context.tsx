@@ -12,6 +12,7 @@ export type User = {
   name: string
   role: UserRole
   avatar: string
+  onboardingCompleted?: boolean
 }
 
 // Utilisateurs de test prédéfinis
@@ -22,6 +23,7 @@ export const TEST_USERS = {
     name: "Alex Durand",
     role: "user" as UserRole,
     avatar: "/mystical-forest-spirit.png",
+    onboardingCompleted: false,
   },
   admin: {
     id: "admin-456",
@@ -29,6 +31,7 @@ export const TEST_USERS = {
     name: "Admin Système",
     role: "admin" as UserRole,
     avatar: "/contemplative-portrait.png",
+    onboardingCompleted: true,
   },
 }
 
@@ -37,6 +40,7 @@ type AuthContextType = {
   login: (email: string, password: string) => Promise<{ success: boolean; message: string }>
   logout: () => void
   isLoading: boolean
+  completeOnboarding: () => void
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -59,6 +63,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     setIsLoading(false)
   }, [])
+
+  // Rediriger vers l'onboarding si nécessaire après la connexion
+  useEffect(() => {
+    if (user && !user.onboardingCompleted && router && !isLoading) {
+      const currentPath = window.location.pathname
+      if (currentPath !== "/onboarding") {
+        router.push("/onboarding")
+      }
+    }
+  }, [user, router, isLoading])
 
   // Fonction de connexion
   const login = async (email: string, password: string): Promise<{ success: boolean; message: string }> => {
@@ -91,7 +105,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     router.push("/login")
   }
 
-  return <AuthContext.Provider value={{ user, login, logout, isLoading }}>{children}</AuthContext.Provider>
+  // Fonction pour marquer l'onboarding comme complété
+  const completeOnboarding = () => {
+    if (user) {
+      const updatedUser = { ...user, onboardingCompleted: true }
+      setUser(updatedUser)
+      localStorage.setItem("currentUser", JSON.stringify(updatedUser))
+    }
+  }
+
+  return (
+    <AuthContext.Provider value={{ user, login, logout, isLoading, completeOnboarding }}>
+      {children}
+    </AuthContext.Provider>
+  )
 }
 
 export function useAuth() {

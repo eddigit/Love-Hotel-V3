@@ -6,6 +6,7 @@ import { Heart, MessageCircle } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { motion } from "framer-motion"
+import { MatchScore } from "@/components/match-score"
 
 interface ProfileCardProps {
   name: string
@@ -13,9 +14,10 @@ interface ProfileCardProps {
   location: string
   image: string
   online: boolean
+  matchScore?: number
 }
 
-export function ProfileCard({ name, age, location, image, online }: ProfileCardProps) {
+export function ProfileCard({ name, age, location, image, online, matchScore }: ProfileCardProps) {
   return (
     <Link href={`/profile/${name.toLowerCase()}`}>
       <Card className="profile-card group overflow-hidden card-hover border-0 shadow-lg shadow-purple-900/20">
@@ -43,6 +45,12 @@ export function ProfileCard({ name, age, location, image, online }: ProfileCardP
                 LIVE
               </Badge>
             </motion.div>
+          )}
+
+          {matchScore !== undefined && (
+            <div className="absolute top-2 left-2 z-10">
+              <MatchScore score={matchScore} size="sm" />
+            </div>
           )}
 
           <div className="absolute bottom-0 left-0 right-0 p-3 z-10">

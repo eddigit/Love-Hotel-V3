@@ -1,88 +1,77 @@
 "use client"
 
-import { Heart, Home, MessageCircle, Search, User } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { Home, Search, MessageCircle, Heart, User } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { useNotifications } from "@/contexts/notification-context"
+import { motion } from "framer-motion"
 import { NotificationBadge } from "@/components/notification-badge"
 
 export function MobileNavigation() {
   const pathname = usePathname()
-  const { counts } = useNotifications()
 
-  // Vérifier si nous sommes sur la landing page ou une page de présentation
-  const isPresentationPage =
-    pathname === "/" ||
-    pathname === "/about" ||
-    pathname === "/features" ||
-    pathname === "/pricing" ||
-    pathname === "/login" ||
-    pathname === "/register" ||
-    pathname === "/rencontres" ||
-    pathname === "/en-direct" ||
-    pathname === "/premium"
-
-  // Ne pas afficher la navigation mobile sur les pages de présentation
-  if (isPresentationPage) {
-    return null
-  }
+  const links = [
+    {
+      href: "/",
+      icon: Home,
+      label: "Accueil",
+      active: pathname === "/",
+    },
+    {
+      href: "/discover",
+      icon: Search,
+      label: "Découvrir",
+      active: pathname === "/discover",
+    },
+    {
+      href: "/matches",
+      icon: Heart,
+      label: "Matchs",
+      active: pathname === "/matches",
+      badge: 2,
+    },
+    {
+      href: "/messages",
+      icon: MessageCircle,
+      label: "Messages",
+      active: pathname === "/messages" || pathname.startsWith("/messages/"),
+      badge: 3,
+    },
+    {
+      href: "/profile",
+      icon: User,
+      label: "Profil",
+      active: pathname === "/profile" || pathname.startsWith("/profile/"),
+    },
+  ]
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 border-t border-purple-800/30 bg-[#1a0d2e]/95 backdrop-blur-md z-50">
-      <div className="flex items-center justify-around h-16">
-        <Link
-          href="/"
-          className={cn("nav-item flex-1", {
-            "text-[#ff3b8b]": pathname === "/",
-          })}
-        >
-          <Home className="h-5 w-5" />
-          <span className="text-xs mt-1">Accueil</span>
-        </Link>
-        <Link
-          href="/discover"
-          className={cn("nav-item flex-1", {
-            "text-[#ff3b8b]": pathname === "/discover",
-          })}
-        >
-          <Search className="h-5 w-5" />
-          <span className="text-xs mt-1">Découvrir</span>
-        </Link>
-        <Link
-          href="/events"
-          className={cn("nav-item relative flex-1", {
-            "text-[#ff3b8b]": pathname === "/events",
-          })}
-        >
-          <div className="relative">
-            <Heart className="h-5 w-5" />
-            {counts.events > 0 && <NotificationBadge count={counts.events} variant="secondary" />}
-          </div>
-          <span className="text-xs mt-1">Événements</span>
-        </Link>
-        <Link
-          href="/messages"
-          className={cn("nav-item flex-1", {
-            "text-[#ff3b8b]": pathname === "/messages",
-          })}
-        >
-          <div className="relative">
-            <MessageCircle className="h-5 w-5" />
-            {counts.messages > 0 && <NotificationBadge count={counts.messages} />}
-          </div>
-          <span className="text-xs mt-1">Messages</span>
-        </Link>
-        <Link
-          href="/profile"
-          className={cn("nav-item flex-1", {
-            "text-[#ff3b8b]": pathname === "/profile",
-          })}
-        >
-          <User className="h-5 w-5" />
-          <span className="text-xs mt-1">Profil</span>
-        </Link>
-      </div>
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-r from-[#1a0d2e] to-[#3d1155] border-t border-purple-900/30 md:hidden">
+      <nav className="flex items-center justify-around">
+        {links.map((link) => (
+          <Link
+            key={link.href}
+            href={link.href}
+            className={cn(
+              "flex flex-col items-center justify-center py-2 px-3 relative",
+              link.active ? "text-[#ff3b8b]" : "text-purple-200/70",
+            )}
+          >
+            <div className="relative">
+              <link.icon className="h-6 w-6" />
+              {link.badge && <NotificationBadge count={link.badge} />}
+            </div>
+            <span className="text-xs mt-1">{link.label}</span>
+            {link.active && (
+              <motion.div
+                layoutId="navigation-indicator"
+                className="absolute bottom-0 h-1 w-12 bg-[#ff3b8b] rounded-t-full"
+                transition={{ type: "spring", stiffness: 500, damping: 30 }}
+              />
+            )}
+          </Link>
+        ))}
+      </nav>
     </div>
   )
 }

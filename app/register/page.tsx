@@ -11,6 +11,7 @@ import { User, Mail, Lock, Eye, EyeOff, Calendar, ArrowLeft } from "lucide-react
 import Link from "next/link"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
+import { useRouter } from "next/navigation"
 
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false)
@@ -22,6 +23,8 @@ export default function RegisterPage() {
     birthdate: "",
     agreeTerms: false,
   })
+
+  const router = useRouter()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target
@@ -42,6 +45,11 @@ export default function RegisterPage() {
     e.preventDefault()
     // Ici, vous ajouteriez la logique d'inscription
     console.log("Registration attempt with:", formData)
+
+    // Simuler une inscription réussie et rediriger vers l'onboarding
+    setTimeout(() => {
+      router.push("/onboarding")
+    }, 1000)
   }
 
   return (

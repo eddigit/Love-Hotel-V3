@@ -1,6 +1,7 @@
 "use server"
 
 import type { Notification } from "@/components/notifications-dropdown"
+import type { OnboardingData } from "@/components/onboarding-form"
 
 // Fonction pour générer des notifications fictives
 function generateFakeNotifications(): Notification[] {
@@ -42,7 +43,7 @@ function generateFakeNotifications(): Notification[] {
       time: "Il y a 2h",
       read: false,
       image: "/serene-woman.png",
-      link: "/profile/julie",
+      link: "/matches",
     },
     {
       id: "5",
@@ -100,7 +101,27 @@ function generateFakeNotifications(): Notification[] {
       time: "Il y a 3j",
       read: true,
       image: "/contemplative-man.png",
-      link: "/profile/antoine",
+      link: "/matches",
+    },
+    {
+      id: "11",
+      type: "match",
+      title: "Nouveau match potentiel !",
+      description: "Émilie pourrait être compatible avec vous (85%)",
+      time: "Il y a 1h",
+      read: false,
+      image: "/serene-woman-purple.png",
+      link: "/matches?tab=pending",
+    },
+    {
+      id: "12",
+      type: "match",
+      title: "Match exceptionnel !",
+      description: "Sophie et vous êtes très compatibles (92%)",
+      time: "Il y a 4h",
+      read: false,
+      image: "/vibrant-woman.png",
+      link: "/matches",
     },
   ]
 }
@@ -124,5 +145,46 @@ export async function markAllNotificationsAsRead() {
   // Simuler un délai de traitement
   await new Promise((resolve) => setTimeout(resolve, 300))
   console.log("Marking all notifications as read")
+  return { success: true }
+}
+
+// Fonction pour sauvegarder les préférences utilisateur (mock pour le moment)
+export async function saveUserPreferences(userId: string, data: OnboardingData) {
+  console.log("Sauvegarde des préférences pour l'utilisateur:", userId, data)
+
+  // Simuler un délai de traitement
+  await new Promise((resolve) => setTimeout(resolve, 800))
+
+  // Dans une implémentation réelle, nous sauvegarderions ces données dans une base de données
+  return { success: true }
+}
+
+// Fonction pour accepter un match
+export async function acceptMatch(userId: string, matchId: string) {
+  console.log(`Utilisateur ${userId} a accepté le match avec ${matchId}`)
+
+  // Simuler un délai de traitement
+  await new Promise((resolve) => setTimeout(resolve, 500))
+
+  return { success: true }
+}
+
+// Fonction pour refuser un match
+export async function rejectMatch(userId: string, matchId: string) {
+  console.log(`Utilisateur ${userId} a refusé le match avec ${matchId}`)
+
+  // Simuler un délai de traitement
+  await new Promise((resolve) => setTimeout(resolve, 500))
+
+  return { success: true }
+}
+
+// Fonction pour supprimer un match
+export async function removeMatch(userId: string, matchId: string) {
+  console.log(`Utilisateur ${userId} a supprimé le match avec ${matchId}`)
+
+  // Simuler un délai de traitement
+  await new Promise((resolve) => setTimeout(resolve, 500))
+
   return { success: true }
 }
