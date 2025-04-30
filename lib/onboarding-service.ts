@@ -38,7 +38,7 @@ export async function saveOnboardingData(userId: string, data: OnboardingData): 
         data.interestedInDating,
         data.preferCurtainOpen,
         data.interestedInLolib,
-        data.suggestions || null,
+        data.suggestions || "",
       ],
     )
 
@@ -58,13 +58,13 @@ export async function saveOnboardingData(userId: string, data: OnboardingData): 
       [
         uuidv4(),
         userId,
-        data.friendly,
-        data.romantic,
-        data.playful,
-        data.openCurtains,
-        data.libertine,
+        data.meetingTypes.friendly,
+        data.meetingTypes.romantic,
+        data.meetingTypes.playful,
+        data.meetingTypes.openCurtains,
+        data.meetingTypes.libertine,
         data.openToOtherCouples,
-        data.specificPreferences || null,
+        data.specificPreferences || "",
       ],
     )
 
@@ -96,5 +96,65 @@ export async function saveOnboardingData(userId: string, data: OnboardingData): 
   } catch (error) {
     console.error("Erreur lors de la sauvegarde des données d'onboarding:", error)
     return false
+  }
+}
+
+// Récupérer les données d'onboarding d'un utilisateur
+export async function getOnboardingData(userId: string): Promise<OnboardingData | null> {
+  try {
+    // Récupérer toutes les données d'onboarding en une seule requête avec des jointures
+    const query = `
+      SELECT 
+        p.status, p.age, p.orientation,
+        pref.interested_in_restaurant, pref.interested_in_events, 
+        pref.interested_in_dating, pref.prefer_curtain_open, 
+        pref.interested_in_lolib, pref.suggestions,
+        mt.friendly, mt.romantic, mt.playful, mt.open_curtains, 
+        mt.libertine, mt.open_to_other_couples, mt.specific_preferences,
+        ao.join_exclusive_events, ao.premium_access
+      FROM users u
+      LEFT JOIN user_profiles p ON u.id = p.user_id
+      LEFT JOIN user_preferences pref ON u.id = pref.user_id
+      LEFT JOIN user_meeting_types mt ON u.id = mt.user_id
+      LEFT JOIN user_additional_options ao ON u.id = ao.user_id
+      WHERE u.id = $1
+    `
+
+    const results = await executeQuery(query, [userId])
+
+    if (results.length === 0 || !results[0].status) {
+      return null
+    }
+
+    const data = results[0]
+
+    return {
+      status: data.status,
+      age: data.age,
+      orientation: data.orientation,
+
+      interestedInRestaurant: data.interested_in_restaurant || false,
+      interestedInEvents: data.interested_in_events || false,
+      interestedInDating: data.interested_in_dating || false,
+      preferCurtainOpen: data.prefer_curtain_open || false,
+      interestedInLolib: data.interested_in_lolib || false,
+      suggestions: data.suggestions || "",
+
+      meetingTypes: {
+        friendly: data.friendly || false,
+        romantic: data.romantic || false,
+        playful: data.playful || false,
+        openCurtains: data.open_curtains || false,
+        libertine: data.libertine || false,
+      },
+      openToOtherCouples: data.open_to_other_couples || false,
+      specificPreferences: data.specific_preferences || "",
+
+      joinExclusiveEvents: data.join_exclusive_events || false,
+      premiumAccess: data.premium_access || false,
+    }
+  } catch (error) {
+    console.error("Erreur lors de la récupération des données d'onboarding:", error)
+    return null
   }
 }

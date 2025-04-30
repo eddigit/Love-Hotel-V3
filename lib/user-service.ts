@@ -1,5 +1,5 @@
 import { executeQuery } from "./db"
-import { hash, compare } from "bcrypt"
+import { hash, compare } from "bcryptjs"
 import { v4 as uuidv4 } from "uuid"
 
 // Types
