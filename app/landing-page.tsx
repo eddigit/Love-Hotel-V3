@@ -270,7 +270,9 @@ export default function LandingPage() {
         <div className="container mx-auto px-4 relative z-10">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8">
             <div className="md:w-1/2 text-center md:text-left">
-              <p className="text-white text-lg md:text-xl font-medium mb-1">Ce n'est pas qu'une simple monnaie.</p>
+              <p className="text-white text-lg md:text-xl font-medium mb-1">
+                LOOLYYB, plus qu'une simple cryptomonnaie
+              </p>
               <h2 className="text-white text-3xl md:text-5xl font-black tracking-tight mb-2 drop-shadow-lg">
                 C'EST LA <span className="text-[#ff3b8b]">MONNAIE DES LOVERS</span>
               </h2>
