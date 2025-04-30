@@ -98,7 +98,7 @@ export default function LoveRoomsPage() {
     <div className="min-h-screen flex flex-col pb-16 md:pb-0">
       <div className="container py-4 md:py-6 flex-1">
         <div className="mb-4 md:mb-8">
-          <h1 className="text-2xl md:text-3xl font-bold mb-2">Love Rooms</h1>
+          <h1 className="text-2xl md:text-3xl font-bold mb-2">Escapades Love Hôtel</h1>
           <p className="text-muted-foreground text-sm md:text-base">
             Réservez une Love Room pour un moment inoubliable dans l'un de nos établissements.
           </p>
