@@ -287,7 +287,7 @@ export default function LandingPage() {
                   size="lg"
                   asChild
                 >
-                  <Link href="/loolyyb">Acheter</Link>
+                  <Link href="/loolyyb-memecoin">Acheter</Link>
                 </Button>
                 <Button variant="outline" className="border-white/30 text-white hover:bg-white/10" asChild>
                   <Link href="/loolyyb/whitepaper">En savoir plus</Link>
