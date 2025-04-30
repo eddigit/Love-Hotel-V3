@@ -33,6 +33,14 @@ export const TEST_USERS = {
     avatar: "/contemplative-portrait.png",
     onboardingCompleted: true,
   },
+  demo: {
+    id: "demo-789",
+    email: "demo@test.com",
+    name: "Sophie Martin",
+    role: "user" as UserRole,
+    avatar: "/serene-woman.png",
+    onboardingCompleted: true,
+  },
 }
 
 type AuthContextType = {
@@ -92,6 +100,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.setItem("currentUser", JSON.stringify(TEST_USERS.admin))
       setIsLoading(false)
       return { success: true, message: "Connexion réussie en tant qu'administrateur" }
+    } else if (email === TEST_USERS.demo.email && password === "demo123") {
+      setUser(TEST_USERS.demo)
+      localStorage.setItem("currentUser", JSON.stringify(TEST_USERS.demo))
+      setIsLoading(false)
+      return { success: true, message: "Connexion réussie en tant qu'utilisateur de démonstration" }
     }
 
     setIsLoading(false)

@@ -123,6 +123,17 @@ export default function LoginPage() {
                 <Button type="submit" className="w-full h-11" disabled={isLoading}>
                   {isLoading ? "Connexion en cours..." : "Se connecter"}
                 </Button>
+
+                <div className="mt-6 p-4 bg-purple-900/30 rounded-lg">
+                  <h3 className="text-lg font-medium text-white mb-2">Compte de démonstration</h3>
+                  <p className="text-purple-200 text-sm mb-2">
+                    Pour explorer l'application sans passer par l'onboarding, utilisez ces identifiants:
+                  </p>
+                  <div className="bg-purple-800/30 p-2 rounded text-sm text-purple-100 font-mono">
+                    <p>Email: demo@test.com</p>
+                    <p>Mot de passe: demo123</p>
+                  </div>
+                </div>
               </form>
 
               <div className="relative my-6">
