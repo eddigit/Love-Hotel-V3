@@ -8,6 +8,8 @@ import { NotificationProvider } from "@/contexts/notification-context"
 import { MainLayout } from "@/components/layout/main-layout"
 // Importer le AuthProvider
 import { AuthProvider } from "@/contexts/auth-context"
+// Import the LoolyyBWidget component
+import { LoolyyBWidget } from "@/components/loolyyb-widget"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -57,6 +59,7 @@ export default function RootLayout({
           <AuthProvider>
             <NotificationProvider>
               <MainLayout>{children}</MainLayout>
+              <LoolyyBWidget />
             </NotificationProvider>
           </AuthProvider>
         </ThemeProvider>

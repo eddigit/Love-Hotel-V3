@@ -32,6 +32,11 @@ export default function ProfilePage() {
     "https://t4.ftcdn.net/jpg/05/74/88/35/240_F_574883541_Oori6Abhb3BjGviQjgsAONsCJi3cp7jk.jpg",
   )
 
+  // Ajout de l'état pour l'image de profil
+  const [profileImage, setProfileImage] = useState<string>(
+    "https://t3.ftcdn.net/jpg/12/33/14/94/240_F_1233149465_AwlOMlj8jtPcyJW7Ymo7f7tf8Nf8vhsH.jpg",
+  )
+
   // Fonction pour gérer le changement d'image de couverture
   const handleCoverImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -40,6 +45,15 @@ export default function ProfilePage() {
       // Ici, nous créons simplement une URL d'objet pour la prévisualisation
       const imageUrl = URL.createObjectURL(file)
       setCoverImage(imageUrl)
+    }
+  }
+
+  // Fonction pour gérer le changement d'image de profil
+  const handleProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      const imageUrl = URL.createObjectURL(file)
+      setProfileImage(imageUrl)
     }
   }
 
@@ -142,14 +156,35 @@ export default function ProfilePage() {
           <div className="absolute -top-12 md:-top-16 left-1/2 transform -translate-x-1/2 flex flex-col items-center">
             <div className="relative">
               <div className="w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-background overflow-hidden">
-                <Image
-                  src="/mystical-forest-spirit.png"
-                  alt={profile.name}
-                  width={128}
-                  height={128}
-                  className="object-cover"
-                />
+                {profileImage.startsWith("http") ? (
+                  <img
+                    src={profileImage || "/placeholder.svg"}
+                    alt={profile.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <Image
+                    src={profileImage || "/mystical-forest-spirit.png"}
+                    alt={profile.name}
+                    width={128}
+                    height={128}
+                    className="object-cover"
+                  />
+                )}
               </div>
+              <label
+                htmlFor="profile-upload"
+                className="absolute bottom-0 right-0 p-1.5 rounded-full bg-primary text-white cursor-pointer hover:bg-primary/90 transition-colors"
+              >
+                <Camera className="h-4 w-4" />
+                <input
+                  id="profile-upload"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleProfileImageChange}
+                />
+              </label>
               {profile.online && (
                 <div className="absolute bottom-2 right-2 w-4 h-4 rounded-full bg-green-500 border-2 border-background"></div>
               )}
