@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
 import { useRouter } from "next/navigation"
+import { loginUser } from "@/app/actions"
 
 // Types d'utilisateurs
 export type UserRole = "user" | "admin"
@@ -86,29 +87,61 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (email: string, password: string): Promise<{ success: boolean; message: string }> => {
     setIsLoading(true)
 
-    // Simuler un délai de traitement
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    try {
+      // Utiliser la fonction loginUser qui interagit avec la base de données
+      const result = await loginUser(email, password)
 
-    // Vérifier les identifiants (simplifiés pour le test)
-    if (email === TEST_USERS.user.email && password === "password") {
-      setUser(TEST_USERS.user)
-      localStorage.setItem("currentUser", JSON.stringify(TEST_USERS.user))
+      if (result.success && result.user) {
+        setUser({
+          id: result.user.id,
+          email: result.user.email,
+          name: result.user.name,
+          role: result.user.role,
+          avatar: result.user.avatar || "/mystical-forest-spirit.png", // Image par défaut si pas d'avatar
+          onboardingCompleted: result.user.onboarding_completed,
+        })
+
+        localStorage.setItem(
+          "currentUser",
+          JSON.stringify({
+            id: result.user.id,
+            email: result.user.email,
+            name: result.user.name,
+            role: result.user.role,
+            avatar: result.user.avatar || "/mystical-forest-spirit.png",
+            onboardingCompleted: result.user.onboarding_completed,
+          }),
+        )
+
+        setIsLoading(false)
+        return { success: true, message: "Connexion réussie" }
+      }
+
+      // Conserver le comportement de test pour les comptes de démonstration
+      if (email === TEST_USERS.user.email && password === "password") {
+        setUser(TEST_USERS.user)
+        localStorage.setItem("currentUser", JSON.stringify(TEST_USERS.user))
+        setIsLoading(false)
+        return { success: true, message: "Connexion réussie en tant qu'utilisateur" }
+      } else if (email === TEST_USERS.admin.email && password === "admin123") {
+        setUser(TEST_USERS.admin)
+        localStorage.setItem("currentUser", JSON.stringify(TEST_USERS.admin))
+        setIsLoading(false)
+        return { success: true, message: "Connexion réussie en tant qu'administrateur" }
+      } else if (email === TEST_USERS.demo.email && password === "demo123") {
+        setUser(TEST_USERS.demo)
+        localStorage.setItem("currentUser", JSON.stringify(TEST_USERS.demo))
+        setIsLoading(false)
+        return { success: true, message: "Connexion réussie en tant qu'utilisateur de démonstration" }
+      }
+
       setIsLoading(false)
-      return { success: true, message: "Connexion réussie en tant qu'utilisateur" }
-    } else if (email === TEST_USERS.admin.email && password === "admin123") {
-      setUser(TEST_USERS.admin)
-      localStorage.setItem("currentUser", JSON.stringify(TEST_USERS.admin))
+      return { success: false, message: "Email ou mot de passe incorrect" }
+    } catch (error) {
+      console.error("Erreur lors de la connexion:", error)
       setIsLoading(false)
-      return { success: true, message: "Connexion réussie en tant qu'administrateur" }
-    } else if (email === TEST_USERS.demo.email && password === "demo123") {
-      setUser(TEST_USERS.demo)
-      localStorage.setItem("currentUser", JSON.stringify(TEST_USERS.demo))
-      setIsLoading(false)
-      return { success: true, message: "Connexion réussie en tant qu'utilisateur de démonstration" }
+      return { success: false, message: "Une erreur est survenue lors de la connexion" }
     }
-
-    setIsLoading(false)
-    return { success: false, message: "Email ou mot de passe incorrect" }
   }
 
   // Fonction de déconnexion
@@ -119,11 +152,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   // Fonction pour marquer l'onboarding comme complété
-  const completeOnboarding = () => {
+  const completeOnboarding = async () => {
     if (user) {
-      const updatedUser = { ...user, onboardingCompleted: true }
-      setUser(updatedUser)
-      localStorage.setItem("currentUser", JSON.stringify(updatedUser))
+      try {
+        // Mettre à jour le statut d'onboarding dans la base de données
+        //await updateOnboardingStatus(user.id, true);
+
+        const updatedUser = { ...user, onboardingCompleted: true }
+        setUser(updatedUser)
+        localStorage.setItem("currentUser", JSON.stringify(updatedUser))
+      } catch (error) {
+        console.error("Erreur lors de la mise à jour du statut d'onboarding:", error)
+      }
     }
   }
 

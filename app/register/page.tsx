@@ -12,6 +12,8 @@ import Link from "next/link"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useRouter } from "next/navigation"
+// Ajouter cet import en haut du fichier
+import { registerUser } from "@/app/actions"
 
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false)
@@ -41,15 +43,26 @@ export default function RegisterPage() {
     })
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Modifier la fonction handleSubmit pour utiliser la base de données
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Ici, vous ajouteriez la logique d'inscription
-    console.log("Registration attempt with:", formData)
 
-    // Simuler une inscription réussie et rediriger vers l'onboarding
-    setTimeout(() => {
-      router.push("/onboarding")
-    }, 1000)
+    try {
+      // Enregistrer l'utilisateur dans la base de données
+      const result = await registerUser(formData.email, formData.password, formData.name)
+
+      if (result.success) {
+        // Simuler une inscription réussie et rediriger vers l'onboarding
+        setTimeout(() => {
+          router.push("/onboarding")
+        }, 1000)
+      } else {
+        // Gérer l'erreur ici (afficher un message, etc.)
+        console.error("Erreur lors de l'inscription:", result.error)
+      }
+    } catch (error) {
+      console.error("Erreur lors de l'inscription:", error)
+    }
   }
 
   return (

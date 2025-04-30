@@ -12,6 +12,10 @@ import { Progress } from "@/components/ui/progress"
 import { ArrowLeft, ArrowRight, Check } from "lucide-react"
 import { useRouter } from "next/navigation"
 
+// Ajouter cet import en haut du fichier
+import { saveUserPreferences } from "@/app/actions"
+import { useAuth } from "@/contexts/auth-context"
+
 // Types pour les données du formulaire
 export interface OnboardingData {
   // Étape 1: Informations personnelles
@@ -70,10 +74,12 @@ const initialData: OnboardingData = {
   premiumAccess: false,
 }
 
+// Modifier la fonction OnboardingForm pour utiliser la base de données
 export function OnboardingForm({ onComplete }: { onComplete: (data: OnboardingData) => void }) {
   const [step, setStep] = useState(1)
   const [formData, setFormData] = useState<OnboardingData>(initialData)
   const router = useRouter()
+  const { user, completeOnboarding } = useAuth()
 
   const totalSteps = 4
   const progress = (step / totalSteps) * 100
@@ -95,12 +101,33 @@ export function OnboardingForm({ onComplete }: { onComplete: (data: OnboardingDa
     }))
   }
 
-  const nextStep = () => {
+  // Modifier la fonction nextStep pour sauvegarder les données dans la base de données à la dernière étape
+  const nextStep = async () => {
     if (step < totalSteps) {
       setStep(step + 1)
       window.scrollTo(0, 0)
     } else {
-      onComplete(formData)
+      // À la dernière étape, sauvegarder les données dans la base de données
+      if (user) {
+        try {
+          const result = await saveUserPreferences(user.id, formData)
+          if (result.success) {
+            // Mettre à jour le statut d'onboarding dans le contexte d'authentification
+            await completeOnboarding()
+            // Appeler la fonction onComplete
+            onComplete(formData)
+          } else {
+            console.error("Erreur lors de la sauvegarde des préférences")
+            // Gérer l'erreur ici (afficher un message, etc.)
+          }
+        } catch (error) {
+          console.error("Erreur lors de la sauvegarde des préférences:", error)
+          // Gérer l'erreur ici (afficher un message, etc.)
+        }
+      } else {
+        // Si l'utilisateur n'est pas connecté, simplement appeler onComplete
+        onComplete(formData)
+      }
     }
   }
 

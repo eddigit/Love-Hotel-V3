@@ -2,6 +2,9 @@
 
 import type { Notification } from "@/components/notifications-dropdown"
 import type { OnboardingData } from "@/components/onboarding-form"
+import { saveOnboardingData } from "@/lib/onboarding-service"
+import { createUser, verifyUserCredentials } from "@/lib/user-service"
+import { executeQuery } from "@/lib/db"
 
 // Fonction pour générer des notifications fictives
 function generateFakeNotifications(): Notification[] {
@@ -148,43 +151,91 @@ export async function markAllNotificationsAsRead() {
   return { success: true }
 }
 
-// Fonction pour sauvegarder les préférences utilisateur (mock pour le moment)
+// Fonction pour sauvegarder les préférences utilisateur (utilise maintenant la base de données)
 export async function saveUserPreferences(userId: string, data: OnboardingData) {
-  console.log("Sauvegarde des préférences pour l'utilisateur:", userId, data)
+  try {
+    const success = await saveOnboardingData(userId, data)
+    return { success }
+  } catch (error) {
+    console.error("Erreur lors de la sauvegarde des préférences:", error)
+    return { success: false, error: "Erreur lors de la sauvegarde des préférences" }
+  }
+}
 
-  // Simuler un délai de traitement
-  await new Promise((resolve) => setTimeout(resolve, 800))
+// Fonction pour s'inscrire
+export async function registerUser(email: string, password: string, name: string) {
+  try {
+    const user = await createUser(email, password, name)
+    return { success: !!user, user }
+  } catch (error) {
+    console.error("Erreur lors de l'inscription:", error)
+    return { success: false, error: "Erreur lors de l'inscription" }
+  }
+}
 
-  // Dans une implémentation réelle, nous sauvegarderions ces données dans une base de données
-  return { success: true }
+// Fonction pour se connecter
+export async function loginUser(email: string, password: string) {
+  try {
+    const user = await verifyUserCredentials(email, password)
+    return { success: !!user, user }
+  } catch (error) {
+    console.error("Erreur lors de la connexion:", error)
+    return { success: false, error: "Erreur lors de la connexion" }
+  }
 }
 
 // Fonction pour accepter un match
 export async function acceptMatch(userId: string, matchId: string) {
-  console.log(`Utilisateur ${userId} a accepté le match avec ${matchId}`)
+  try {
+    await executeQuery(
+      `
+      UPDATE user_matches
+      SET status = 'accepted', updated_at = CURRENT_TIMESTAMP
+      WHERE (user_id_1 = $1 AND user_id_2 = $2) OR (user_id_1 = $2 AND user_id_2 = $1)
+    `,
+      [userId, matchId],
+    )
 
-  // Simuler un délai de traitement
-  await new Promise((resolve) => setTimeout(resolve, 500))
-
-  return { success: true }
+    return { success: true }
+  } catch (error) {
+    console.error(`Erreur lors de l'acceptation du match:`, error)
+    return { success: false }
+  }
 }
 
 // Fonction pour refuser un match
 export async function rejectMatch(userId: string, matchId: string) {
-  console.log(`Utilisateur ${userId} a refusé le match avec ${matchId}`)
+  try {
+    await executeQuery(
+      `
+      UPDATE user_matches
+      SET status = 'rejected', updated_at = CURRENT_TIMESTAMP
+      WHERE (user_id_1 = $1 AND user_id_2 = $2) OR (user_id_1 = $2 AND user_id_2 = $1)
+    `,
+      [userId, matchId],
+    )
 
-  // Simuler un délai de traitement
-  await new Promise((resolve) => setTimeout(resolve, 500))
-
-  return { success: true }
+    return { success: true }
+  } catch (error) {
+    console.error(`Erreur lors du refus du match:`, error)
+    return { success: false }
+  }
 }
 
 // Fonction pour supprimer un match
 export async function removeMatch(userId: string, matchId: string) {
-  console.log(`Utilisateur ${userId} a supprimé le match avec ${matchId}`)
+  try {
+    await executeQuery(
+      `
+      DELETE FROM user_matches
+      WHERE (user_id_1 = $1 AND user_id_2 = $2) OR (user_id_1 = $2 AND user_id_2 = $1)
+    `,
+      [userId, matchId],
+    )
 
-  // Simuler un délai de traitement
-  await new Promise((resolve) => setTimeout(resolve, 500))
-
-  return { success: true }
+    return { success: true }
+  } catch (error) {
+    console.error(`Erreur lors de la suppression du match:`, error)
+    return { success: false }
+  }
 }
