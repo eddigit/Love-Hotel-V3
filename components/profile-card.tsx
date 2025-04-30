@@ -18,7 +18,7 @@ interface ProfileCardProps {
 export function ProfileCard({ name, age, location, image, online }: ProfileCardProps) {
   return (
     <Link href={`/profile/${name.toLowerCase()}`}>
-      <Card className="profile-card group overflow-hidden card-hover">
+      <Card className="profile-card group overflow-hidden card-hover border-0 shadow-lg shadow-purple-900/20">
         <div className="relative aspect-[3/4]">
           <Image
             src={image || "/placeholder.svg"}
@@ -26,6 +26,8 @@ export function ProfileCard({ name, age, location, image, online }: ProfileCardP
             fill
             className="object-cover transition-transform group-hover:scale-105"
           />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#1a0d2e]/80 via-[#3d1155]/30 to-transparent"></div>
+
           {online && (
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
@@ -34,15 +36,16 @@ export function ProfileCard({ name, age, location, image, online }: ProfileCardP
                 duration: 0.3,
                 ease: "easeOut",
               }}
-              className="absolute bottom-2 left-2 z-10"
+              className="absolute top-2 right-2 z-10"
             >
-              <Badge variant="secondary" className="bg-secondary/80 backdrop-blur-sm flex items-center gap-1.5 text-xs">
-                <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
-                En ligne
+              <Badge className="bg-gradient-to-r from-[#ff3b8b] to-[#ff8cc8] border-0 flex items-center gap-1.5 text-xs">
+                <span className="h-2 w-2 rounded-full bg-white animate-pulse"></span>
+                LIVE
               </Badge>
             </motion.div>
           )}
-          <div className="absolute bottom-0 left-0 right-0 p-3 profile-card-content">
+
+          <div className="absolute bottom-0 left-0 right-0 p-3 z-10">
             <div className="text-white">
               <div className="flex items-center justify-between">
                 <h3 className="font-bold text-base sm:text-lg line-clamp-1">

@@ -34,10 +34,10 @@ export function Header() {
   }
 
   return (
-    <header className="border-b sticky top-0 z-40 bg-background/95 backdrop-blur-md">
+    <header className="border-b border-purple-800/30 sticky top-0 z-40 bg-[#1a0d2e]/95 backdrop-blur-md">
       <div className="container flex items-center justify-between h-16">
         <Link href={isLoggedIn ? "/discover" : "/"} className="flex items-center gap-2 z-10">
-          <Heart className="h-5 w-5 text-primary" />
+          <Heart className="h-5 w-5 text-[#ff3b8b]" />
           <span className="font-bold text-lg">Love Hotel</span>
         </Link>
 
@@ -47,33 +47,37 @@ export function Header() {
             {/* Menu desktop */}
             <div className="hidden md:flex items-center gap-4">
               <Link href="/discover">
-                <Button variant="ghost" size="sm">
+                <Button variant="ghost" size="sm" className={pathname === "/discover" ? "text-[#ff3b8b]" : ""}>
                   Découvrir
                 </Button>
               </Link>
               <Link href="/events">
-                <Button variant="ghost" size="sm">
+                <Button variant="ghost" size="sm" className={pathname === "/events" ? "text-[#ff3b8b]" : ""}>
                   Événements
                 </Button>
               </Link>
               <Link href="/love-rooms">
-                <Button variant="ghost" size="sm">
+                <Button variant="ghost" size="sm" className={pathname === "/love-rooms" ? "text-[#ff3b8b]" : ""}>
                   Love Room
                 </Button>
               </Link>
               <Link href="/messages">
-                <Button variant="ghost" size="sm">
+                <Button variant="ghost" size="sm" className={pathname === "/messages" ? "text-[#ff3b8b]" : ""}>
                   Messages
                 </Button>
               </Link>
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="outline" size="icon" className="rounded-full md:flex hidden">
+              <Button
+                variant="outline"
+                size="icon"
+                className="rounded-full md:flex hidden border-purple-800/30 bg-[#2d1155]/50"
+              >
                 <Search className="h-4 w-4" />
               </Button>
               <NotificationsButton />
               <Link href="/profile" className="hidden md:block">
-                <Button variant="outline" size="sm" className="rounded-full">
+                <Button variant="outline" size="sm" className="rounded-full border-purple-800/30 bg-[#2d1155]/50">
                   <Image
                     src={user?.avatar || "/mystical-forest-spirit.png"}
                     alt="Avatar"
@@ -100,10 +104,10 @@ export function Header() {
 
             {/* Menu mobile overlay */}
             {mobileMenuOpen && (
-              <div className="fixed inset-0 bg-background/95 z-30 md:hidden pt-16">
+              <div className="fixed inset-0 bg-[#1a0d2e]/95 z-30 md:hidden pt-16">
                 <div className="container py-8 flex flex-col gap-4">
                   <Link href="/profile" onClick={() => setMobileMenuOpen(false)}>
-                    <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted/50">
+                    <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-[#2d1155]/50">
                       <Image
                         src={user?.avatar || "/mystical-forest-spirit.png"}
                         alt="Avatar"
@@ -123,7 +127,7 @@ export function Header() {
                       href="/discover"
                       className={cn(
                         "flex items-center gap-3 p-3 rounded-lg",
-                        pathname === "/discover" ? "bg-primary/10 text-primary" : "hover:bg-muted/50",
+                        pathname === "/discover" ? "bg-[#ff3b8b]/10 text-[#ff3b8b]" : "hover:bg-[#2d1155]/50",
                       )}
                       onClick={() => setMobileMenuOpen(false)}
                     >
@@ -134,7 +138,7 @@ export function Header() {
                       href="/events"
                       className={cn(
                         "flex items-center gap-3 p-3 rounded-lg",
-                        pathname === "/events" ? "bg-primary/10 text-primary" : "hover:bg-muted/50",
+                        pathname === "/events" ? "bg-[#ff3b8b]/10 text-[#ff3b8b]" : "hover:bg-[#2d1155]/50",
                       )}
                       onClick={() => setMobileMenuOpen(false)}
                     >
@@ -145,7 +149,7 @@ export function Header() {
                       href="/love-rooms"
                       className={cn(
                         "flex items-center gap-3 p-3 rounded-lg",
-                        pathname === "/love-rooms" ? "bg-primary/10 text-primary" : "hover:bg-muted/50",
+                        pathname === "/love-rooms" ? "bg-[#ff3b8b]/10 text-[#ff3b8b]" : "hover:bg-[#2d1155]/50",
                       )}
                       onClick={() => setMobileMenuOpen(false)}
                     >
@@ -156,7 +160,7 @@ export function Header() {
                       href="/messages"
                       className={cn(
                         "flex items-center gap-3 p-3 rounded-lg",
-                        pathname === "/messages" ? "bg-primary/10 text-primary" : "hover:bg-muted/50",
+                        pathname === "/messages" ? "bg-[#ff3b8b]/10 text-[#ff3b8b]" : "hover:bg-[#2d1155]/50",
                       )}
                       onClick={() => setMobileMenuOpen(false)}
                     >
@@ -165,7 +169,7 @@ export function Header() {
                     </Link>
                   </div>
 
-                  <div className="mt-auto pt-4 border-t">
+                  <div className="mt-auto pt-4 border-t border-purple-800/30">
                     <Button
                       variant="ghost"
                       className="w-full justify-start"
@@ -203,7 +207,10 @@ export function Header() {
                 </Button>
               </Link>
               <Link href="/register">
-                <Button variant="primary" size="sm">
+                <Button
+                  className="bg-gradient-to-r from-[#ff3b8b] to-[#ff8cc8] border-0 hover:opacity-90 text-white"
+                  size="sm"
+                >
                   Inscription
                 </Button>
               </Link>

@@ -40,7 +40,7 @@ export default function ProfilePage({ params }: { params: { username: string } }
   return (
     <div className="min-h-screen flex flex-col pb-16 md:pb-0">
       <div className="relative">
-        <div className="h-40 md:h-60 w-full gradient-bg"></div>
+        <div className="h-40 md:h-60 w-full bg-gradient-to-r from-[#1a0d2e] to-[#3d1155]"></div>
         <div className="absolute top-4 left-4 flex gap-2">
           <Button variant="ghost" size="icon" className="rounded-full bg-black/20 backdrop-blur-sm text-white">
             <svg
@@ -70,7 +70,7 @@ export default function ProfilePage({ params }: { params: { username: string } }
         <div className="container relative">
           <div className="absolute -top-16 md:-top-20 left-1/2 transform -translate-x-1/2 flex flex-col items-center">
             <div className="relative">
-              <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-background overflow-hidden">
+              <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-background overflow-hidden shadow-lg shadow-purple-900/30">
                 <Image
                   src="/amethyst-portrait.png"
                   alt={profile.name}
@@ -96,17 +96,17 @@ export default function ProfilePage({ params }: { params: { username: string } }
 
       <div className="container mt-24 md:mt-28 py-6 flex-1">
         <div className="flex justify-center gap-4 mb-6">
-          <Button className="gap-2">
+          <Button className="gap-2 bg-gradient-to-r from-[#ff3b8b] to-[#ff8cc8] border-0 hover:opacity-90">
             <MessageCircle className="h-4 w-4" />
             Message
           </Button>
-          <Button variant="outline" className="gap-2">
+          <Button variant="outline" className="gap-2 border-purple-800/30 bg-[#2d1155]/50 hover:bg-[#2d1155]/70">
             <Calendar className="h-4 w-4" />
             Inviter
           </Button>
         </div>
 
-        <Card className="mb-6">
+        <Card className="mb-6 border-0 bg-gradient-to-br from-[#2d1155]/70 to-[#3d1155]/50 backdrop-blur-sm shadow-lg shadow-purple-900/20">
           <CardContent className="p-6">
             <div className="grid grid-cols-3 gap-4 text-center mb-6">
               <div>
@@ -135,7 +135,11 @@ export default function ProfilePage({ params }: { params: { username: string } }
                 <h3 className="font-semibold mb-2">Intérêts</h3>
                 <div className="flex flex-wrap gap-2">
                   {profile.interests.map((interest) => (
-                    <Badge key={interest} variant="secondary">
+                    <Badge
+                      key={interest}
+                      variant="secondary"
+                      className="bg-[#ff3b8b]/20 text-[#ff8cc8] hover:bg-[#ff3b8b]/30"
+                    >
                       {interest}
                     </Badge>
                   ))}
@@ -146,15 +150,22 @@ export default function ProfilePage({ params }: { params: { username: string } }
         </Card>
 
         <Tabs defaultValue="photos" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-6">
-            <TabsTrigger value="photos">Photos</TabsTrigger>
-            <TabsTrigger value="events">Événements</TabsTrigger>
-            <TabsTrigger value="rooms">Love Rooms</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3 mb-6 bg-[#2d1155]/50">
+            <TabsTrigger value="photos" className="data-[state=active]:bg-[#ff3b8b] data-[state=active]:text-white">
+              Photos
+            </TabsTrigger>
+            <TabsTrigger value="events" className="data-[state=active]:bg-[#ff3b8b] data-[state=active]:text-white">
+              Événements
+            </TabsTrigger>
+            <TabsTrigger value="rooms" className="data-[state=active]:bg-[#ff3b8b] data-[state=active]:text-white">
+              Love Rooms
+            </TabsTrigger>
           </TabsList>
+
           <TabsContent value="photos" className="space-y-6">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {profile.photos.map((photo, index) => (
-                <div key={index} className="aspect-square rounded-lg overflow-hidden">
+                <div key={index} className="aspect-square rounded-lg overflow-hidden shadow-lg shadow-purple-900/20">
                   <Image
                     src={photo || "/placeholder.svg"}
                     alt={`Photo ${index + 1}`}
@@ -166,23 +177,33 @@ export default function ProfilePage({ params }: { params: { username: string } }
               ))}
             </div>
           </TabsContent>
+
           <TabsContent value="events" className="space-y-6">
             <div className="space-y-4">
               {profile.events.map((event, index) => (
-                <Card key={index}>
+                <Card
+                  key={index}
+                  className="border-0 bg-gradient-to-br from-[#2d1155]/70 to-[#3d1155]/50 backdrop-blur-sm shadow-lg shadow-purple-900/20"
+                >
                   <CardContent className="p-4 flex items-center justify-between">
                     <div>
                       <h3 className="font-semibold">{event.title}</h3>
                       <div className="text-sm text-muted-foreground">{event.date}</div>
                     </div>
-                    <Button size="sm">Rejoindre</Button>
+                    <Button
+                      size="sm"
+                      className="bg-gradient-to-r from-[#ff3b8b] to-[#ff8cc8] border-0 hover:opacity-90"
+                    >
+                      Rejoindre
+                    </Button>
                   </CardContent>
                 </Card>
               ))}
             </div>
           </TabsContent>
+
           <TabsContent value="rooms" className="space-y-6">
-            <Card>
+            <Card className="border-0 bg-gradient-to-br from-[#2d1155]/70 to-[#3d1155]/50 backdrop-blur-sm shadow-lg shadow-purple-900/20">
               <CardContent className="p-6 text-center">
                 <div className="flex flex-col items-center gap-2 mb-4">
                   <Users className="h-12 w-12 text-muted-foreground" />
@@ -191,7 +212,9 @@ export default function ProfilePage({ params }: { params: { username: string } }
                     Participez à des discussions en groupe et rencontrez de nouvelles personnes
                   </p>
                 </div>
-                <Button>Découvrir les Love Rooms</Button>
+                <Button className="bg-gradient-to-r from-[#ff3b8b] to-[#ff8cc8] border-0 hover:opacity-90">
+                  Découvrir les Love Rooms
+                </Button>
               </CardContent>
             </Card>
           </TabsContent>

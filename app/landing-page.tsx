@@ -12,8 +12,12 @@ export default function LandingPage() {
       <LandingHeader />
 
       {/* Hero Section */}
-      <section className="py-8 md:py-16">
-        <div className="container px-4 grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+      <section className="py-8 md:py-16 relative overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-gradient-to-br from-[#1a0d2e] via-[#3d1155] to-[#1a0d2e] opacity-90"></div>
+          <div className="absolute inset-0 bg-[url('/purple-glow-pattern.png')] opacity-20 mix-blend-overlay"></div>
+        </div>
+        <div className="container px-4 grid md:grid-cols-2 gap-8 md:gap-12 items-center relative z-10">
           <div className="space-y-6 md:space-y-8">
             <div className="space-y-3 md:space-y-4">
               <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black uppercase text-white leading-tight tracking-tight">
@@ -33,7 +37,7 @@ export default function LandingPage() {
             <div className="flex flex-wrap gap-3 md:gap-4">
               <Button
                 asChild
-                className="bg-[#ff3b8b] hover:bg-[#ff3b8b]/90 text-white rounded-full px-6 py-5 text-base md:text-lg"
+                className="bg-gradient-to-r from-[#ff3b8b] to-[#ff8cc8] hover:opacity-90 text-white rounded-full px-6 py-5 text-base md:text-lg border-0"
               >
                 <Link href="/rencontres">Pourquoi nous rejoindre ?</Link>
               </Button>
@@ -49,27 +53,29 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-2 gap-3 md:gap-4 mt-4 md:mt-0">
             <div className="space-y-3 md:space-y-4">
-              <div className="relative aspect-[3/4] rounded-2xl overflow-hidden">
+              <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-lg shadow-purple-900/30">
                 <Image
                   src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/attachments/gen-images/public/images/luxury-jacuzzi-group-f7nIeUbLIQISpGe5YmIcboYSMPeCeg.png"
                   alt="Espace Spa"
                   fill
                   className="object-cover"
                 />
-                <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4 bg-black/30 backdrop-blur-sm">
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1a0d2e]/80 via-transparent to-transparent"></div>
+                <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4 bg-[#1a0d2e]/50 backdrop-blur-sm">
                   <p className="text-base md:text-lg font-bold text-white">ESPACE SPA</p>
                   <p className="text-xs md:text-sm text-white/80">Expérience privative</p>
                 </div>
               </div>
 
-              <div className="relative aspect-[3/4] rounded-2xl overflow-hidden">
+              <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-lg shadow-purple-900/30">
                 <Image
                   src="/speed-dating-restaurant-chic.png"
                   alt="Speed Dating Restaurant Chic"
                   fill
                   className="object-cover"
                 />
-                <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4 bg-black/30 backdrop-blur-sm">
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1a0d2e]/80 via-transparent to-transparent"></div>
+                <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4 bg-[#1a0d2e]/50 backdrop-blur-sm">
                   <p className="text-base md:text-lg font-bold text-white">SPEED DATING</p>
                   <p className="text-xs md:text-sm text-white/80">Rencontres exclusives</p>
                 </div>
@@ -77,27 +83,32 @@ export default function LandingPage() {
             </div>
 
             <div className="space-y-3 md:space-y-4 mt-6 md:mt-8">
-              <div className="relative aspect-[3/4] rounded-2xl overflow-hidden">
+              <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-lg shadow-purple-900/30">
                 <Image
                   src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/attachments/gen-images/public/amethyst-glow-YU11au0rIIGAWH8iymdMmtFrC6ZFIb.png"
                   alt="Sophia"
                   fill
                   className="object-cover"
                 />
-                <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4 bg-black/30 backdrop-blur-sm">
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1a0d2e]/80 via-transparent to-transparent"></div>
+                <div className="absolute top-2 right-2">
+                  <span className="live-badge">LIVE</span>
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4 bg-[#1a0d2e]/50 backdrop-blur-sm">
                   <p className="text-base md:text-lg font-bold text-white">SOPHIA</p>
                   <p className="text-xs md:text-sm text-white/80">En ligne maintenant</p>
                 </div>
               </div>
 
-              <div className="relative aspect-[3/4] rounded-2xl overflow-hidden">
+              <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-lg shadow-purple-900/30">
                 <Image
                   src="https://lovehotelaparis.fr/wp-content/uploads/2025/04/image1.jpg"
                   alt="Expérience Rideaux Ouverts"
                   fill
                   className="object-cover"
                 />
-                <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4 bg-black/30 backdrop-blur-sm">
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1a0d2e]/80 via-transparent to-transparent"></div>
+                <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4 bg-[#1a0d2e]/50 backdrop-blur-sm">
                   <p className="text-base md:text-lg font-bold text-white">RIDEAUX OUVERTS</p>
                   <p className="text-xs md:text-sm text-white/80">Expérience unique</p>
                 </div>
@@ -110,13 +121,8 @@ export default function LandingPage() {
       {/* Features Section */}
       <section className="py-12 md:py-16 relative overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <Image
-            src="https://lovehotelaparis.fr/wp-content/uploads/2024/09/chambre-a-lheure-a-love-hotel-paris.webp"
-            alt="Love Hotel Paris background"
-            fill
-            className="object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#1a0d2e]/90 to-[#1a0d2e]/80"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-[#1a0d2e] to-[#3d1155]"></div>
+          <div className="absolute inset-0 bg-[url('/purple-glow-pattern.png')] opacity-20 mix-blend-overlay"></div>
         </div>
         <div className="container px-4 relative z-10">
           <h2 className="text-2xl md:text-4xl font-bold text-white text-center mb-8 md:mb-12">
@@ -124,8 +130,8 @@ export default function LandingPage() {
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
-            <div className="bg-[#2d1155]/70 backdrop-blur-sm p-6 rounded-2xl">
-              <div className="h-14 w-14 bg-[#ff3b8b]/20 rounded-full flex items-center justify-center mb-4 md:mb-6">
+            <div className="bg-gradient-to-br from-[#2d1155]/70 to-[#3d1155]/50 backdrop-blur-sm p-6 rounded-2xl border border-purple-800/20 shadow-lg shadow-purple-900/20">
+              <div className="h-14 w-14 bg-gradient-to-br from-[#ff3b8b]/30 to-[#ff8cc8]/20 rounded-full flex items-center justify-center mb-4 md:mb-6">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -138,7 +144,7 @@ export default function LandingPage() {
                   strokeLinejoin="round"
                   className="h-7 w-7 text-[#ff3b8b]"
                 >
-                  <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+                  <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
                 </svg>
               </div>
               <h3 className="text-lg md:text-xl font-bold mb-2 md:mb-3 text-white">Rencontrez, Vibrez, Vivez</h3>
@@ -148,8 +154,8 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="bg-[#2d1155]/70 backdrop-blur-sm p-6 rounded-2xl">
-              <div className="h-14 w-14 bg-[#ff3b8b]/20 rounded-full flex items-center justify-center mb-4 md:mb-6">
+            <div className="bg-gradient-to-br from-[#2d1155]/70 to-[#3d1155]/50 backdrop-blur-sm p-6 rounded-2xl border border-purple-800/20 shadow-lg shadow-purple-900/20">
+              <div className="h-14 w-14 bg-gradient-to-br from-[#ff3b8b]/30 to-[#ff8cc8]/20 rounded-full flex items-center justify-center mb-4 md:mb-6">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -172,8 +178,8 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="bg-[#2d1155]/70 backdrop-blur-sm p-6 rounded-2xl">
-              <div className="h-14 w-14 bg-[#ff3b8b]/20 rounded-full flex items-center justify-center mb-4 md:mb-6">
+            <div className="bg-gradient-to-br from-[#2d1155]/70 to-[#3d1155]/50 backdrop-blur-sm p-6 rounded-2xl border border-purple-800/20 shadow-lg shadow-purple-900/20">
+              <div className="h-14 w-14 bg-gradient-to-br from-[#ff3b8b]/30 to-[#ff8cc8]/20 rounded-full flex items-center justify-center mb-4 md:mb-6">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -197,8 +203,8 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="bg-[#2d1155]/70 backdrop-blur-sm p-6 rounded-2xl">
-              <div className="h-14 w-14 bg-[#ff3b8b]/20 rounded-full flex items-center justify-center mb-4 md:mb-6">
+            <div className="bg-gradient-to-br from-[#2d1155]/70 to-[#3d1155]/50 backdrop-blur-sm p-6 rounded-2xl border border-purple-800/20 shadow-lg shadow-purple-900/20">
+              <div className="h-14 w-14 bg-gradient-to-br from-[#ff3b8b]/30 to-[#ff8cc8]/20 rounded-full flex items-center justify-center mb-4 md:mb-6">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -232,7 +238,7 @@ export default function LandingPage() {
       {/* CTA section */}
       <section className="py-8 md:py-16">
         <div className="container px-4">
-          <div className="bg-gradient-to-r from-[#4a2282] to-[#ff3b8b] rounded-3xl p-6 md:p-12 flex flex-col lg:flex-row items-center justify-between">
+          <div className="bg-gradient-to-r from-[#3d1155] to-[#ff3b8b] rounded-3xl p-6 md:p-12 flex flex-col lg:flex-row items-center justify-between shadow-lg shadow-purple-900/30">
             <div className="lg:w-2/3 mb-6 lg:mb-0">
               <h2 className="text-2xl md:text-4xl font-bold mb-3 md:mb-4 text-white">
                 Prêt à Commencer Votre Aventure ?
@@ -245,7 +251,7 @@ export default function LandingPage() {
               <Button
                 asChild
                 size="lg"
-                className="bg-white text-[#ff3b8b] hover:bg-white/90 rounded-full text-base md:text-lg px-6 py-5 w-full lg:w-auto"
+                className="bg-white text-[#ff3b8b] hover:bg-white/90 rounded-full text-base md:text-lg px-6 py-5 w-full lg:w-auto shadow-lg shadow-purple-900/20"
               >
                 <Link href="/register">Commencer Maintenant</Link>
               </Button>

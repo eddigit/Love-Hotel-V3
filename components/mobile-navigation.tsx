@@ -29,12 +29,12 @@ export function MobileNavigation() {
   }
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 border-t bg-background/95 backdrop-blur-md z-50">
+    <div className="md:hidden fixed bottom-0 left-0 right-0 border-t border-purple-800/30 bg-[#1a0d2e]/95 backdrop-blur-md z-50">
       <div className="flex items-center justify-around h-16">
         <Link
           href="/"
           className={cn("nav-item flex-1", {
-            active: pathname === "/",
+            "text-[#ff3b8b]": pathname === "/",
           })}
         >
           <Home className="h-5 w-5" />
@@ -43,7 +43,7 @@ export function MobileNavigation() {
         <Link
           href="/discover"
           className={cn("nav-item flex-1", {
-            active: pathname === "/discover",
+            "text-[#ff3b8b]": pathname === "/discover",
           })}
         >
           <Search className="h-5 w-5" />
@@ -52,7 +52,7 @@ export function MobileNavigation() {
         <Link
           href="/events"
           className={cn("nav-item relative flex-1", {
-            active: pathname === "/events",
+            "text-[#ff3b8b]": pathname === "/events",
           })}
         >
           <div className="relative">
@@ -64,7 +64,7 @@ export function MobileNavigation() {
         <Link
           href="/messages"
           className={cn("nav-item flex-1", {
-            active: pathname === "/messages",
+            "text-[#ff3b8b]": pathname === "/messages",
           })}
         >
           <div className="relative">
@@ -76,7 +76,7 @@ export function MobileNavigation() {
         <Link
           href="/profile"
           className={cn("nav-item flex-1", {
-            active: pathname === "/profile",
+            "text-[#ff3b8b]": pathname === "/profile",
           })}
         >
           <User className="h-5 w-5" />

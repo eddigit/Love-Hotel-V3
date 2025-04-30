@@ -61,9 +61,9 @@ export default function ConversationPage({ params }: { params: { id: string } })
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-[#1a0d2e] to-[#3d1155]">
       {/* Header de conversation */}
-      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-md border-b">
+      <div className="sticky top-0 z-10 bg-[#1a0d2e]/95 backdrop-blur-md border-b border-purple-800/30">
         <div className="container py-3 flex items-center gap-3">
           <Link href="/messages" className="md:hidden">
             <Button variant="ghost" size="icon" className="rounded-full">
@@ -80,7 +80,7 @@ export default function ConversationPage({ params }: { params: { id: string } })
                 className="rounded-full object-cover"
               />
               {conversation.online && (
-                <div className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-green-500 border-2 border-background"></div>
+                <div className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-green-500 border-2 border-[#1a0d2e]"></div>
               )}
             </div>
             <div>
@@ -96,15 +96,13 @@ export default function ConversationPage({ params }: { params: { id: string } })
           <div key={msg.id} className={`flex ${msg.sender === "me" ? "justify-end" : "justify-start"}`}>
             <div
               className={`max-w-[85%] sm:max-w-[75%] rounded-2xl p-3 ${
-                msg.sender === "me" ? "bg-primary text-primary-foreground rounded-br-none" : "bg-muted rounded-bl-none"
+                msg.sender === "me"
+                  ? "bg-gradient-to-r from-[#ff3b8b] to-[#ff8cc8] text-white rounded-br-none"
+                  : "bg-[#2d1155]/70 backdrop-blur-sm rounded-bl-none"
               }`}
             >
               <div className="mb-1 break-words">{msg.text}</div>
-              <div
-                className={`text-xs ${
-                  msg.sender === "me" ? "text-primary-foreground/70" : "text-muted-foreground"
-                } text-right`}
-              >
+              <div className={`text-xs ${msg.sender === "me" ? "text-white/70" : "text-muted-foreground"} text-right`}>
                 {msg.time}
               </div>
             </div>
@@ -112,7 +110,7 @@ export default function ConversationPage({ params }: { params: { id: string } })
         ))}
       </div>
 
-      <div className="border-t p-3 md:p-4 sticky bottom-0 bg-background">
+      <div className="border-t border-purple-800/30 p-3 md:p-4 sticky bottom-0 bg-[#1a0d2e]/95 backdrop-blur-md">
         <form onSubmit={handleSendMessage} className="flex items-center gap-2">
           <Button type="button" variant="ghost" size="icon" className="rounded-full flex-shrink-0">
             <ImageIcon className="h-5 w-5" />
@@ -121,9 +119,14 @@ export default function ConversationPage({ params }: { params: { id: string } })
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Écrivez un message..."
-            className="flex-1 rounded-full bg-muted border-none"
+            className="flex-1 rounded-full bg-[#2d1155]/50 border-purple-800/30 focus:border-[#ff3b8b]"
           />
-          <Button type="submit" size="icon" className="rounded-full flex-shrink-0" disabled={!message.trim()}>
+          <Button
+            type="submit"
+            size="icon"
+            className="rounded-full flex-shrink-0 bg-gradient-to-r from-[#ff3b8b] to-[#ff8cc8] border-0 hover:opacity-90"
+            disabled={!message.trim()}
+          >
             <Send className="h-5 w-5" />
           </Button>
           <Button type="button" variant="ghost" size="icon" className="rounded-full flex-shrink-0 hidden sm:flex">

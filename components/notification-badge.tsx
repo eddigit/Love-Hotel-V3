@@ -14,9 +14,9 @@ export function NotificationBadge({ count, variant = "primary", size = "sm" }: N
 
   const badgeVariant =
     variant === "primary"
-      ? "bg-primary text-primary-foreground"
+      ? "bg-gradient-to-r from-[#ff3b8b] to-[#ff8cc8] text-white border-0"
       : variant === "secondary"
-        ? "bg-secondary text-secondary-foreground"
+        ? "bg-gradient-to-r from-[#ff8cc8] to-[#ff3b8b] text-white border-0"
         : "bg-destructive text-destructive-foreground"
 
   const badgeSize = size === "sm" ? "h-4 w-4 text-[10px]" : "h-5 w-5 text-xs"
@@ -30,7 +30,9 @@ export function NotificationBadge({ count, variant = "primary", size = "sm" }: N
         transition={{ type: "spring", stiffness: 500, damping: 30 }}
         className="absolute -top-1 -right-1"
       >
-        <Badge className={`${badgeVariant} ${badgeSize} flex items-center justify-center p-0 rounded-full`}>
+        <Badge
+          className={`${badgeVariant} ${badgeSize} flex items-center justify-center p-0 rounded-full shadow-lg shadow-purple-900/20`}
+        >
           {count > 9 ? "9+" : count}
         </Badge>
       </motion.div>

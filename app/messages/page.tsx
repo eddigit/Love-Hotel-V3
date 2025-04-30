@@ -66,19 +66,22 @@ export default function MessagesPage() {
   ]
 
   return (
-    <div className="min-h-screen flex flex-col pb-16 md:pb-0">
+    <div className="min-h-screen flex flex-col pb-16 md:pb-0 bg-gradient-to-br from-[#1a0d2e] to-[#3d1155]">
       <div className="container py-4 md:py-6 flex-1">
         <h1 className="text-2xl md:text-3xl font-bold mb-4">Messages</h1>
 
         <div className="relative mb-4 md:mb-6">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input placeholder="Rechercher dans les messages" className="pl-10 bg-muted border-none" />
+          <Input
+            placeholder="Rechercher dans les messages"
+            className="pl-10 bg-[#2d1155]/50 border-purple-800/30 focus:border-[#ff3b8b]"
+          />
         </div>
 
         <div className="space-y-2">
           {conversations.map((conversation) => (
             <Link href={`/messages/${conversation.id}`} key={conversation.id}>
-              <Card className="hover:bg-muted/50 transition-colors card-hover">
+              <Card className="hover:bg-[#2d1155]/70 transition-colors card-hover border-0 bg-[#2d1155]/50 backdrop-blur-sm shadow-lg shadow-purple-900/20">
                 <CardContent className="p-3 md:p-4 flex items-center gap-3 md:gap-4">
                   <div className="relative flex-shrink-0">
                     <Image
@@ -89,7 +92,7 @@ export default function MessagesPage() {
                       className="rounded-full object-cover"
                     />
                     {conversation.online && (
-                      <div className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-green-500 border-2 border-background"></div>
+                      <div className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-green-500 border-2 border-[#1a0d2e]"></div>
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -100,7 +103,7 @@ export default function MessagesPage() {
                     <div className="flex items-center justify-between">
                       <p className="text-sm text-muted-foreground truncate">{conversation.lastMessage}</p>
                       {conversation.unread > 0 && (
-                        <div className="ml-2 flex-shrink-0 h-5 w-5 bg-primary rounded-full flex items-center justify-center">
+                        <div className="ml-2 flex-shrink-0 h-5 w-5 bg-gradient-to-r from-[#ff3b8b] to-[#ff8cc8] rounded-full flex items-center justify-center">
                           <span className="text-xs text-white">{conversation.unread}</span>
                         </div>
                       )}

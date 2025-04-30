@@ -58,7 +58,7 @@ export default function DiscoverPage() {
   ]
 
   return (
-    <div className="min-h-screen flex flex-col pb-16 md:pb-0">
+    <div className="min-h-screen flex flex-col pb-16 md:pb-0 bg-gradient-to-br from-[#1a0d2e] to-[#3d1155]">
       <div className="container py-4 md:py-6 flex-1">
         <div className="flex flex-col gap-4 mb-4 md:mb-6">
           <h1 className="text-2xl md:text-3xl font-bold">Découvrir</h1>
@@ -67,22 +67,28 @@ export default function DiscoverPage() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Rechercher..."
-                className="pl-10 pr-4 w-full"
+                className="pl-10 pr-4 w-full bg-[#2d1155]/50 border-purple-800/30 focus:border-[#ff3b8b]"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <Button variant="outline" size="icon" className="flex-shrink-0">
+            <Button variant="outline" size="icon" className="flex-shrink-0 border-purple-800/30 bg-[#2d1155]/50">
               <Filter className="h-4 w-4" />
             </Button>
           </div>
         </div>
 
         <Tabs defaultValue="nearby" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-4 md:mb-6">
-            <TabsTrigger value="nearby">À proximité</TabsTrigger>
-            <TabsTrigger value="online">En ligne</TabsTrigger>
-            <TabsTrigger value="new">Nouveaux</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3 mb-4 md:mb-6 bg-[#2d1155]/50">
+            <TabsTrigger value="nearby" className="data-[state=active]:bg-[#ff3b8b] data-[state=active]:text-white">
+              À proximité
+            </TabsTrigger>
+            <TabsTrigger value="online" className="data-[state=active]:bg-[#ff3b8b] data-[state=active]:text-white">
+              En ligne
+            </TabsTrigger>
+            <TabsTrigger value="new" className="data-[state=active]:bg-[#ff3b8b] data-[state=active]:text-white">
+              Nouveaux
+            </TabsTrigger>
           </TabsList>
           <TabsContent value="nearby" className="space-y-4 md:space-y-6">
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
