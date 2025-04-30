@@ -9,6 +9,7 @@ export interface UserProfile {
   online: boolean
   preferences: OnboardingData
   lastActive?: string
+  featured?: boolean
 }
 
 // Calcule un score de compatibilité entre deux utilisateurs (0-100)
@@ -71,6 +72,11 @@ export function calculateMatchScore(userA: UserProfile, userB: UserProfile): num
     score += 5
   }
 
+  // Bonus pour les profils mis en avant
+  if (userB.featured) {
+    score += 15
+  }
+
   // Limiter le score à 100
   return Math.min(score, maxScore)
 }
@@ -82,28 +88,207 @@ export function sortProfilesByCompatibility(currentUser: UserProfile, profiles: 
       ...profile,
       matchScore: calculateMatchScore(currentUser, profile),
     }))
-    .sort((a, b) => (b.matchScore || 0) - (a.matchScore || 0))
+    .sort((a, b) => {
+      // Mettre en avant les profils featured
+      if (a.featured && !b.featured) return -1
+      if (!a.featured && b.featured) return 1
+      // Ensuite trier par score de compatibilité
+      return (b.matchScore || 0) - (a.matchScore || 0)
+    })
 }
 
-// Remplacer les tableaux d'images actuels par des tableaux avec des photos plus réalistes
+// Remplacer les tableaux d'images actuels par des tableaux avec des photos plus réalistes et diversifiées
 const femaleImages = [
   "/glamorous-woman-pink-portrait.png",
   "/elegant-woman-purple-lighting.png",
   "/stylish-woman-nightclub.png",
   "/attractive-woman-colorful-portrait.png",
 ]
+
 const maleImages = [
   "/handsome-man-pink-portrait.png",
-  "/placeholder.svg?height=500&width=400&query=elegant+man+portrait+purple+lighting",
-  "/placeholder.svg?height=500&width=400&query=stylish+man+portrait+nightclub+lighting",
-  "/placeholder.svg?height=500&width=400&query=attractive+man+portrait+colorful+lighting",
+  "/elegant-man-purple-lighting.png",
+  "/stylish-man-nightclub.png",
+  "/attractive-man-colorful-portrait.png",
 ]
+
 const coupleImages = [
-  "/placeholder.svg?height=500&width=400&query=attractive+couple+portrait+pink+lighting",
-  "/placeholder.svg?height=500&width=400&query=elegant+couple+portrait+purple+lighting",
-  "/placeholder.svg?height=500&width=400&query=stylish+couple+portrait+nightclub+lighting",
-  "/placeholder.svg?height=500&width=400&query=romantic+couple+portrait+colorful+lighting",
+  "/romantic-couple-pink-lighting.png",
+  "/elegant-couple-purple-lighting.png",
+  "/stylish-couple-nightclub.png",
+  "/attractive-couple-colorful-portrait.png",
 ]
+
+// Créer les profils spécifiques demandés
+export function createFeaturedProfiles(): UserProfile[] {
+  return [
+    {
+      id: "rescatore",
+      name: "Rescatore",
+      age: 32,
+      location: "Paris",
+      image:
+        "https://cmxmnsgbmhgpgxopmtua.supabase.co/storage/v1/object/public/profile_photos/08ffac12-2312-4c42-84a5-a756c1c6e494.jpg",
+      online: true,
+      featured: true,
+      lastActive: "En ligne",
+      preferences: {
+        status: "single_male",
+        age: 32,
+        orientation: "hetero",
+        interestedInRestaurant: true,
+        interestedInEvents: true,
+        interestedInDating: true,
+        preferCurtainOpen: false,
+        interestedInLolib: true,
+        suggestions: "",
+        meetingTypes: {
+          friendly: true,
+          romantic: true,
+          playful: true,
+          openCurtains: false,
+          libertine: true,
+        },
+        openToOtherCouples: true,
+        specificPreferences: "",
+        joinExclusiveEvents: true,
+        premiumAccess: true,
+      },
+    },
+    {
+      id: "xavyeahxxx",
+      name: "xavyeahxxx",
+      age: 34,
+      location: "Lyon",
+      image:
+        "https://cmxmnsgbmhgpgxopmtua.supabase.co/storage/v1/object/public/profile_photos/78823992-e5be-4a81-aa66-9e7138c9b7e7.jpg",
+      online: true,
+      featured: true,
+      lastActive: "En ligne",
+      preferences: {
+        status: "single_male",
+        age: 34,
+        orientation: "bi",
+        interestedInRestaurant: true,
+        interestedInEvents: true,
+        interestedInDating: true,
+        preferCurtainOpen: true,
+        interestedInLolib: false,
+        suggestions: "",
+        meetingTypes: {
+          friendly: true,
+          romantic: true,
+          playful: true,
+          openCurtains: true,
+          libertine: true,
+        },
+        openToOtherCouples: true,
+        specificPreferences: "",
+        joinExclusiveEvents: true,
+        premiumAccess: true,
+      },
+    },
+    {
+      id: "simba",
+      name: "Simba",
+      age: 29,
+      location: "Marseille",
+      image:
+        "https://cmxmnsgbmhgpgxopmtua.supabase.co/storage/v1/object/public/profile_photos/6e8fc773-bf42-4d4b-bdcf-77a143745c1d.jpg",
+      online: true,
+      featured: true,
+      lastActive: "En ligne",
+      preferences: {
+        status: "single_male",
+        age: 29,
+        orientation: "hetero",
+        interestedInRestaurant: true,
+        interestedInEvents: true,
+        interestedInDating: true,
+        preferCurtainOpen: false,
+        interestedInLolib: true,
+        suggestions: "",
+        meetingTypes: {
+          friendly: true,
+          romantic: true,
+          playful: true,
+          openCurtains: false,
+          libertine: false,
+        },
+        openToOtherCouples: false,
+        specificPreferences: "",
+        joinExclusiveEvents: false,
+        premiumAccess: true,
+      },
+    },
+    {
+      id: "bun-vino",
+      name: "Bun & Vino",
+      age: 31,
+      location: "Nice",
+      image:
+        "https://cmxmnsgbmhgpgxopmtua.supabase.co/storage/v1/object/public/profile_photos/1feb3c8c-a261-4837-9379-efe72ce8d9c0.jpeg",
+      online: true,
+      featured: true,
+      lastActive: "En ligne",
+      preferences: {
+        status: "couple",
+        age: 31,
+        orientation: "bi",
+        interestedInRestaurant: true,
+        interestedInEvents: true,
+        interestedInDating: true,
+        preferCurtainOpen: true,
+        interestedInLolib: true,
+        suggestions: "",
+        meetingTypes: {
+          friendly: true,
+          romantic: true,
+          playful: true,
+          openCurtains: true,
+          libertine: true,
+        },
+        openToOtherCouples: true,
+        specificPreferences: "",
+        joinExclusiveEvents: true,
+        premiumAccess: true,
+      },
+    },
+    {
+      id: "bianca-25",
+      name: "Bianca.25",
+      age: 25,
+      location: "Paris",
+      image:
+        "https://cmxmnsgbmhgpgxopmtua.supabase.co/storage/v1/object/public/profile_photos/f5367f05-fef1-42a7-afc3-dd0109ba1331.webp",
+      online: true,
+      featured: true,
+      lastActive: "En ligne",
+      preferences: {
+        status: "single_female",
+        age: 25,
+        orientation: "bi",
+        interestedInRestaurant: true,
+        interestedInEvents: true,
+        interestedInDating: true,
+        preferCurtainOpen: false,
+        interestedInLolib: false,
+        suggestions: "",
+        meetingTypes: {
+          friendly: true,
+          romantic: true,
+          playful: true,
+          openCurtains: false,
+          libertine: true,
+        },
+        openToOtherCouples: true,
+        specificPreferences: "",
+        joinExclusiveEvents: true,
+        premiumAccess: true,
+      },
+    },
+  ]
+}
 
 // Modifier la fonction generateMockProfiles pour utiliser les bonnes images selon le statut
 export function generateMockProfiles(count = 20): UserProfile[] {
@@ -111,9 +296,11 @@ export function generateMockProfiles(count = 20): UserProfile[] {
   const statuses = ["couple", "single_male", "single_female"]
   const orientations = ["hetero", "homo", "bi"]
 
-  const profiles: UserProfile[] = []
+  // Commencer avec les profils mis en avant
+  const profiles = createFeaturedProfiles()
 
-  for (let i = 0; i < count; i++) {
+  // Ajouter des profils aléatoires
+  for (let i = 0; i < count - profiles.length; i++) {
     const statusIndex = Math.floor(Math.random() * statuses.length)
     const status = statuses[statusIndex] as "couple" | "single_male" | "single_female"
     const age = Math.floor(Math.random() * 30) + 20 // 20-50 ans
@@ -180,6 +367,6 @@ export function generateMockProfiles(count = 20): UserProfile[] {
 // Récupère les meilleurs matchs pour un utilisateur
 export function getBestMatches(currentUser: UserProfile, profiles: UserProfile[], minScore = 70): UserProfile[] {
   return sortProfilesByCompatibility(currentUser, profiles).filter(
-    (profile) => calculateMatchScore(currentUser, profile) >= minScore,
+    (profile) => calculateMatchScore(currentUser, profile) >= minScore || profile.featured,
   )
 }

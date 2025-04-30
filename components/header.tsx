@@ -58,7 +58,7 @@ export function Header() {
               </Link>
               <Link href="/love-rooms">
                 <Button variant="ghost" size="sm" className={pathname === "/love-rooms" ? "text-[#ff3b8b]" : ""}>
-                  Love Room
+                  Escapade
                 </Button>
               </Link>
               <Link href="/messages">
@@ -154,7 +154,7 @@ export function Header() {
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       <Heart className="h-5 w-5" />
-                      <span>Love Rooms</span>
+                      <span>Escapade</span>
                     </Link>
                     <Link
                       href="/messages"

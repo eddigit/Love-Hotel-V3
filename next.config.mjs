@@ -8,6 +8,14 @@ const nextConfig = {
   },
   images: {
     unoptimized: true,
+    domains: ['cmxmnsgbmhgpgxopmtua.supabase.co'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'cmxmnsgbmhgpgxopmtua.supabase.co',
+        pathname: '/storage/v1/object/public/**',
+      },
+    ],
   },
 }
 

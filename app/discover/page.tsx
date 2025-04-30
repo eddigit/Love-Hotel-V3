@@ -35,7 +35,7 @@ export default function DiscoverPage() {
         name: user.name,
         age: 28, // Âge fictif
         location: "Paris",
-        image: "/placeholder.svg?height=500&width=400&query=attractive+person+portrait+glamorous+lighting",
+        image: "/glamorous-portrait.png",
         online: true,
         preferences: {
           status: "single_male",
@@ -227,6 +227,7 @@ export default function DiscoverPage() {
                       location={profile.location}
                       image={profile.image}
                       online={profile.online}
+                      featured={profile.featured}
                       matchScore={currentUserProfile ? Math.round(profile.matchScore || 0) : undefined}
                     />
                   </motion.div>
