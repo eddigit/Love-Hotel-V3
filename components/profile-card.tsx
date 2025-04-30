@@ -23,7 +23,7 @@ export function ProfileCard({ name, age, location, image, online, matchScore }: 
       <Card className="profile-card group overflow-hidden card-hover border-0 shadow-lg shadow-purple-900/20">
         <div className="relative aspect-[3/4]">
           <Image
-            src={image || "/placeholder.svg"}
+            src={image || "/placeholder.svg?height=500&width=400&query=person+silhouette"}
             alt={name}
             fill
             className="object-cover transition-transform group-hover:scale-105"

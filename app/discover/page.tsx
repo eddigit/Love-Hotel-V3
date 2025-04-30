@@ -29,12 +29,13 @@ export default function DiscoverPage() {
 
     // Créer un profil fictif pour l'utilisateur actuel
     if (user) {
+      // Mettre à jour le profil utilisateur fictif pour utiliser une image plus réaliste
       const mockUserProfile: UserProfile = {
         id: user.id,
         name: user.name,
         age: 28, // Âge fictif
         location: "Paris",
-        image: user.avatar,
+        image: "/placeholder.svg?height=500&width=400&query=attractive+person+portrait+glamorous+lighting",
         online: true,
         preferences: {
           status: "single_male",

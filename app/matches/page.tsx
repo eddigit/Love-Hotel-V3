@@ -40,7 +40,7 @@ export default function MatchesPage() {
         name: user.name,
         age: 28, // Âge fictif
         location: "Paris",
-        image: user.avatar,
+        image: "/placeholder.svg?height=500&width=400&query=attractive+person+portrait+glamorous+lighting",
         online: true,
         preferences: {
           status: "single_male",

@@ -85,20 +85,56 @@ export function sortProfilesByCompatibility(currentUser: UserProfile, profiles: 
     .sort((a, b) => (b.matchScore || 0) - (a.matchScore || 0))
 }
 
-// Génère des profils fictifs avec des préférences aléatoires pour les tests
+// Remplacer les tableaux d'images actuels par des tableaux avec des photos plus réalistes
+const femaleImages = [
+  "/glamorous-woman-pink-portrait.png",
+  "/elegant-woman-purple-lighting.png",
+  "/stylish-woman-nightclub.png",
+  "/attractive-woman-colorful-portrait.png",
+]
+const maleImages = [
+  "/handsome-man-pink-portrait.png",
+  "/placeholder.svg?height=500&width=400&query=elegant+man+portrait+purple+lighting",
+  "/placeholder.svg?height=500&width=400&query=stylish+man+portrait+nightclub+lighting",
+  "/placeholder.svg?height=500&width=400&query=attractive+man+portrait+colorful+lighting",
+]
+const coupleImages = [
+  "/placeholder.svg?height=500&width=400&query=attractive+couple+portrait+pink+lighting",
+  "/placeholder.svg?height=500&width=400&query=elegant+couple+portrait+purple+lighting",
+  "/placeholder.svg?height=500&width=400&query=stylish+couple+portrait+nightclub+lighting",
+  "/placeholder.svg?height=500&width=400&query=romantic+couple+portrait+colorful+lighting",
+]
+
+// Modifier la fonction generateMockProfiles pour utiliser les bonnes images selon le statut
 export function generateMockProfiles(count = 20): UserProfile[] {
   const locations = ["Paris", "Lyon", "Marseille", "Bordeaux", "Nice", "Toulouse", "Lille", "Strasbourg"]
-  const femaleImages = ["/serene-woman.png", "/vibrant-woman.png", "/serene-woman-purple.png", "/amethyst-portrait.png"]
-  const maleImages = ["/contemplative-man.png", "/thoughtful-man-pink.png", "/contemplative-portrait.png"]
   const statuses = ["couple", "single_male", "single_female"]
   const orientations = ["hetero", "homo", "bi"]
 
   const profiles: UserProfile[] = []
 
   for (let i = 0; i < count; i++) {
-    const isFemale = Math.random() > 0.5
-    const status = statuses[Math.floor(Math.random() * statuses.length)] as "couple" | "single_male" | "single_female"
+    const statusIndex = Math.floor(Math.random() * statuses.length)
+    const status = statuses[statusIndex] as "couple" | "single_male" | "single_female"
     const age = Math.floor(Math.random() * 30) + 20 // 20-50 ans
+
+    // Sélectionner l'image en fonction du statut
+    let image = ""
+    let name = ""
+
+    if (status === "couple") {
+      image = coupleImages[Math.floor(Math.random() * coupleImages.length)]
+      name = ["Sophie & Thomas", "Julie & Marc", "Émilie & Antoine", "Chloé & Lucas"][Math.floor(Math.random() * 4)]
+    } else if (status === "single_female") {
+      image = femaleImages[Math.floor(Math.random() * femaleImages.length)]
+      name = ["Sophie", "Julie", "Émilie", "Chloé", "Marie", "Laura", "Camille", "Léa"][Math.floor(Math.random() * 8)]
+    } else {
+      // single_male
+      image = maleImages[Math.floor(Math.random() * maleImages.length)]
+      name = ["Thomas", "Marc", "Antoine", "Lucas", "Hugo", "Julien", "Nicolas", "Maxime"][
+        Math.floor(Math.random() * 8)
+      ]
+    }
 
     const meetingTypes = {
       friendly: Math.random() > 0.3,
@@ -110,19 +146,15 @@ export function generateMockProfiles(count = 20): UserProfile[] {
 
     profiles.push({
       id: `user-${i}`,
-      name: isFemale
-        ? ["Sophie", "Julie", "Émilie", "Chloé", "Marie", "Laura", "Camille", "Léa"][Math.floor(Math.random() * 8)]
-        : ["Thomas", "Marc", "Antoine", "Lucas", "Hugo", "Julien", "Nicolas", "Maxime"][Math.floor(Math.random() * 8)],
+      name,
       age,
       location: locations[Math.floor(Math.random() * locations.length)],
-      image: isFemale
-        ? femaleImages[Math.floor(Math.random() * femaleImages.length)]
-        : maleImages[Math.floor(Math.random() * maleImages.length)],
+      image,
       online: Math.random() > 0.7,
       lastActive: Math.random() > 0.5 ? "Il y a 2h" : "Il y a 1j",
       preferences: {
-        status: status,
-        age: age,
+        status,
+        age,
         orientation: orientations[Math.floor(Math.random() * orientations.length)] as "hetero" | "homo" | "bi",
 
         interestedInRestaurant: Math.random() > 0.5,
