@@ -103,6 +103,12 @@ const femaleImages = [
   "/elegant-woman-purple-lighting.png",
   "/stylish-woman-nightclub.png",
   "/attractive-woman-colorful-portrait.png",
+  "/glamorous-woman-pink-lighting.png",
+  "/elegant-woman-purple-glow.png",
+  "/stylish-woman-nightlife.png",
+  "/colorful-woman-portrait.png",
+  "/beautiful-woman-neon.png",
+  "/placeholder.svg?height=400&width=300&query=chic+woman+evening+portrait",
 ]
 
 const maleImages = [
@@ -110,6 +116,12 @@ const maleImages = [
   "/elegant-man-purple-lighting.png",
   "/stylish-man-nightclub.png",
   "/attractive-man-colorful-portrait.png",
+  "/placeholder.svg?height=400&width=300&query=handsome+man+pink+lighting",
+  "/placeholder.svg?height=400&width=300&query=elegant+man+purple+glow",
+  "/placeholder.svg?height=400&width=300&query=stylish+man+nightlife",
+  "/placeholder.svg?height=400&width=300&query=attractive+man+colorful+portrait",
+  "/placeholder.svg?height=400&width=300&query=charming+man+neon+lights",
+  "/placeholder.svg?height=400&width=300&query=sophisticated+man+evening+portrait",
 ]
 
 const coupleImages = [
@@ -117,6 +129,12 @@ const coupleImages = [
   "/elegant-couple-purple-lighting.png",
   "/stylish-couple-nightclub.png",
   "/attractive-couple-colorful-portrait.png",
+  "/placeholder.svg?height=400&width=300&query=romantic+couple+pink+lighting",
+  "/placeholder.svg?height=400&width=300&query=elegant+couple+purple+glow",
+  "/placeholder.svg?height=400&width=300&query=stylish+couple+nightlife",
+  "/placeholder.svg?height=400&width=300&query=attractive+couple+colorful+portrait",
+  "/placeholder.svg?height=400&width=300&query=charming+couple+neon+lights",
+  "/placeholder.svg?height=400&width=300&query=sophisticated+couple+evening+portrait",
 ]
 
 // Créer les profils spécifiques demandés
@@ -299,6 +317,11 @@ export function generateMockProfiles(count = 20): UserProfile[] {
   // Commencer avec les profils mis en avant
   const profiles = createFeaturedProfiles()
 
+  // Garder une trace des images déjà utilisées
+  const usedFemaleImages = new Set<string>()
+  const usedMaleImages = new Set<string>()
+  const usedCoupleImages = new Set<string>()
+
   // Ajouter des profils aléatoires
   for (let i = 0; i < count - profiles.length; i++) {
     const statusIndex = Math.floor(Math.random() * statuses.length)
@@ -310,17 +333,76 @@ export function generateMockProfiles(count = 20): UserProfile[] {
     let name = ""
 
     if (status === "couple") {
-      image = coupleImages[Math.floor(Math.random() * coupleImages.length)]
-      name = ["Sophie & Thomas", "Julie & Marc", "Émilie & Antoine", "Chloé & Lucas"][Math.floor(Math.random() * 4)]
+      // Trouver une image de couple non utilisée
+      const availableCoupleImages = coupleImages.filter((img) => !usedCoupleImages.has(img))
+      // Si toutes les images sont utilisées, réinitialiser
+      if (availableCoupleImages.length === 0) {
+        usedCoupleImages.clear()
+        image = coupleImages[Math.floor(Math.random() * coupleImages.length)]
+      } else {
+        image = availableCoupleImages[Math.floor(Math.random() * availableCoupleImages.length)]
+      }
+      usedCoupleImages.add(image)
+      name = [
+        "Sophie & Thomas",
+        "Julie & Marc",
+        "Émilie & Antoine",
+        "Chloé & Lucas",
+        "Marie & Paul",
+        "Laura & Nicolas",
+        "Camille & Hugo",
+        "Léa & Julien",
+      ][Math.floor(Math.random() * 8)]
     } else if (status === "single_female") {
-      image = femaleImages[Math.floor(Math.random() * femaleImages.length)]
-      name = ["Sophie", "Julie", "Émilie", "Chloé", "Marie", "Laura", "Camille", "Léa"][Math.floor(Math.random() * 8)]
+      // Trouver une image de femme non utilisée
+      const availableFemaleImages = femaleImages.filter((img) => !usedFemaleImages.has(img))
+      // Si toutes les images sont utilisées, réinitialiser
+      if (availableFemaleImages.length === 0) {
+        usedFemaleImages.clear()
+        image = femaleImages[Math.floor(Math.random() * femaleImages.length)]
+      } else {
+        image = availableFemaleImages[Math.floor(Math.random() * availableFemaleImages.length)]
+      }
+      usedFemaleImages.add(image)
+      name = [
+        "Sophie",
+        "Julie",
+        "Émilie",
+        "Chloé",
+        "Marie",
+        "Laura",
+        "Camille",
+        "Léa",
+        "Aurélie",
+        "Céline",
+        "Nathalie",
+        "Isabelle",
+      ][Math.floor(Math.random() * 12)]
     } else {
-      // single_male
-      image = maleImages[Math.floor(Math.random() * maleImages.length)]
-      name = ["Thomas", "Marc", "Antoine", "Lucas", "Hugo", "Julien", "Nicolas", "Maxime"][
-        Math.floor(Math.random() * 8)
-      ]
+      // Trouver une image d'homme non utilisée
+      const availableMaleImages = maleImages.filter((img) => !usedMaleImages.has(img))
+      // Si toutes les images sont utilisées, réinitialiser
+      if (availableMaleImages.length === 0) {
+        usedMaleImages.clear()
+        image = maleImages[Math.floor(Math.random() * maleImages.length)]
+      } else {
+        image = availableMaleImages[Math.floor(Math.random() * availableMaleImages.length)]
+      }
+      usedMaleImages.add(image)
+      name = [
+        "Thomas",
+        "Marc",
+        "Antoine",
+        "Lucas",
+        "Hugo",
+        "Julien",
+        "Nicolas",
+        "Maxime",
+        "Pierre",
+        "David",
+        "Alexandre",
+        "Sébastien",
+      ][Math.floor(Math.random() * 12)]
     }
 
     const meetingTypes = {
