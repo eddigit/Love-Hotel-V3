@@ -30,9 +30,13 @@ export async function createUser(
       VALUES ($1, $2, $3, $4, $5)
       RETURNING id, email, name, role, avatar, onboarding_completed, created_at, updated_at
     `
+    const params = [userId, email, hashedPassword, name, role]
+    console.log(params)
+  const result = (await executeQuery<User[]>(query, params)) ?? []   
+  console.log(result)
+  return result.length ? result[0] : null                            
+     
 
-    const result = await executeQuery<User[]>(query, [userId, email, hashedPassword, name, role])
-    return result[0] || null
   } catch (error) {
     console.error("Erreur lors de la création de l'utilisateur:", error)
     return null

@@ -7,8 +7,8 @@ export const sql = neon(process.env.DATABASE_URL!)
 export async function executeQuery<T = any>(query: string, params: any[] = []): Promise<T> {
   try {
     // Utiliser sql.query au lieu de sql directement
-    const result = await sql.query(query, params)
-    return result.rows as T
+    const rows = await sql.query(query, params)
+    return rows as T
   } catch (error) {
     console.error("Erreur lors de l'exécution de la requête SQL:", error)
     throw error
