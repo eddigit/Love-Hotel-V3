@@ -6,8 +6,9 @@ import { OnboardingForm, type OnboardingData } from "@/components/onboarding-for
 import { useAuth } from "@/contexts/auth-context"
 import { saveUserPreferences } from "@/app/actions"
 import { toast } from "@/components/ui/use-toast"
+import MainLayout from "@/components/layout/main-layout"
 
-export default function OnboardingPage() {
+export default function OnboardingPage(props) {
   const { user, isLoading } = useAuth()
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -51,25 +52,29 @@ export default function OnboardingPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#1a0d2e] to-[#3d1155]">
-        <div className="animate-pulse text-white text-center">
-          <div className="h-8 w-32 bg-purple-800/50 rounded-md mx-auto mb-4"></div>
-          <div className="h-4 w-48 bg-purple-800/30 rounded-md mx-auto"></div>
+      <MainLayout>
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#1a0d2e] to-[#3d1155]">
+          <div className="animate-pulse text-white text-center">
+            <div className="h-8 w-32 bg-purple-800/50 rounded-md mx-auto mb-4"></div>
+            <div className="h-4 w-48 bg-purple-800/30 rounded-md mx-auto"></div>
+          </div>
         </div>
-      </div>
+      </MainLayout>
     )
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-[#1a0d2e] to-[#3d1155]">
-      <div className="container py-8 md:py-12 flex-1 flex flex-col items-center justify-center">
-        <div className="w-full max-w-lg mb-6 text-center">
-          <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">Bienvenue sur Love Hôtel Rencontre</h1>
-          <p className="text-purple-200/80">Complétez votre profil pour trouver des personnes qui vous correspondent</p>
-        </div>
+    <MainLayout>
+      <div className="min-h-screen flex flex-col bg-gradient-to-br from-[#1a0d2e] to-[#3d1155]">
+        <div className="container py-8 md:py-12 flex-1 flex flex-col items-center justify-center">
+          <div className="w-full max-w-lg mb-6 text-center">
+            <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">Bienvenue sur Love Hôtel Rencontre</h1>
+            <p className="text-purple-200/80">Complétez votre profil pour trouver des personnes qui vous correspondent</p>
+          </div>
 
-        <OnboardingForm onComplete={handleOnboardingComplete} />
+          <OnboardingForm onComplete={handleOnboardingComplete} />
+        </div>
       </div>
-    </div>
+    </MainLayout>
   )
 }

@@ -10,9 +10,14 @@ import { useAuth } from "@/contexts/auth-context"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
 
-export function Header() {
+interface HeaderProps {
+  session?: any
+  user?: any
+}
+
+export function Header({ session, user }: HeaderProps) {
   const pathname = usePathname()
-  const { user, logout } = useAuth()
+  const { logout } = useAuth()
   const isLoggedIn = !!user
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
@@ -28,7 +33,6 @@ export function Header() {
     pathname === "/en-direct" ||
     pathname === "/premium"
 
-  // Si nous sommes sur une page de présentation ou la page de login, ne pas afficher ce header
   if (isPresentationPage) {
     return null
   }
@@ -40,11 +44,8 @@ export function Header() {
           <Heart className="h-5 w-5 text-[#ff3b8b]" />
           <span className="font-bold text-lg">Love Hotel</span>
         </Link>
-
         {isLoggedIn ? (
-          // Menu pour utilisateurs connectés
           <>
-            {/* Menu desktop */}
             <div className="hidden md:flex items-center gap-4">
               <Link href="/discover">
                 <Button variant="ghost" size="sm" className={pathname === "/discover" ? "text-[#ff3b8b]" : ""}>
@@ -90,8 +91,6 @@ export function Header() {
               <Button variant="ghost" size="sm" onClick={logout} className="hidden md:flex">
                 Déconnexion
               </Button>
-
-              {/* Bouton menu mobile */}
               <Button
                 variant="ghost"
                 size="icon"
@@ -101,8 +100,6 @@ export function Header() {
                 {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </Button>
             </div>
-
-            {/* Menu mobile overlay */}
             {mobileMenuOpen && (
               <div className="fixed inset-0 bg-[#1a0d2e]/95 z-30 md:hidden pt-16">
                 <div className="container py-8 flex flex-col gap-4">
@@ -121,7 +118,6 @@ export function Header() {
                       </div>
                     </div>
                   </Link>
-
                   <div className="space-y-1 mt-4">
                     <Link
                       href="/discover"
@@ -168,7 +164,6 @@ export function Header() {
                       <span>Messages</span>
                     </Link>
                   </div>
-
                   <div className="mt-auto pt-4 border-t border-purple-800/30">
                     <Button
                       variant="ghost"
@@ -186,7 +181,6 @@ export function Header() {
             )}
           </>
         ) : (
-          // Menu pour utilisateurs non connectés
           <>
             <div className="hidden md:flex items-center gap-4">
               <Link href="/about">

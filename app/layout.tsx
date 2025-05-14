@@ -2,14 +2,7 @@ import type React from "react"
 import type { Metadata, Viewport } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
-import { ThemeProvider } from "@/components/theme-provider"
-import { NotificationProvider } from "@/contexts/notification-context"
-// Utiliser le MainLayout local
-import { MainLayout } from "@/components/layout/main-layout"
-// Importer le AuthProvider
-import { AuthProvider } from "@/contexts/auth-context"
-// Import the LoolyyBWidget component
-import { LoolyyBWidget } from "@/components/loolyyb-widget"
+import { Providers } from "@/components/providers"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -31,14 +24,7 @@ export default function RootLayout({
   return (
     <html lang="fr" suppressHydrationWarning>
       <body className={`${inter.className} bg-gradient-to-br from-[#1a0d2e] to-[#3d1155]`}>
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} disableTransitionOnChange>
-          <AuthProvider>
-            <NotificationProvider>
-              <MainLayout>{children}</MainLayout>
-              <LoolyyBWidget />
-            </NotificationProvider>
-          </AuthProvider>
-        </ThemeProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   )

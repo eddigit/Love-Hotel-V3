@@ -9,10 +9,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Progress } from "@/components/ui/progress"
+import { Input } from "@/components/ui/input"
 import { ArrowLeft, ArrowRight, Check } from "lucide-react"
 import { useRouter } from "next/navigation"
 
-// Ajouter cet import en haut du fichier
 import { saveUserPreferences } from "@/app/actions"
 import { useAuth } from "@/contexts/auth-context"
 
@@ -22,6 +22,8 @@ export interface OnboardingData {
   status: "couple" | "single_male" | "single_female" | ""
   age: number | null
   orientation: "hetero" | "homo" | "bi" | ""
+  gender: "male" | "female" | "other" | "" // Added gender
+  birthday: string // Changed from birthdate to birthday
 
   // Étape 2: Préférences et motivations
   interestedInRestaurant: boolean
@@ -52,6 +54,8 @@ const initialData: OnboardingData = {
   status: "",
   age: null,
   orientation: "",
+  gender: "", // Added gender
+  birthday: "", // Changed from birthdate to birthday
 
   interestedInRestaurant: false,
   interestedInEvents: false,
@@ -141,7 +145,13 @@ export function OnboardingForm({ onComplete }: { onComplete: (data: OnboardingDa
   const isStepValid = () => {
     switch (step) {
       case 1:
-        return formData.status !== "" && formData.age !== null && formData.orientation !== ""
+        return (
+          formData.status !== "" &&
+          formData.age !== null &&
+          formData.orientation !== "" &&
+          formData.gender !== "" &&
+          formData.birthday !== ""
+        )
       case 2:
         return true // Toutes les options sont facultatives dans cette étape
       case 3:
@@ -254,6 +264,44 @@ export function OnboardingForm({ onComplete }: { onComplete: (data: OnboardingDa
                   </Label>
                 </div>
               </RadioGroup>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="gender" className="text-purple-100">
+                Genre
+              </Label>
+              <Select
+                value={formData.gender}
+                onValueChange={(value) => updateFormData("gender", value)}
+              >
+                <SelectTrigger id="gender" className="bg-purple-900/20 border-purple-800/50 focus:ring-[#ff3b8b]">
+                  <SelectValue placeholder="Sélectionnez votre genre" />
+                </SelectTrigger>
+                <SelectContent className="bg-[#2d1155] border-purple-800/50">
+                  <SelectItem value="male" className="focus:bg-[#ff3b8b]/20">
+                    Homme
+                  </SelectItem>
+                  <SelectItem value="female" className="focus:bg-[#ff3b8b]/20">
+                    Femme
+                  </SelectItem>
+                  <SelectItem value="other" className="focus:bg-[#ff3b8b]/20">
+                    Autre
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="birthday" className="text-purple-100">
+                Date de naissance
+              </Label>
+              <Input
+                id="birthday"
+                type="date"
+                value={formData.birthday}
+                onChange={(e) => updateFormData("birthday", e.target.value)}
+                className="bg-purple-900/20 border-purple-800/50 focus:ring-[#ff3b8b] focus:border-[#ff3b8b] text-white"
+              />
             </div>
           </div>
         )}

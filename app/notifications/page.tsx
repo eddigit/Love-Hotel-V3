@@ -9,8 +9,9 @@ import { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { usePathname, useSearchParams } from "next/navigation"
 import { useNotifications } from "@/contexts/notification-context"
+import MainLayout from "@/components/layout/main-layout"
 
-export default function NotificationsPage() {
+export default function NotificationsPage(props) {
   const { notifications, markAsRead, markAllAsRead } = useNotifications()
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState("all")
@@ -75,101 +76,103 @@ export default function NotificationsPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col pb-16 md:pb-0">
-      <div className="container py-4 md:py-6 flex-1">
-        <h1 className="text-2xl md:text-3xl font-bold mb-4">Notifications</h1>
+    <MainLayout>
+      <div className="min-h-screen flex flex-col pb-16 md:pb-0">
+        <div className="container py-4 md:py-6 flex-1">
+          <h1 className="text-2xl md:text-3xl font-bold mb-4">Notifications</h1>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-5 mb-4 md:mb-6 overflow-x-auto">
-            <TabsTrigger value="all" className="text-xs sm:text-sm">
-              Toutes
-            </TabsTrigger>
-            <TabsTrigger value="messages" className="text-xs sm:text-sm">
-              Messages
-            </TabsTrigger>
-            <TabsTrigger value="likes" className="text-xs sm:text-sm">
-              J&apos;aime
-            </TabsTrigger>
-            <TabsTrigger value="events" className="text-xs sm:text-sm">
-              Événements
-            </TabsTrigger>
-            <TabsTrigger value="system" className="text-xs sm:text-sm">
-              Système
-            </TabsTrigger>
-          </TabsList>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-5 mb-4 md:mb-6 overflow-x-auto">
+              <TabsTrigger value="all" className="text-xs sm:text-sm">
+                Toutes
+              </TabsTrigger>
+              <TabsTrigger value="messages" className="text-xs sm:text-sm">
+                Messages
+              </TabsTrigger>
+              <TabsTrigger value="likes" className="text-xs sm:text-sm">
+                J&apos;aime
+              </TabsTrigger>
+              <TabsTrigger value="events" className="text-xs sm:text-sm">
+                Événements
+              </TabsTrigger>
+              <TabsTrigger value="system" className="text-xs sm:text-sm">
+                Système
+              </TabsTrigger>
+            </TabsList>
 
-          <AnimatePresence mode="wait">
-            <TabsContent key={activeTab} value="all" className="space-y-3 md:space-y-4">
-              <motion.div variants={container} initial="hidden" animate="show" className="space-y-3 md:space-y-4">
-                {notifications.map((notification) => (
-                  <motion.div key={notification.id} variants={item}>
-                    <NotificationCard notification={notification} onMarkAsRead={markAsRead} />
-                  </motion.div>
-                ))}
-              </motion.div>
-            </TabsContent>
-
-            <TabsContent key={`${activeTab}-messages`} value="messages" className="space-y-3 md:space-y-4">
-              <motion.div variants={container} initial="hidden" animate="show" className="space-y-3 md:space-y-4">
-                {messageNotifications.length > 0 ? (
-                  messageNotifications.map((notification) => (
+            <AnimatePresence mode="wait">
+              <TabsContent key={activeTab} value="all" className="space-y-3 md:space-y-4">
+                <motion.div variants={container} initial="hidden" animate="show" className="space-y-3 md:space-y-4">
+                  {notifications.map((notification) => (
                     <motion.div key={notification.id} variants={item}>
                       <NotificationCard notification={notification} onMarkAsRead={markAsRead} />
                     </motion.div>
-                  ))
-                ) : (
-                  <EmptyState message="Aucun message" />
-                )}
-              </motion.div>
-            </TabsContent>
+                  ))}
+                </motion.div>
+              </TabsContent>
 
-            <TabsContent key={`${activeTab}-likes`} value="likes" className="space-y-3 md:space-y-4">
-              <motion.div variants={container} initial="hidden" animate="show" className="space-y-3 md:space-y-4">
-                {likeNotifications.length > 0 ? (
-                  likeNotifications.map((notification) => (
-                    <motion.div key={notification.id} variants={item}>
-                      <NotificationCard notification={notification} onMarkAsRead={markAsRead} />
-                    </motion.div>
-                  ))
-                ) : (
-                  <EmptyState message="Aucun j'aime" />
-                )}
-              </motion.div>
-            </TabsContent>
+              <TabsContent key={`${activeTab}-messages`} value="messages" className="space-y-3 md:space-y-4">
+                <motion.div variants={container} initial="hidden" animate="show" className="space-y-3 md:space-y-4">
+                  {messageNotifications.length > 0 ? (
+                    messageNotifications.map((notification) => (
+                      <motion.div key={notification.id} variants={item}>
+                        <NotificationCard notification={notification} onMarkAsRead={markAsRead} />
+                      </motion.div>
+                    ))
+                  ) : (
+                    <EmptyState message="Aucun message" />
+                  )}
+                </motion.div>
+              </TabsContent>
 
-            <TabsContent key={`${activeTab}-events`} value="events" className="space-y-3 md:space-y-4">
-              <motion.div variants={container} initial="hidden" animate="show" className="space-y-3 md:space-y-4">
-                {eventNotifications.length > 0 ? (
-                  eventNotifications.map((notification) => (
-                    <motion.div key={notification.id} variants={item}>
-                      <NotificationCard notification={notification} onMarkAsRead={markAsRead} />
-                    </motion.div>
-                  ))
-                ) : (
-                  <EmptyState message="Aucun événement" />
-                )}
-              </motion.div>
-            </TabsContent>
+              <TabsContent key={`${activeTab}-likes`} value="likes" className="space-y-3 md:space-y-4">
+                <motion.div variants={container} initial="hidden" animate="show" className="space-y-3 md:space-y-4">
+                  {likeNotifications.length > 0 ? (
+                    likeNotifications.map((notification) => (
+                      <motion.div key={notification.id} variants={item}>
+                        <NotificationCard notification={notification} onMarkAsRead={markAsRead} />
+                      </motion.div>
+                    ))
+                  ) : (
+                    <EmptyState message="Aucun j'aime" />
+                  )}
+                </motion.div>
+              </TabsContent>
 
-            <TabsContent key={`${activeTab}-system`} value="system" className="space-y-3 md:space-y-4">
-              <motion.div variants={container} initial="hidden" animate="show" className="space-y-3 md:space-y-4">
-                {systemNotifications.length > 0 ? (
-                  systemNotifications.map((notification) => (
-                    <motion.div key={notification.id} variants={item}>
-                      <NotificationCard notification={notification} onMarkAsRead={markAsRead} />
-                    </motion.div>
-                  ))
-                ) : (
-                  <EmptyState message="Aucune notification système" />
-                )}
-              </motion.div>
-            </TabsContent>
-          </AnimatePresence>
-        </Tabs>
+              <TabsContent key={`${activeTab}-events`} value="events" className="space-y-3 md:space-y-4">
+                <motion.div variants={container} initial="hidden" animate="show" className="space-y-3 md:space-y-4">
+                  {eventNotifications.length > 0 ? (
+                    eventNotifications.map((notification) => (
+                      <motion.div key={notification.id} variants={item}>
+                        <NotificationCard notification={notification} onMarkAsRead={markAsRead} />
+                      </motion.div>
+                    ))
+                  ) : (
+                    <EmptyState message="Aucun événement" />
+                  )}
+                </motion.div>
+              </TabsContent>
+
+              <TabsContent key={`${activeTab}-system`} value="system" className="space-y-3 md:space-y-4">
+                <motion.div variants={container} initial="hidden" animate="show" className="space-y-3 md:space-y-4">
+                  {systemNotifications.length > 0 ? (
+                    systemNotifications.map((notification) => (
+                      <motion.div key={notification.id} variants={item}>
+                        <NotificationCard notification={notification} onMarkAsRead={markAsRead} />
+                      </motion.div>
+                    ))
+                  ) : (
+                    <EmptyState message="Aucune notification système" />
+                  )}
+                </motion.div>
+              </TabsContent>
+            </AnimatePresence>
+          </Tabs>
+        </div>
+
+        <MobileNavigation />
       </div>
-
-      <MobileNavigation />
-    </div>
+    </MainLayout>
   )
 }
 

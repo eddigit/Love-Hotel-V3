@@ -15,14 +15,17 @@ import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
 import { generateMockProfiles, getBestMatches, type UserProfile } from "@/utils/matching-algorithm"
 import { useAuth } from "@/contexts/auth-context"
+import MainLayout from "@/components/layout/main-layout"
+import { useRouter } from "next/navigation"
 
-export default function MatchesPage() {
+export default function MatchesPage(props) {
   const [activeTab, setActiveTab] = useState("all")
   const [isLoading, setIsLoading] = useState(true)
   const [matches, setMatches] = useState<UserProfile[]>([])
   const [pendingMatches, setPendingMatches] = useState<UserProfile[]>([])
   const [currentUserProfile, setCurrentUserProfile] = useState<UserProfile | null>(null)
   const { user } = useAuth()
+  const router = useRouter()
 
   useEffect(() => {
     // Simuler un chargement
@@ -92,9 +95,27 @@ export default function MatchesPage() {
     setMatches(matches.filter((match) => match.id !== id))
   }
 
-  const handleAcceptPending = (profile: UserProfile) => {
-    setPendingMatches(pendingMatches.filter((p) => p.id !== profile.id))
-    setMatches([...matches, profile])
+  const handleAcceptPending = async (profile: UserProfile) => {
+    console.log("handleAcceptPending called", profile)
+    if (!user) return
+    try {
+      // Call the new API route
+      const response = await fetch("/api/accept-match", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ requesterId: profile.id, receiverId: user.id })
+      })
+      const data = await response.json()
+      if (data.success && data.conversationId) {
+        setPendingMatches(pendingMatches.filter((p) => p.id !== profile.id))
+        setMatches([...matches, profile])
+        router.push(`/messages/${data.conversationId}`)
+      } else {
+        alert(data.error || "Erreur lors de l'acceptation du match.")
+      }
+    } catch (err) {
+      alert("Erreur technique lors de l'acceptation du match.")
+    }
   }
 
   const handleRejectPending = (id: string) => {
@@ -116,96 +137,98 @@ export default function MatchesPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col pb-16 md:pb-0 bg-gradient-to-br from-[#1a0d2e] to-[#3d1155]">
-      <div className="container py-4 md:py-6 flex-1">
-        <h1 className="text-2xl md:text-3xl font-bold mb-4 text-white">Vos Matchs</h1>
+    <MainLayout>
+      <div className="min-h-screen flex flex-col pb-16 md:pb-0 bg-gradient-to-br from-[#1a0d2e] to-[#3d1155]">
+        <div className="container py-4 md:py-6 flex-1">
+          <h1 className="text-2xl md:text-3xl font-bold mb-4 text-white">Vos Matchs</h1>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-4 md:mb-6 bg-[#2d1155]/50">
-            <TabsTrigger value="all" className="data-[state=active]:bg-[#ff3b8b] data-[state=active]:text-white">
-              Matchs ({matches.length})
-            </TabsTrigger>
-            <TabsTrigger value="pending" className="data-[state=active]:bg-[#ff3b8b] data-[state=active]:text-white">
-              En attente ({pendingMatches.length})
-            </TabsTrigger>
-          </TabsList>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-2 mb-4 md:mb-6 bg-[#2d1155]/50">
+              <TabsTrigger value="all" className="data-[state=active]:bg-[#ff3b8b] data-[state=active]:text-white">
+                Matchs ({matches.length})
+              </TabsTrigger>
+              <TabsTrigger value="pending" className="data-[state=active]:bg-[#ff3b8b] data-[state=active]:text-white">
+                En attente ({pendingMatches.length})
+              </TabsTrigger>
+            </TabsList>
 
-          <AnimatePresence mode="wait">
-            <TabsContent key={activeTab} value="all" className="space-y-4">
-              {matches.length > 0 ? (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="grid gap-4 md:grid-cols-2"
-                >
-                  {matches.map((match, index) => (
-                    <motion.div
-                      key={match.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -20 }}
-                      transition={{ delay: index * 0.05 }}
-                    >
-                      <MatchCard profile={match} onRemove={() => handleRemoveMatch(match.id)} />
-                    </motion.div>
-                  ))}
-                </motion.div>
-              ) : (
-                <EmptyState
-                  icon={<Heart className="h-10 w-10 text-[#ff3b8b]/70" />}
-                  title="Aucun match pour le moment"
-                  description="Explorez la section Découvrir pour trouver des personnes qui vous correspondent"
-                  action={
-                    <Button
-                      asChild
-                      className="bg-gradient-to-r from-[#ff3b8b] to-[#ff8cc8] hover:from-[#ff3b8b]/90 hover:to-[#ff8cc8]/90 text-white border-0"
-                    >
-                      <Link href="/discover">Découvrir des profils</Link>
-                    </Button>
-                  }
-                />
-              )}
-            </TabsContent>
+            <AnimatePresence mode="wait">
+              <TabsContent key={activeTab} value="all" className="space-y-4">
+                {matches.length > 0 ? (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="grid gap-4 md:grid-cols-2"
+                  >
+                    {matches.map((match, index) => (
+                      <motion.div
+                        key={match.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ delay: index * 0.05 }}
+                      >
+                        <MatchCard profile={match} onRemove={() => handleRemoveMatch(match.id)} />
+                      </motion.div>
+                    ))}
+                  </motion.div>
+                ) : (
+                  <EmptyState
+                    icon={<Heart className="h-10 w-10 text-[#ff3b8b]/70" />}
+                    title="Aucun match pour le moment"
+                    description="Explorez la section Découvrir pour trouver des personnes qui vous correspondent"
+                    action={
+                      <Button
+                        asChild
+                        className="bg-gradient-to-r from-[#ff3b8b] to-[#ff8cc8] hover:from-[#ff3b8b]/90 hover:to-[#ff8cc8]/90 text-white border-0"
+                      >
+                        <Link href="/discover">Découvrir des profils</Link>
+                      </Button>
+                    }
+                  />
+                )}
+              </TabsContent>
 
-            <TabsContent key={`${activeTab}-pending`} value="pending" className="space-y-4">
-              {pendingMatches.length > 0 ? (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="grid gap-4 md:grid-cols-2"
-                >
-                  {pendingMatches.map((match, index) => (
-                    <motion.div
-                      key={match.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -20 }}
-                      transition={{ delay: index * 0.05 }}
-                    >
-                      <PendingMatchCard
-                        profile={match}
-                        onAccept={() => handleAcceptPending(match)}
-                        onReject={() => handleRejectPending(match.id)}
-                      />
-                    </motion.div>
-                  ))}
-                </motion.div>
-              ) : (
-                <EmptyState
-                  icon={<Clock className="h-10 w-10 text-[#ff3b8b]/70" />}
-                  title="Aucune demande en attente"
-                  description="Revenez plus tard pour voir les nouvelles demandes de match"
-                />
-              )}
-            </TabsContent>
-          </AnimatePresence>
-        </Tabs>
+              <TabsContent key={`${activeTab}-pending`} value="pending" className="space-y-4">
+                {pendingMatches.length > 0 ? (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="grid gap-4 md:grid-cols-2"
+                  >
+                    {pendingMatches.map((match, index) => (
+                      <motion.div
+                        key={match.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ delay: index * 0.05 }}
+                      >
+                        <PendingMatchCard
+                          profile={match}
+                          onAccept={() => handleAcceptPending(match)}
+                          onReject={() => handleRejectPending(match.id)}
+                        />
+                      </motion.div>
+                    ))}
+                  </motion.div>
+                ) : (
+                  <EmptyState
+                    icon={<Clock className="h-10 w-10 text-[#ff3b8b]/70" />}
+                    title="Aucune demande en attente"
+                    description="Revenez plus tard pour voir les nouvelles demandes de match"
+                  />
+                )}
+              </TabsContent>
+            </AnimatePresence>
+          </Tabs>
+        </div>
+
+        <MobileNavigation />
       </div>
-
-      <MobileNavigation />
-    </div>
+    </MainLayout>
   )
 }
 
@@ -309,6 +332,7 @@ interface PendingMatchCardProps {
 }
 
 function PendingMatchCard({ profile, onAccept, onReject }: PendingMatchCardProps) {
+  console.log("PendingMatchCard rendered", profile)
   return (
     <Card className="overflow-hidden border-0 shadow-lg shadow-purple-900/20 bg-gradient-to-b from-[#2d1155]/90 to-[#1a0d2e]/90">
       <CardContent className="p-0">
@@ -358,7 +382,7 @@ function PendingMatchCard({ profile, onAccept, onReject }: PendingMatchCardProps
               <Button
                 size="sm"
                 className="flex-1 bg-gradient-to-r from-[#ff3b8b] to-[#ff8cc8] hover:from-[#ff3b8b]/90 hover:to-[#ff8cc8]/90 text-white border-0"
-                onClick={onAccept}
+                onClick={() => { console.log("Accepter button clicked"); onAccept(); }}
               >
                 <Heart className="h-4 w-4 mr-1" />
                 Accepter

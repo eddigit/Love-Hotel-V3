@@ -1,11 +1,12 @@
 "use server"
 
 import { sql } from "@/lib/db"
+import { createNotification } from "@/actions/notification-actions"
 
 export async function getUserConversations(userId: string) {
   const conversations = await sql`
     WITH user_conversations AS (
-      SELECT 
+      SELECT
         c.id,
         c.created_at,
         c.updated_at
@@ -14,7 +15,7 @@ export async function getUserConversations(userId: string) {
       WHERE cp.user_id = ${userId}
     ),
     last_messages AS (
-      SELECT 
+      SELECT
         m.conversation_id,
         m.content,
         m.created_at,
@@ -24,7 +25,7 @@ export async function getUserConversations(userId: string) {
       JOIN user_conversations uc ON m.conversation_id = uc.id
     ),
     conversation_users AS (
-      SELECT 
+      SELECT
         cp.conversation_id,
         u.id as user_id,
         u.name,
@@ -33,7 +34,7 @@ export async function getUserConversations(userId: string) {
       JOIN users u ON cp.user_id = u.id
       WHERE cp.user_id != ${userId}
     )
-    SELECT 
+    SELECT
       uc.id,
       uc.created_at,
       uc.updated_at,
@@ -54,7 +55,7 @@ export async function getUserConversations(userId: string) {
 
 export async function getConversationMessages(conversationId: string) {
   const messages = await sql`
-    SELECT 
+    SELECT
       m.*,
       u.name as sender_name,
       u.avatar as sender_avatar
@@ -65,4 +66,70 @@ export async function getConversationMessages(conversationId: string) {
   `
 
   return messages || []
+}
+
+export async function sendMessage({ conversationId, senderId, content }: {
+  conversationId: string;
+  senderId: string;
+  content: string;
+}) {
+  // Insert the new message
+  const [newMessage] = await sql`
+    INSERT INTO messages (conversation_id, sender_id, content, read)
+    VALUES (${conversationId}, ${senderId}, ${content}, false)
+    RETURNING *;
+  `
+
+  // Update the conversation's updated_at timestamp
+  await sql`
+    UPDATE conversations
+    SET updated_at = CURRENT_TIMESTAMP
+    WHERE id = ${conversationId};
+  `
+
+  // Notify all recipients except the sender
+  const recipients = await sql`
+    SELECT user_id FROM conversation_participants
+    WHERE conversation_id = ${conversationId} AND user_id != ${senderId}
+  `
+  for (const recipient of recipients) {
+    await createNotification({
+      userId: recipient.user_id,
+      type: 'new_message',
+      title: 'Nouveau message',
+      description: 'Vous avez reçu un nouveau message.',
+      link: `/messages/${conversationId}`,
+    })
+  }
+
+  return newMessage;
+}
+
+export async function findOrCreateConversation(userId1: string, userId2: string) {
+  // Check if a conversation already exists between the two users
+  const [existingConversation] = await sql`
+    SELECT c.id
+    FROM conversations c
+    JOIN conversation_participants cp1 ON c.id = cp1.conversation_id
+    JOIN conversation_participants cp2 ON c.id = cp2.conversation_id
+    WHERE cp1.user_id = ${userId1} AND cp2.user_id = ${userId2}
+       OR cp1.user_id = ${userId2} AND cp2.user_id = ${userId1};
+  `
+
+  if (existingConversation) {
+    return existingConversation.id;
+  }
+
+  // If not, create a new conversation
+  const [newConversation] = await sql`
+    INSERT INTO conversations DEFAULT VALUES RETURNING id;
+  `
+
+  // Add participants to the new conversation
+  await sql`
+    INSERT INTO conversation_participants (conversation_id, user_id)
+    VALUES (${newConversation.id}, ${userId1}), (${newConversation.id}, ${userId2});
+  `
+
+  return newConversation.id;
 }

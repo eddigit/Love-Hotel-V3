@@ -8,19 +8,19 @@ export async function saveOnboardingData(userId: string, data: OnboardingData): 
     // 1. Mettre à jour le profil utilisateur
     await executeQuery(
       `
-      INSERT INTO user_profiles (id, user_id, status, age, orientation)
-      VALUES ($1, $2, $3, $4, $5)
+      INSERT INTO user_profiles (id, user_id, status, age, orientation, gender, birthday)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
       ON CONFLICT (user_id) DO UPDATE
-      SET status = $3, age = $4, orientation = $5, updated_at = CURRENT_TIMESTAMP
+      SET status = $3, age = $4, orientation = $5, gender = $6, birthday = $7, updated_at = CURRENT_TIMESTAMP
     `,
-      [uuidv4(), userId, data.status, data.age, data.orientation],
+      [uuidv4(), userId, data.status, data.age, data.orientation, data.gender, data.birthday ? data.birthday : null], // Ensure birthday is null if empty
     )
 
     // 2. Mettre à jour les préférences utilisateur
     await executeQuery(
       `
       INSERT INTO user_preferences (
-        id, user_id, interested_in_restaurant, interested_in_events, 
+        id, user_id, interested_in_restaurant, interested_in_events,
         interested_in_dating, prefer_curtain_open, interested_in_lolib, suggestions
       )
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
@@ -104,12 +104,12 @@ export async function getOnboardingData(userId: string): Promise<OnboardingData 
   try {
     // Récupérer toutes les données d'onboarding en une seule requête avec des jointures
     const query = `
-      SELECT 
-        p.status, p.age, p.orientation,
-        pref.interested_in_restaurant, pref.interested_in_events, 
-        pref.interested_in_dating, pref.prefer_curtain_open, 
+      SELECT
+        p.status, p.age, p.orientation, p.gender, p.birthday,
+        pref.interested_in_restaurant, pref.interested_in_events,
+        pref.interested_in_dating, pref.prefer_curtain_open,
         pref.interested_in_lolib, pref.suggestions,
-        mt.friendly, mt.romantic, mt.playful, mt.open_curtains, 
+        mt.friendly, mt.romantic, mt.playful, mt.open_curtains,
         mt.libertine, mt.open_to_other_couples, mt.specific_preferences,
         ao.join_exclusive_events, ao.premium_access
       FROM users u
@@ -132,6 +132,8 @@ export async function getOnboardingData(userId: string): Promise<OnboardingData 
       status: data.status,
       age: data.age,
       orientation: data.orientation,
+      gender: data.gender, // Added gender
+      birthday: data.birthday ? new Date(data.birthday).toISOString().split('T')[0] : "", // Added birthday, formatted for input
 
       interestedInRestaurant: data.interested_in_restaurant || false,
       interestedInEvents: data.interested_in_events || false,

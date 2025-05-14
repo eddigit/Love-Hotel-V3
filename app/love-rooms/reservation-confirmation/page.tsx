@@ -8,6 +8,8 @@ import Link from "next/link"
 import { useSearchParams } from "next/navigation"
 import { MobileNavigation } from "@/components/mobile-navigation"
 import { motion } from "framer-motion"
+import MainLayout from "@/components/layout/main-layout"
+
 
 export default function ReservationConfirmationPage() {
   const searchParams = useSearchParams()
@@ -40,7 +42,7 @@ export default function ReservationConfirmationPage() {
           : "/twilight-tryst.png",
   }
 
-  return (
+  return (<MainLayout>
     <div className="min-h-screen flex flex-col pb-16 md:pb-0">
       <div className="container py-4 md:py-6 flex-1 flex flex-col items-center justify-center">
         <motion.div
@@ -133,6 +135,6 @@ export default function ReservationConfirmationPage() {
       </div>
 
       <MobileNavigation />
-    </div>
+    </div></MainLayout>
   )
 }

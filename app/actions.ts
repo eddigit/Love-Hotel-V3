@@ -4,7 +4,7 @@ import type { Notification } from "@/components/notifications-dropdown"
 import type { OnboardingData } from "@/components/onboarding-form"
 import { saveOnboardingData } from "@/lib/onboarding-service"
 import { createUser, verifyUserCredentials } from "@/lib/user-service"
-import { executeQuery } from "@/lib/db"
+import { executeQuery, sql } from "@/lib/db"
 
 // Fonction pour générer des notifications fictives
 function generateFakeNotifications(): Notification[] {
@@ -129,25 +129,44 @@ function generateFakeNotifications(): Notification[] {
   ]
 }
 
-export async function getNotifications() {
-  // Simuler un délai de chargement
-  await new Promise((resolve) => setTimeout(resolve, 500))
-
-  // Retourner les notifications fictives
-  return { notifications: generateFakeNotifications() }
+export async function getNotifications(userId: string) {
+  // Fetch notifications for the user from the database
+  const rows = await sql`
+    SELECT id, user_id, type, title, description, image, link, read, created_at
+    FROM notifications
+    WHERE user_id = ${userId}
+    ORDER BY created_at DESC
+    LIMIT 50
+  `
+  // Map DB rows to Notification type expected by the frontend
+  const notifications = rows.map((row: any) => ({
+    id: row.id,
+    type: row.type,
+    title: row.title,
+    description: row.description,
+    image: row.image,
+    link: row.link,
+    read: row.read,
+    time: new Date(row.created_at).toLocaleString(),
+  }))
+  return { notifications }
 }
 
 export async function markNotificationAsRead(id: string) {
-  // Simuler un délai de traitement
-  await new Promise((resolve) => setTimeout(resolve, 200))
-  console.log(`Marking notification ${id} as read`)
+  await sql`
+    UPDATE notifications
+    SET read = true
+    WHERE id = ${id}
+  `
   return { success: true }
 }
 
-export async function markAllNotificationsAsRead() {
-  // Simuler un délai de traitement
-  await new Promise((resolve) => setTimeout(resolve, 300))
-  console.log("Marking all notifications as read")
+export async function markAllNotificationsAsRead(userId: string) {
+  await sql`
+    UPDATE notifications
+    SET read = true
+    WHERE user_id = ${userId}
+  `
   return { success: true }
 }
 

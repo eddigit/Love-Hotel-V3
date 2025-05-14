@@ -1,8 +1,8 @@
 "use client"
 
-import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
+import { createContext, useContext, type ReactNode } from "react"
 import { useRouter } from "next/navigation"
-import { loginUser } from "@/app/actions"
+import { useSession, signIn, signOut } from "next-auth/react"
 
 // Types d'utilisateurs
 export type UserRole = "user" | "admin"
@@ -55,116 +55,34 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const { data: session, status, update } = useSession() // Added update from useSession
   const router = useRouter()
+  const isLoading = status === "loading"
+  const user = session?.user ?? null
 
-  // Vérifier si l'utilisateur est déjà connecté (localStorage)
-  useEffect(() => {
-    const storedUser = localStorage.getItem("currentUser")
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser))
-      } catch (error) {
-        console.error("Erreur lors de la récupération de l'utilisateur:", error)
-        localStorage.removeItem("currentUser")
-      }
+  // Login with NextAuth.js
+  const login = async (email: string, password: string) => {
+    const result = await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+    })
+    if (result && result.ok) {
+      return { success: true, message: "Connexion réussie" }
     }
-    setIsLoading(false)
-  }, [])
-
-  // Rediriger vers l'onboarding si nécessaire après la connexion
-  useEffect(() => {
-    if (user && !user.onboardingCompleted && router && !isLoading) {
-      const currentPath = window.location.pathname
-      if (currentPath !== "/onboarding") {
-        router.push("/onboarding")
-      }
-    }
-  }, [user, router, isLoading])
-
-  // Fonction de connexion
-  const login = async (email: string, password: string): Promise<{ success: boolean; message: string }> => {
-    setIsLoading(true)
-
-    try {
-      // Utiliser la fonction loginUser qui interagit avec la base de données
-      const result = await loginUser(email, password)
-
-      if (result.success && result.user) {
-        setUser({
-          id: result.user.id,
-          email: result.user.email,
-          name: result.user.name,
-          role: result.user.role,
-          avatar: result.user.avatar || "/mystical-forest-spirit.png", // Image par défaut si pas d'avatar
-          onboardingCompleted: result.user.onboarding_completed,
-        })
-
-        localStorage.setItem(
-          "currentUser",
-          JSON.stringify({
-            id: result.user.id,
-            email: result.user.email,
-            name: result.user.name,
-            role: result.user.role,
-            avatar: result.user.avatar || "/mystical-forest-spirit.png",
-            onboardingCompleted: result.user.onboarding_completed,
-          }),
-        )
-
-        setIsLoading(false)
-        return { success: true, message: "Connexion réussie" }
-      }
-
-      // Conserver le comportement de test pour les comptes de démonstration
-      if (email === TEST_USERS.user.email && password === "password") {
-        setUser(TEST_USERS.user)
-        localStorage.setItem("currentUser", JSON.stringify(TEST_USERS.user))
-        setIsLoading(false)
-        return { success: true, message: "Connexion réussie en tant qu'utilisateur" }
-      } else if (email === TEST_USERS.admin.email && password === "admin123") {
-        setUser(TEST_USERS.admin)
-        localStorage.setItem("currentUser", JSON.stringify(TEST_USERS.admin))
-        setIsLoading(false)
-        return { success: true, message: "Connexion réussie en tant qu'administrateur" }
-      } else if (email === TEST_USERS.demo.email && password === "demo123") {
-        setUser(TEST_USERS.demo)
-        localStorage.setItem("currentUser", JSON.stringify(TEST_USERS.demo))
-        setIsLoading(false)
-        return { success: true, message: "Connexion réussie en tant qu'utilisateur de démonstration" }
-      }
-
-      setIsLoading(false)
-      return { success: false, message: "Email ou mot de passe incorrect" }
-    } catch (error) {
-      console.error("Erreur lors de la connexion:", error)
-      setIsLoading(false)
-      return { success: false, message: "Une erreur est survenue lors de la connexion" }
-    }
+    return { success: false, message: "Email ou mot de passe incorrect" }
   }
 
-  // Fonction de déconnexion
+  // Logout with NextAuth.js
   const logout = () => {
-    setUser(null)
-    localStorage.removeItem("currentUser")
-    router.push("/login")
+    signOut({ callbackUrl: "/login" })
   }
 
-  // Fonction pour marquer l'onboarding comme complété
+  // Onboarding completion (optional, can be handled via API)
   const completeOnboarding = async () => {
-    if (user) {
-      try {
-        // Mettre à jour le statut d'onboarding dans la base de données
-        //await updateOnboardingStatus(user.id, true);
-
-        const updatedUser = { ...user, onboardingCompleted: true }
-        setUser(updatedUser)
-        localStorage.setItem("currentUser", JSON.stringify(updatedUser))
-      } catch (error) {
-        console.error("Erreur lors de la mise à jour du statut d'onboarding:", error)
-      }
-    }
+    // Implement onboarding status update if needed
+    await update() // Call update to refresh the session
+    router.push("/discover")
   }
 
   return (

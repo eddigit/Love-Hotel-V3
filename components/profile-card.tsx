@@ -9,6 +9,7 @@ import Link from "next/link"
 import { useState } from "react"
 
 interface ProfileCardProps {
+  id: string
   name: string
   age: number
   location: string
@@ -18,35 +19,46 @@ interface ProfileCardProps {
   matchScore?: number
 }
 
-export function ProfileCard({ name, age, location, image, online, featured, matchScore }: ProfileCardProps) {
+export function ProfileCard({ id, name, age, location, image, online, featured, matchScore }: ProfileCardProps) {
   const [imageError, setImageError] = useState(false)
 
-  // Vérifier si l'image est une URL externe
-  const isExternalImage = image.startsWith("http")
+  const placeholderSrc = "/placeholder.svg?height=500&width=400&query=person+silhouette"
+
+  // Determine the image source to use.
+  // If an error occurred, use the placeholder.
+  // Otherwise, use the provided image; if it's invalid (null, empty), also use the placeholder.
+  let srcToUse = imageError ? placeholderSrc : (typeof image === 'string' && image ? image : placeholderSrc)
+
+  // Check if the srcToUse (which might be the placeholder if original image failed) is an external URL.
+  const isExternal = typeof srcToUse === 'string' && srcToUse.startsWith("http")
+
+  const handleImageError = () => {
+    if (!imageError) { // Prevent infinite loops if placeholder itself errors, though unlikely for local SVG
+      setImageError(true)
+    }
+  }
 
   return (
-    <Link href={`/profile/${name.toLowerCase().replace(/\s+/g, "-")}`}>
+    <Link href={`/profile/${id}`}>
       <Card className="overflow-hidden border-0 shadow-lg shadow-purple-900/20 bg-gradient-to-b from-[#2d1155]/90 to-[#1a0d2e]/90 hover:shadow-xl hover:shadow-purple-900/30 transition-all duration-300 transform hover:scale-[1.02]">
         <CardContent className="p-0">
           <div className="relative aspect-[3/4]">
-            {isExternalImage ? (
-              // Pour les images externes, utiliser un élément img standard
-              <div className="w-full h-full relative">
-                <img
-                  src="https://t3.ftcdn.net/jpg/06/26/94/08/240_F_626940897_wwd1PzIV04U7EGesT81Csh8JEkDMqB7B.jpg"
-                  alt={name}
-                  className="w-full h-full object-cover absolute inset-0"
-                  onError={() => setImageError(true)}
-                />
-              </div>
+            {isExternal ? (
+              <img
+                src={srcToUse} // Use the determined src, not hardcoded
+                alt={name}
+                className="w-full h-full object-cover" // Simplified className
+                onError={handleImageError}
+              />
             ) : (
-              // Pour les images locales, utiliser le composant Image de Next.js
+              // For local images or if an external image failed (srcToUse is now placeholderSrc)
               <Image
-                src={image || "/placeholder.svg?height=500&width=400&query=person+silhouette"}
+                src={srcToUse} // Use the determined src
                 alt={name}
                 fill
                 className="object-cover"
                 sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+                onError={handleImageError} // Added onError for Next/Image
               />
             )}
 

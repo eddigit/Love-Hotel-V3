@@ -2,14 +2,24 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { MobileNavigation } from "@/components/mobile-navigation"
 import { useNotifications } from "@/contexts/notification-context"
+import { useAuth } from "@/contexts/auth-context"
+import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 import { EventCard } from "@/components/event-card"
+import MainLayout from "@/components/layout/main-layout"
 
-export default function EventsPage() {
+export default function EventsPage(props) {
   const { markAsRead } = useNotifications()
+  const { user: authUser } = useAuth()
+  const router = useRouter()
 
-  // Marquer les notifications d'événements comme lues lorsque l'utilisateur visite la page des événements
+  // Redirect if not logged in
   useEffect(() => {
+    if (!authUser?.id) {
+      router.replace("/login")
+      return
+    }
+
     const eventNotifications = [
       "3", // IDs des notifications de type événement
       "7",
@@ -19,7 +29,7 @@ export default function EventsPage() {
     eventNotifications.forEach((id) => {
       markAsRead(id)
     })
-  }, [markAsRead])
+  }, [markAsRead, authUser, router])
 
   // Simuler des données d'événements
   const events = [
@@ -80,36 +90,21 @@ export default function EventsPage() {
   ]
 
   return (
-    <div className="min-h-screen flex flex-col pb-16 md:pb-0">
-      <div className="container py-4 md:py-6 flex-1">
-        <h1 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6">Événements</h1>
+    <MainLayout user={authUser}>
+      <div className="min-h-screen flex flex-col pb-16 md:pb-0">
+        <div className="container py-4 md:py-6 flex-1">
+          <h1 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6">Événements</h1>
 
-        <Tabs defaultValue="all" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-4 md:mb-6">
-            <TabsTrigger value="all">Tous</TabsTrigger>
-            <TabsTrigger value="speed-dating">Speed Dating</TabsTrigger>
-            <TabsTrigger value="jacuzzi">Jacuzzi</TabsTrigger>
-            <TabsTrigger value="restaurant">Restaurant</TabsTrigger>
-          </TabsList>
-          <TabsContent value="all" className="space-y-4 md:space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {events.map((event) => (
-                <EventCard
-                  key={event.id}
-                  title={event.title}
-                  location={event.location}
-                  date={event.date}
-                  image={event.image}
-                  attendees={event.attendees}
-                />
-              ))}
-            </div>
-          </TabsContent>
-          <TabsContent value="speed-dating" className="space-y-4 md:space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {events
-                .filter((event) => event.category === "speed-dating")
-                .map((event) => (
+          <Tabs defaultValue="all" className="w-full">
+            <TabsList className="grid w-full grid-cols-4 mb-4 md:mb-6">
+              <TabsTrigger value="all">Tous</TabsTrigger>
+              <TabsTrigger value="speed-dating">Speed Dating</TabsTrigger>
+              <TabsTrigger value="jacuzzi">Jacuzzi</TabsTrigger>
+              <TabsTrigger value="restaurant">Restaurant</TabsTrigger>
+            </TabsList>
+            <TabsContent value="all" className="space-y-4 md:space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {events.map((event) => (
                   <EventCard
                     key={event.id}
                     title={event.title}
@@ -119,44 +114,61 @@ export default function EventsPage() {
                     attendees={event.attendees}
                   />
                 ))}
-            </div>
-          </TabsContent>
-          <TabsContent value="jacuzzi" className="space-y-4 md:space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {events
-                .filter((event) => event.category === "jacuzzi")
-                .map((event) => (
-                  <EventCard
-                    key={event.id}
-                    title={event.title}
-                    location={event.location}
-                    date={event.date}
-                    image={event.image}
-                    attendees={event.attendees}
-                  />
-                ))}
-            </div>
-          </TabsContent>
-          <TabsContent value="restaurant" className="space-y-4 md:space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {events
-                .filter((event) => event.category === "restaurant")
-                .map((event) => (
-                  <EventCard
-                    key={event.id}
-                    title={event.title}
-                    location={event.location}
-                    date={event.date}
-                    image={event.image}
-                    attendees={event.attendees}
-                  />
-                ))}
-            </div>
-          </TabsContent>
-        </Tabs>
+              </div>
+            </TabsContent>
+            <TabsContent value="speed-dating" className="space-y-4 md:space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {events
+                  .filter((event) => event.category === "speed-dating")
+                  .map((event) => (
+                    <EventCard
+                      key={event.id}
+                      title={event.title}
+                      location={event.location}
+                      date={event.date}
+                      image={event.image}
+                      attendees={event.attendees}
+                    />
+                  ))}
+              </div>
+            </TabsContent>
+            <TabsContent value="jacuzzi" className="space-y-4 md:space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {events
+                  .filter((event) => event.category === "jacuzzi")
+                  .map((event) => (
+                    <EventCard
+                      key={event.id}
+                      title={event.title}
+                      location={event.location}
+                      date={event.date}
+                      image={event.image}
+                      attendees={event.attendees}
+                    />
+                  ))}
+              </div>
+            </TabsContent>
+            <TabsContent value="restaurant" className="space-y-4 md:space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {events
+                  .filter((event) => event.category === "restaurant")
+                  .map((event) => (
+                    <EventCard
+                      key={event.id}
+                      title={event.title}
+                      location={event.location}
+                      date={event.date}
+                      image={event.image}
+                      attendees={event.attendees}
+                    />
+                  ))}
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
+
+        <MobileNavigation />
       </div>
-
-      <MobileNavigation />
-    </div>
+    </MainLayout>
   )
 }

@@ -1,7 +1,8 @@
 "use client"
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
-import { getNotifications } from "@/app/actions"
+import { getNotifications, markNotificationAsRead, markAllNotificationsAsRead } from "@/app/actions"
+import { useAuth } from "@/contexts/auth-context"
 import type { Notification } from "@/components/notifications-dropdown"
 
 type NotificationCounts = {
@@ -23,6 +24,7 @@ type NotificationContextType = {
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined)
 
 export function NotificationProvider({ children }: { children: ReactNode }) {
+  const { user } = useAuth();
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [counts, setCounts] = useState<NotificationCounts>({
     total: 0,
@@ -33,17 +35,24 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   })
 
   useEffect(() => {
+    if (!user?.id) return;
+    let isMounted = true;
+    let interval: NodeJS.Timeout;
     async function loadNotifications() {
       try {
-        const { notifications } = await getNotifications()
-        setNotifications(notifications)
+        const { notifications } = await getNotifications(user.id)
+        if (isMounted) setNotifications(notifications)
       } catch (error) {
-        console.error("Failed to load notifications:", error)
+        if (isMounted) console.error("Failed to load notifications:", error)
       }
     }
-
     loadNotifications()
-  }, [])
+    interval = setInterval(loadNotifications, 15000) // Poll every 15 seconds
+    return () => {
+      isMounted = false;
+      clearInterval(interval)
+    }
+  }, [user?.id])
 
   // Mettre à jour les compteurs chaque fois que les notifications changent
   useEffect(() => {
@@ -58,22 +67,30 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     })
   }, [notifications])
 
-  // Update the markAsRead function to avoid unnecessary re-renders
-  const markAsRead = (id: string) => {
+  const markAsRead = async (id: string) => {
     setNotifications((prev) => {
-      // Check if the notification exists and is not already read
       const notification = prev.find((n) => n.id === id)
       if (!notification || notification.read) {
-        return prev // Return the same array if no changes needed
+        return prev
       }
-
-      // Only update if the notification exists and needs to be marked as read
       return prev.map((notification) => (notification.id === id ? { ...notification, read: true } : notification))
     })
+    try {
+      await markNotificationAsRead(id)
+    } catch (e) {
+      // Optionally handle error
+    }
   }
 
-  const markAllAsRead = () => {
+  const markAllAsRead = async () => {
     setNotifications((prev) => prev.map((notification) => ({ ...notification, read: true })))
+    if (user?.id) {
+      try {
+        await markAllNotificationsAsRead(user.id)
+      } catch (e) {
+        // Optionally handle error
+      }
+    }
   }
 
   const addNotification = (notification: Notification) => {
