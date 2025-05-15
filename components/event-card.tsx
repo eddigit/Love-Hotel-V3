@@ -9,9 +9,11 @@ interface EventCardProps {
   date: string
   image: string
   attendees: number
+  isParticipating?: boolean
+  onSubscribeToggle?: () => void
 }
 
-export function EventCard({ title, location, date, image, attendees }: EventCardProps) {
+export function EventCard({ title, location, date, image, attendees, isParticipating, onSubscribeToggle }: EventCardProps) {
   return (
     <Card className="overflow-hidden card-hover border-0 shadow-lg shadow-purple-900/20">
       <div className="relative h-48 sm:h-56">
@@ -40,8 +42,12 @@ export function EventCard({ title, location, date, image, attendees }: EventCard
             <span>{attendees} participants</span>
           </div>
         </div>
-        <Button className="w-full bg-gradient-to-r from-[#ff3b8b] to-[#ff8cc8] border-0 hover:opacity-90">
-          Participer
+        <Button
+          className={`w-full bg-gradient-to-r from-[#ff3b8b] to-[#ff8cc8] border-0 hover:opacity-90`}
+          variant={isParticipating ? "secondary" : "default"}
+          onClick={onSubscribeToggle}
+        >
+          {isParticipating ? "Se désinscrire" : "Participer"}
         </Button>
       </CardContent>
     </Card>

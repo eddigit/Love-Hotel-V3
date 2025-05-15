@@ -133,3 +133,24 @@ export async function findOrCreateConversation(userId1: string, userId2: string)
 
   return newConversation.id;
 }
+
+// Get messages sent grouped by day/week/month
+export async function getMessagesStats({ startDate, endDate, scale }: { startDate: string, endDate: string, scale: "day"|"week"|"month" }) {
+  let dateTrunc;
+  if (scale === "day") {
+    dateTrunc = "TO_CHAR(DATE(created_at), 'YYYY-MM-DD')";
+  } else if (scale === "week") {
+    dateTrunc = "TO_CHAR(DATE_TRUNC('week', created_at), 'YYYY-MM-DD')";
+  } else {
+    dateTrunc = "TO_CHAR(DATE_TRUNC('month', created_at), 'YYYY-MM-DD')";
+  }
+  const query = `
+    SELECT ${dateTrunc} as period, COUNT(*) as count
+    FROM messages
+    WHERE created_at BETWEEN $1 AND $2
+    GROUP BY period
+    ORDER BY period ASC
+  `;
+  const stats = await sql.query(query, [startDate, endDate]);
+  return stats;
+}

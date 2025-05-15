@@ -226,3 +226,113 @@ export async function getOutgoingMatchRequests(userId: string) {
     ORDER BY created_at DESC
   `
 }
+
+export async function getAllUsers() {
+  const users = await sql`
+    SELECT u.id, u.name, u.email, u.role, u.avatar, up.location, up.age
+    FROM users u
+    LEFT JOIN user_profiles up ON u.id = up.user_id
+    ORDER BY u.created_at DESC
+  `
+  return users || []
+}
+
+export async function updateUserByAdmin(userId: string, { name, email, role, avatar }: { name?: string, email?: string, role?: string, avatar?: string }) {
+  const [user] = await sql`
+    UPDATE users
+    SET
+      name = COALESCE(${name}, name),
+      email = COALESCE(${email}, email),
+      role = COALESCE(${role}, role),
+      avatar = COALESCE(${avatar}, avatar)
+    WHERE id = ${userId}
+    RETURNING *
+  `
+  return user
+}
+
+export async function deleteUserByAdmin(userId: string) {
+  await sql`
+    DELETE FROM users WHERE id = ${userId}
+  `
+  return { success: true }
+}
+
+// Get new users count grouped by day/week/month
+export async function getNewUsersStats({ startDate, endDate, scale }: { startDate: string, endDate: string, scale: "day"|"week"|"month" }) {
+  let dateTrunc;
+  if (scale === "day") {
+    dateTrunc = "TO_CHAR(DATE(created_at), 'YYYY-MM-DD')";
+  } else if (scale === "week") {
+    dateTrunc = "TO_CHAR(DATE_TRUNC('week', created_at), 'YYYY-MM-DD')";
+  } else {
+    dateTrunc = "TO_CHAR(DATE_TRUNC('month', created_at), 'YYYY-MM-DD')";
+  }
+  const query = `
+    SELECT ${dateTrunc} as period, COUNT(*) as count
+    FROM users
+    WHERE created_at BETWEEN $1 AND $2
+    GROUP BY period
+    ORDER BY period ASC
+  `;
+  const stats = await sql.query(query, [startDate, endDate]);
+  return stats;
+}
+
+// Get active users (users who sent a message) grouped by day/week/month
+export async function getActiveUsersStats({ startDate, endDate, scale }: { startDate: string, endDate: string, scale: "day"|"week"|"month" }) {
+  let dateTrunc;
+  if (scale === "day") {
+    dateTrunc = "TO_CHAR(DATE(created_at), 'YYYY-MM-DD')";
+  } else if (scale === "week") {
+    dateTrunc = "TO_CHAR(DATE_TRUNC('week', created_at), 'YYYY-MM-DD')";
+  } else {
+    dateTrunc = "TO_CHAR(DATE_TRUNC('month', created_at), 'YYYY-MM-DD')";
+  }
+  const query = `
+    SELECT ${dateTrunc} as period, COUNT(DISTINCT sender_id) as count
+    FROM messages
+    WHERE created_at BETWEEN $1 AND $2
+    GROUP BY period
+    ORDER BY period ASC
+  `;
+  const stats = await sql.query(query, [startDate, endDate]);
+  return stats;
+}
+
+// Get new matches grouped by day/week/month
+export async function getMatchesStats({ startDate, endDate, scale }: { startDate: string, endDate: string, scale: "day"|"week"|"month" }) {
+  let dateTrunc;
+  if (scale === "day") {
+    dateTrunc = "TO_CHAR(DATE(created_at), 'YYYY-MM-DD')";
+  } else if (scale === "week") {
+    dateTrunc = "TO_CHAR(DATE_TRUNC('week', created_at), 'YYYY-MM-DD')";
+  } else {
+    dateTrunc = "TO_CHAR(DATE_TRUNC('month', created_at), 'YYYY-MM-DD')";
+  }
+  const query = `
+    SELECT ${dateTrunc} as period, COUNT(*) as count
+    FROM user_matches
+    WHERE status = 'accepted' AND created_at BETWEEN $1 AND $2
+    GROUP BY period
+    ORDER BY period ASC
+  `;
+  const stats = await sql.query(query, [startDate, endDate]);
+  return stats;
+}
+
+// Get an option by name
+export async function getOption(name: string) {
+  const [option] = await sql`SELECT value FROM options WHERE name = ${name}`
+  return option?.value || null
+}
+
+// Set an option by name
+export async function setOption(name: string, value: string) {
+  await sql`
+    INSERT INTO options (name, value)
+    VALUES (${name}, ${value})
+    ON CONFLICT (name) DO UPDATE SET value = EXCLUDED.value
+  `
+  return { success: true }
+}
