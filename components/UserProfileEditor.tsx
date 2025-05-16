@@ -144,7 +144,7 @@ export function UserProfileEditor({ user, onSave, onUploadImage }: {
         <div>
           <div className="flex flex-wrap gap-2 mb-2">
             {form.interests.map((interest: string) => (
-              <span key={interest} className="inline-flex items-center bg-gray-200 rounded px-2 py-1 text-sm">
+              <span key={interest} className="inline-flex items-center bg-gray-800 rounded px-2 py-1 text-sm">
                 {interest}
                 <button type="button" onClick={() => handleRemoveInterest(interest)} className="ml-1 text-red-500">×</button>
               </span>

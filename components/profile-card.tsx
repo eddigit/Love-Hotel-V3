@@ -38,6 +38,8 @@ export function ProfileCard({ id, name, age, location, image, online, featured, 
     }
   }
 
+  const imageAltText = `Photo de profil de ${name}, ${age} ans, ${location}`
+
   return (
     <Link href={`/profile/${id}`}>
       <Card className="overflow-hidden border-0 shadow-lg shadow-purple-900/20 bg-gradient-to-b from-[#2d1155]/90 to-[#1a0d2e]/90 hover:shadow-xl hover:shadow-purple-900/30 transition-all duration-300 transform hover:scale-[1.02]">
@@ -46,7 +48,7 @@ export function ProfileCard({ id, name, age, location, image, online, featured, 
             {isExternal ? (
               <img
                 src={srcToUse} // Use the determined src, not hardcoded
-                alt={name}
+                alt={imageAltText}
                 className="w-full h-full object-cover" // Simplified className
                 onError={handleImageError}
               />
@@ -54,7 +56,7 @@ export function ProfileCard({ id, name, age, location, image, online, featured, 
               // For local images or if an external image failed (srcToUse is now placeholderSrc)
               <Image
                 src={srcToUse} // Use the determined src
-                alt={name}
+                alt={imageAltText}
                 fill
                 className="object-cover"
                 sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"

@@ -16,44 +16,57 @@ import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { findOrCreateConversation } from "@/actions/conversation-actions"
 import { redirect } from "next/navigation"
-import { use } from "react"
 
-export default async function ProfilePage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params)
+// Add type for the session user
+type SessionUser = {
+  id?: string;
+  name?: string | null;
+  email?: string | null;
+  image?: string | null;
+  role?: string;
+  avatar?: string;
+  onboardingCompleted?: boolean;
+}
+
+export default async function ProfilePage({ params }: { params: { id: string } }) {
+  // Properly await the params object
+  const { id } = await params;
 
   // Fetch user profile by ID
-  const userProfileData = await getUserProfile(id)
+  const userProfileData = await getUserProfile(id);
   if (!userProfileData || !userProfileData.user) {
-    notFound()
+    notFound();
   }
-  const user = userProfileData.user
+
+  const user = userProfileData.user;
   // Use user.user_id for the real user's id, user.profile_id for the profile row's id
-  console.log("[ProfilePage] params.id:", id, "user.user_id:", user.user_id, "user.profile_id:", user.profile_id)
-  const profile = userProfileData.user
-  const preferences = userProfileData.preferences
+  console.log("[ProfilePage] params.id:", id, "user.user_id:", user.user_id, "user.profile_id:", user.profile_id);
+  const profile = userProfileData.user;
+  const preferences = userProfileData.preferences;
   // Use avatar or fallback
-  const avatar = user.avatar || "/placeholder.svg"
+  const avatar = user.avatar || "/placeholder.svg";
+
   // Format birthday if present
-  let formattedBirthday = ""
+  let formattedBirthday = "";
   if (profile.birthday) {
     try {
-      const date = new Date(profile.birthday)
+      const date = new Date(profile.birthday);
       if (!isNaN(date.getTime())) {
-        formattedBirthday = date.toISOString().split('T')[0]
+        formattedBirthday = date.toISOString().split('T')[0];
       } else if (typeof profile.birthday === 'string' && profile.birthday.match(/^\d{4}-\d{2}-\d{2}$/)) {
-        formattedBirthday = profile.birthday
+        formattedBirthday = profile.birthday;
       }
     } catch {}
   }
 
   // Get the current session user
-  const session = await getServerSession(authOptions)
-  const currentUser = session?.user
-  let matchStatus: any = null
-  let isRequester = false
-  if (currentUser && currentUser.id && currentUser.id !== user.user_id) {
-    matchStatus = await getMatchStatus(String(currentUser.id), String(user.user_id))
-    isRequester = matchStatus && matchStatus.user_id_1 === currentUser.id
+  const session = await getServerSession(authOptions);
+  const currentUser = session?.user as SessionUser;
+  let matchStatus: any = null;
+  let isRequester = false;
+  if (currentUser?.id && currentUser.id !== user.user_id) {
+    matchStatus = await getMatchStatus(String(currentUser.id), String(user.user_id));
+    isRequester = matchStatus && matchStatus.user_id_1 === currentUser.id;
   }
 
   return (

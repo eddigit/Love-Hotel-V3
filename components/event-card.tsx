@@ -27,9 +27,7 @@ export function EventCard({ title, location, date, image, attendees, isParticipa
             </div>
           </div>
         </div>
-        <div className="absolute top-2 right-2">
-          <span className="live-badge">LIVE</span>
-        </div>
+
       </div>
       <CardContent className="p-4 space-y-4 bg-gradient-to-br from-[#2d1155]/90 to-[#3d1155]/80">
         <div className="flex items-center justify-between flex-wrap gap-y-2">

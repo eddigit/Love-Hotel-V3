@@ -1,25 +1,30 @@
 "use client"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { sendMessageToUser } from "@/actions/conversation-actions"
+import { sendMessage, findOrCreateConversation } from "@/actions/conversation-actions"
+import { useAuth } from "@/contexts/auth-context"
 
 export function ProfileMessageForm({ recipientId }: { recipientId: string }) {
   const [message, setMessage] = useState("")
   const [sending, setSending] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState("")
+  const { user } = useAuth()
+
   async function handleSend(e: React.FormEvent) {
     e.preventDefault()
     setSending(true)
     setError("")
     setSuccess(false)
     try {
-      const result = await sendMessageToUser(recipientId, message)
-      if (result.success) {
+      if (!user?.id) throw new Error("Vous devez être connecté pour envoyer un message.")
+      const conversationId = await findOrCreateConversation(user.id, recipientId)
+      const result = await sendMessage({ conversationId, senderId: user.id, content: message })
+      if (result) {
         setSuccess(true)
         setMessage("")
       } else {
-        setError(result.error || "Erreur lors de l'envoi du message.")
+        setError("Erreur lors de l'envoi du message.")
       }
     } catch (err) {
       setError("Erreur lors de l'envoi du message.")
@@ -27,6 +32,7 @@ export function ProfileMessageForm({ recipientId }: { recipientId: string }) {
       setSending(false)
     }
   }
+
   return (
     <form onSubmit={handleSend} className="flex flex-col gap-2 mt-6">
       <textarea

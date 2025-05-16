@@ -4,8 +4,8 @@ import { usePathname } from "next/navigation"
 
 const tabs = [
   { label: "Dashboard", href: "/admin" },
-  { label: "Événements", href: "/admin/events" },
   { label: "Utilisateurs", href: "/admin/users" },
+  { label: "Événements", href: "/admin/events" },
   { label: "Paramètres", href: "/admin/options" },
   // Add more admin sections here as needed
   // { label: "Statistiques", href: "/admin/stats" },

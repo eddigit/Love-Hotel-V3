@@ -54,12 +54,25 @@ export async function getUserMatches(userId: string) {
   return matches || []
 }
 
-export async function getDiscoverProfiles(currentUserId: string) {
+export async function getDiscoverProfiles(currentUserId: string, page: number = 1, pageSize: number = 50) {
+  const offset = (page - 1) * pageSize;
+
+  // First get total count
+  const totalCountResult = await sql`
+    SELECT COUNT(*) as total
+    FROM users u
+    JOIN user_profiles up ON u.id = up.user_id
+    WHERE u.id != ${currentUserId}
+  `;
+
+  const totalCount = parseInt(totalCountResult[0].total);
+
+  // Then get paginated profiles
   const profiles = await sql`
     SELECT
       u.id,
       u.name,
-      u.avatar as image, -- Alias avatar to image to match UserProfile interface
+      u.avatar as image,
       up.age,
       up.location,
       up.orientation,
@@ -67,45 +80,45 @@ export async function getDiscoverProfiles(currentUserId: string) {
       up.gender,
       up.birthday,
       up.bio,
-      up.interests, -- This is a JSON string
-      -- Add a simple way to determine online status (e.g., last_active within X minutes)
-      -- For now, we'll mock it or leave it out until a proper presence system is built
-      true as online, -- Placeholder for online status
-      false as featured -- Placeholder for featured status
-      -- We will need to fetch preferences separately or join them if needed for the UserProfile structure
+      up.interests,
+      true as online,
+      false as featured
     FROM users u
     JOIN user_profiles up ON u.id = up.user_id
     WHERE u.id != ${currentUserId}
-    -- Add any other initial filtering if necessary (e.g., only show completed profiles)
-    -- ORDER BY RANDOM() -- Or some other logic for discovery, e.g., last active, new users
-    LIMIT 50; -- Limit the number of profiles for now
-  `
-  // The UserProfile interface in matching-algorithm.ts expects a nested 'preferences' object.
-  // We'll need to map the fetched data to this structure.
-  // For now, this action will return a simpler structure, and the page component will adapt or we'll refine this.
-  return profiles.map(profile => ({
+    ORDER BY u.created_at DESC
+    LIMIT ${pageSize}
+    OFFSET ${offset}
+  `;
+
+  const mappedProfiles = profiles.map(profile => ({
     ...profile,
-    // Attempt to parse interests if it's a JSON string, otherwise default to empty array
     interests: profile.interests ? JSON.parse(profile.interests) : [],
-    // Mocking preferences for now as it's a complex object
-    // In a real scenario, you'd fetch and structure this properly
     preferences: {
       status: profile.status,
       age: profile.age,
       orientation: profile.orientation,
-      interestedInRestaurant: false, // Mock
-      interestedInEvents: false, // Mock
-      interestedInDating: true, // Mock
-      preferCurtainOpen: false, // Mock
-      interestedInLolib: false, // Mock
-      suggestions: "", // Mock
-      meetingTypes: { friendly: false, romantic: false, playful: false, openCurtains: false, libertine: false }, // Mock
-      openToOtherCouples: false, // Mock
-      specificPreferences: "", // Mock
-      joinExclusiveEvents: false, // Mock
-      premiumAccess: false, // Mock
+      interestedInRestaurant: false,
+      interestedInEvents: false,
+      interestedInDating: true,
+      preferCurtainOpen: false,
+      interestedInLolib: false,
+      suggestions: "",
+      meetingTypes: { friendly: false, romantic: false, playful: false, openCurtains: false, libertine: false },
+      openToOtherCouples: false,
+      specificPreferences: "",
+      joinExclusiveEvents: false,
+      premiumAccess: false,
     }
   }));
+
+  return {
+    profiles: mappedProfiles,
+    totalCount,
+    currentPage: page,
+    totalPages: Math.ceil(totalCount / pageSize),
+    hasMore: offset + profiles.length < totalCount
+  };
 }
 
 // Send a match request (creates a pending match if not already exists)
