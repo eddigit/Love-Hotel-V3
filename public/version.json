@@ -1,7 +1,8 @@
 {
   "version": "0.1.0",
-  "buildNumber": 0,
-  "lastCommit": "",
-  "lastCommitDate": "",
-  "deploymentDate": ""
+  "buildNumber": 1,
+  "lastCommit": "b5bab28",
+  "lastCommitDate": "2025-05-19T14:19:56.306Z",
+  "deploymentDate": "2025-05-19T14:19:56.306Z",
+  "lastCommitMessage": "versionning footer"
 }
