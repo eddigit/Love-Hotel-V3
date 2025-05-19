@@ -1,8 +1,5 @@
-# Get current branch
-current_branch=$(git symbolic-ref --short HEAD)
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
 
-# Only run version script if on pzen_2 branch
-if [ "$current_branch" = "pzen_2" ]; then
-  echo "Updating version for pzen_2 deployment..."
-  node scripts/update-version.js
-fi
+# Ce hook est maintenant remplacé par post-push
+# pour capturer le bon commit après le push
