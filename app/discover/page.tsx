@@ -9,7 +9,6 @@ import { MobileNavigation } from "@/components/mobile-navigation"
 import { useState, useEffect, useContext, useCallback } from "react"
 import { AdvancedFilters } from "@/components/advanced-filters";
 import { ProfileCard } from "@/components/profile-card";
-import { sortProfilesByCompatibility } from "@/utils/matching-algorithm"
 import { useAuth } from "@/contexts/auth-context"
 import { motion } from "framer-motion"
 import MainLayout from "@/components/layout/main-layout"
@@ -58,6 +57,7 @@ export default function DiscoverPage() {
     setLoading(true);
     try {
       const result = await getDiscoverProfiles(user.id, page);
+      
       setProfiles(prev => page === 1 ? result.profiles : [...prev, ...result.profiles]);
       setTotalPages(result.totalPages);
       setHasMore(result.hasMore);
@@ -127,7 +127,7 @@ export default function DiscoverPage() {
               age={profile.age}
               location={profile.location}
               image={profile.image}
-              // Add other props as needed
+              popularity={profile.popularity}
             />
           ))}
         </div>

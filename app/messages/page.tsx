@@ -49,7 +49,7 @@ export default function MessagesPage() {
             other_user_name: conv.other_user_name,
             last_message: conv.last_message,
             last_message_date: conv.last_message_date
-              ? new Date(conv.last_message_date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+              ? formatMessageDate(new Date(conv.last_message_date))
               : "",
             other_user_avatar: conv.other_user_avatar,
           }))
@@ -65,18 +65,46 @@ export default function MessagesPage() {
     if (session) {
       fetchConversations()
     }
-
-    const messageNotifications = [
-      "1",
-      "5",
-      "9",
-      "new-1234567890",
-    ]
-
-    messageNotifications.forEach((id) => {
-      markAsRead(id)
-    })
   }, [session, markAsRead])
+
+  // Format dates in a user-friendly way
+  function formatMessageDate(date: Date): string {
+    const now = new Date()
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    const yesterday = new Date(today)
+    yesterday.setDate(yesterday.getDate() - 1)
+    const twoDaysAgo = new Date(today)
+    twoDaysAgo.setDate(twoDaysAgo.getDate() - 2)
+    
+    const timeString = date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+    
+    if (date >= today) {
+      // Today: just show the time
+      return timeString
+    } else if (date >= yesterday) {
+      // Yesterday: show "Hier à HH:MM"
+      return `Hier à ${timeString}`
+    } else if (date >= twoDaysAgo) {
+      // Two days ago: show "Avant-hier à HH:MM"
+      return `Avant-hier à ${timeString}`
+    } else {
+      // Calculate difference in days, months, and years
+      const daysDiff = Math.floor((today.getTime() - date.getTime()) / (1000 * 60 * 60 * 24))
+      const monthsDiff = (today.getFullYear() - date.getFullYear()) * 12 + today.getMonth() - date.getMonth()
+      const yearsDiff = today.getFullYear() - date.getFullYear()
+      
+      if (yearsDiff >= 1) {
+        // More than a year ago: "Il y a # ans"
+        return yearsDiff === 1 ? `Il y a 1 an` : `Il y a ${yearsDiff} ans`
+      } else if (monthsDiff >= 1) {
+        // More than a month ago: "Il y a # mois"
+        return monthsDiff === 1 ? `Il y a 1 mois` : `Il y a ${monthsDiff} mois`
+      } else {
+        // Less than a month ago: "Il y a # jours"
+        return daysDiff === 1 ? `Il y a 1 jour` : `Il y a ${daysDiff} jours`
+      }
+    }
+  }
 
   if (loading && !conversations.length) {
     return (

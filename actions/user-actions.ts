@@ -67,7 +67,10 @@ export async function getDiscoverProfiles(currentUserId: string, page: number = 
 
   const totalCount = parseInt(totalCountResult[0].total);
 
-  // Then get paginated profiles
+  // Then get paginated profiles with improved sorting:
+  // 1. Prioritize profiles with avatar images
+  // 2. Then by popularity (number of matches)
+  // 3. Then by recent creation date
   const profiles = await sql`
     SELECT
       u.id,
@@ -82,11 +85,15 @@ export async function getDiscoverProfiles(currentUserId: string, page: number = 
       up.bio,
       up.interests,
       true as online,
-      false as featured
+      false as featured,
+      (SELECT COUNT(*) FROM user_matches WHERE (user_id_1 = u.id OR user_id_2 = u.id) AND status = 'accepted') as match_count
     FROM users u
     JOIN user_profiles up ON u.id = up.user_id
     WHERE u.id != ${currentUserId}
-    ORDER BY u.created_at DESC
+    ORDER BY 
+      (CASE WHEN u.avatar IS NOT NULL AND u.avatar != '' THEN 1 ELSE 0 END) DESC,
+      match_count DESC,
+      u.created_at DESC
     LIMIT ${pageSize}
     OFFSET ${offset}
   `;
@@ -109,7 +116,9 @@ export async function getDiscoverProfiles(currentUserId: string, page: number = 
       specificPreferences: "",
       joinExclusiveEvents: false,
       premiumAccess: false,
-    }
+    },
+    // Add popularity metric for frontend use
+    popularity: profile.match_count || 0
   }));
 
   return {

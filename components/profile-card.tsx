@@ -3,7 +3,7 @@
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { MatchScore } from "@/components/match-score"
-import { Star } from "lucide-react"
+import { Star, Heart, Flame } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { useState } from "react"
@@ -17,9 +17,10 @@ interface ProfileCardProps {
   online?: boolean
   featured?: boolean
   matchScore?: number
+  popularity?: number // Added popularity prop
 }
 
-export function ProfileCard({ id, name, age, location, image, online, featured, matchScore }: ProfileCardProps) {
+export function ProfileCard({ id, name, age, location, image, online, featured, matchScore, popularity }: ProfileCardProps) {
   const [imageError, setImageError] = useState(false)
 
   const placeholderSrc = "/placeholder.svg?height=500&width=400&query=person+silhouette"
@@ -74,6 +75,25 @@ export function ProfileCard({ id, name, age, location, image, online, featured, 
                 <Badge className="bg-gradient-to-r from-amber-400 to-amber-600 border-0 flex items-center gap-1.5 text-xs">
                   <Star className="h-3 w-3 fill-white" />
                   VIP
+                </Badge>
+              </div>
+            )}
+            {/* Popularity badge - shows only for profiles with 3+ matches */}
+            {popularity !== undefined && popularity >= 3 && (
+              <div className={`absolute ${featured ? 'top-10' : 'top-2'} right-2`}>
+                <Badge 
+                  className={`
+                    flex items-center gap-1.5 text-xs border-0
+                    ${popularity >= 10 
+                      ? 'bg-gradient-to-r from-pink-500 to-rose-600' 
+                      : popularity >= 5 
+                        ? 'bg-gradient-to-r from-pink-400 to-pink-600'
+                        : 'bg-gradient-to-r from-pink-300 to-pink-500'
+                    }
+                  `}
+                >
+                  <Flame className="h-3 w-3 fill-white" />
+                  {popularity >= 10 ? 'Populaire' : popularity >= 5 ? 'Tendance' : 'En vue'}
                 </Badge>
               </div>
             )}
