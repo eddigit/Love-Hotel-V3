@@ -9,23 +9,24 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from "@/components/ui/label"
 import { Mail, Lock, Eye, EyeOff, ArrowLeft } from "lucide-react"
 import Link from "next/link"
-import { useAuth } from "@/contexts/auth-context"
 import { useRouter } from "next/navigation"
 import { useToast } from "@/components/ui/use-toast"
 import { signIn } from "next-auth/react"
 import MainLayout from "@/components/layout/main-layout"
 
-export default function LoginPage(props) {
+export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
 
-  const { isLoading } = useAuth()
   const router = useRouter()
   const { toast } = useToast()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setIsLoading(true)
+
     try {
       const result = await signIn("credentials", {
         email,
@@ -33,6 +34,7 @@ export default function LoginPage(props) {
         redirect: false,
         callbackUrl: "/discover",
       })
+
       if (result && result.ok) {
         toast({
           title: "Connexion réussie",
@@ -53,6 +55,8 @@ export default function LoginPage(props) {
         description: "Une erreur s'est produite lors de la connexion",
         variant: "destructive",
       })
+    } finally {
+      setIsLoading(false)
     }
   }
 
