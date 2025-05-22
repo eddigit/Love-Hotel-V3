@@ -1,101 +1,62 @@
 "use client"
 
-import { createContext, useContext, type ReactNode } from "react"
+import type React from "react"
+
+import { createContext, useContext, useState, useEffect } from "react"
+import { useSession, signOut } from "next-auth/react"
 import { useRouter } from "next/navigation"
-import { useSession, signIn, signOut } from "next-auth/react"
 
-// Types d'utilisateurs
-export type UserRole = "user" | "admin"
-
-export type User = {
-  id: string
-  email: string
-  name: string
-  role: UserRole
-  avatar: string
-  onboardingCompleted?: boolean
-}
-
-// Utilisateurs de test prédéfinis
-export const TEST_USERS = {
-  user: {
-    id: "user-123",
-    email: "user@test.com",
-    name: "Alex Durand",
-    role: "user" as UserRole,
-    avatar: "/mystical-forest-spirit.png",
-    onboardingCompleted: false,
-  },
-  admin: {
-    id: "admin-456",
-    email: "admin@test.com",
-    name: "Admin Système",
-    role: "admin" as UserRole,
-    avatar: "/contemplative-portrait.png",
-    onboardingCompleted: true,
-  },
-  demo: {
-    id: "demo-789",
-    email: "demo@test.com",
-    name: "Sophie Martin",
-    role: "user" as UserRole,
-    avatar: "/serene-woman.png",
-    onboardingCompleted: true,
-  },
-}
-
-type AuthContextType = {
-  user: User | null
-  login: (email: string, password: string) => Promise<{ success: boolean; message: string }>
-  logout: () => void
+interface AuthContextType {
+  user: any
   isLoading: boolean
-  completeOnboarding: () => void
+  isAuthenticated: boolean
+  logout: () => Promise<void>
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined)
+const AuthContext = createContext<AuthContextType>({
+  user: null,
+  isLoading: true,
+  isAuthenticated: false,
+  logout: async () => {},
+})
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const { data: session, status, update } = useSession() // Added update from useSession
+export const useAuth = () => useContext(AuthContext)
+
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const { data: session, status } = useSession()
+  const [user, setUser] = useState<any>(null)
+  const [isLoading, setIsLoading] = useState<boolean>(status === "loading")
   const router = useRouter()
-  const isLoading = status === "loading"
-  const user = session?.user ?? null
 
-  // Login with NextAuth.js
-  const login = async (email: string, password: string) => {
-    const result = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    })
-    if (result && result.ok) {
-      return { success: true, message: "Connexion réussie" }
+  useEffect(() => {
+    if (status === "loading") {
+      setIsLoading(true)
+      return
     }
-    return { success: false, message: "Email ou mot de passe incorrect" }
-  }
 
-  // Logout with NextAuth.js
-  const logout = () => {
-    signOut({ callbackUrl: "/login" })
-  }
+    setIsLoading(false)
+    if (session?.user) {
+      setUser(session.user)
+    } else {
+      setUser(null)
+    }
+  }, [session, status])
 
-  // Onboarding completion (optional, can be handled via API)
-  const completeOnboarding = async () => {
-    // Implement onboarding status update if needed
-    await update() // Call update to refresh the session
-    router.push("/discover")
+  const logout = async () => {
+    await signOut({ redirect: false })
+    router.push("/")
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isLoading, completeOnboarding }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        isLoading,
+        isAuthenticated: !!user,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   )
-}
-
-export function useAuth() {
-  const context = useContext(AuthContext)
-  if (context === undefined) {
-    throw new Error("useAuth doit être utilisé à l'intérieur d'un AuthProvider")
-  }
-  return context
 }

@@ -1,21 +1,24 @@
 "use client"
-import { ThemeProvider } from "@/components/theme-provider"
-import { NotificationProvider } from "@/contexts/notification-context"
-import { AuthProvider } from "@/contexts/auth-context"
+
+import type React from "react"
+
+import { ThemeProvider } from "next-themes"
 import { SessionProvider } from "next-auth/react"
-import { LoolyyBWidget } from "@/components/loolyyb-widget"
+import { AuthProvider } from "@/contexts/auth-context"
+import { NotificationProvider } from "@/contexts/notification-context"
+import { Toaster } from "@/components/ui/toaster"
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} disableTransitionOnChange>
-      <SessionProvider>
+    <SessionProvider refetchInterval={0}>
+      <ThemeProvider attribute="class" defaultTheme="dark">
         <AuthProvider>
           <NotificationProvider>
             {children}
-            <LoolyyBWidget />
+            <Toaster />
           </NotificationProvider>
         </AuthProvider>
-      </SessionProvider>
-    </ThemeProvider>
+      </ThemeProvider>
+    </SessionProvider>
   )
 }

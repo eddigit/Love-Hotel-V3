@@ -1,10 +1,5 @@
-import LandingPage from "./landing-page"
-import MainLayout from "@/components/layout/main-layout"
+import { LandingPage } from "./landing-page"
 
 export default function Home() {
-  return (
-    <MainLayout>
-      <LandingPage />
-    </MainLayout>
-  )
+  return <LandingPage />
 }
