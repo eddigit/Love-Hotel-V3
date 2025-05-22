@@ -31,6 +31,7 @@ export default function LoginPage(props) {
         email,
         password,
         redirect: false,
+        callbackUrl: "/discover",
       })
       if (result && result.ok) {
         toast({
@@ -123,7 +124,6 @@ export default function LoginPage(props) {
                   <Button type="submit" className="w-full h-11" disabled={isLoading}>
                     {isLoading ? "Connexion en cours..." : "Se connecter"}
                   </Button>
-
                 </form>
 
                 <div className="relative my-6">

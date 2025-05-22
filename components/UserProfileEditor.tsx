@@ -14,16 +14,29 @@ export function UserProfileEditor({ user, onSave, onUploadImage }: {
   onUploadImage: (formData: FormData) => Promise<any>
 }) {
   const router = useRouter();
-  const [form, setForm] = useState({
-    name: user.name || "",
-    bio: user.bio || "",
-    location: user.location || "",
-    age: user.age || "",
-    orientation: user.orientation || "",
-    gender: user.gender || "",
-    birthday: user.birthday || "",
-    interests: user.interests || [],
-    avatar: user.avatar || "",
+  const [form, setForm] = useState(() => {
+    let interests = user.interests;
+    if (typeof interests === 'string') {
+      try {
+        interests = interests ? JSON.parse(interests) : [];
+      } catch {
+        interests = [];
+      }
+    }
+    if (!Array.isArray(interests)) {
+      interests = [];
+    }
+    return {
+      name: user.name || "",
+      bio: user.bio || "",
+      location: user.location || "",
+      age: user.age || "",
+      orientation: user.orientation || "",
+      gender: user.gender || "",
+      birthday: user.birthday || "",
+      interests,
+      avatar: user.avatar || "",
+    };
   })
   const [saving, setSaving] = useState(false)
   const [newInterest, setNewInterest] = useState("")

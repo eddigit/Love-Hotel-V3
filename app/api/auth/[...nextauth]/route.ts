@@ -1,4 +1,4 @@
-import NextAuth, { NextAuthOptions } from "next-auth"
+import NextAuth, { type NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import GoogleProvider from "next-auth/providers/google"
 import FacebookProvider from "next-auth/providers/facebook"
@@ -69,14 +69,14 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.sub
         session.user.role = token.role as string
         session.user.avatar = token.avatar as string
-        session.user.onboardingCompleted = token.onboardingCompleted as boolean // Assign from token
+        session.user.onboardingCompleted = token.onboardingCompleted as boolean
       }
       return session
     },
     async jwt({ token, user, account, profile, trigger, session: sessionFromUpdate }) {
       // Toujours récupérer l'utilisateur depuis la base par email pour obtenir le vrai UUID
       if (user?.email) {
-        const dbUser = await getUserByEmail(user.email) // <-- FIX: fetch by email, not by id
+        const dbUser = await getUserByEmail(user.email)
         if (dbUser) {
           token.sub = dbUser.id // Toujours le vrai UUID
           token.role = dbUser.role
@@ -84,8 +84,7 @@ export const authOptions: NextAuthOptions = {
           token.onboardingCompleted = dbUser.onboarding_completed
         }
       }
-      // If session was updated (e.g., by calling useSession().update())
-      // and we want to refresh data from the DB:
+      // If session was updated
       if (trigger === "update" && token.sub) {
         const dbUser = await getUserById(token.sub as string)
         if (dbUser) {
