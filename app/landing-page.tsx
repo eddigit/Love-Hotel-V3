@@ -25,7 +25,7 @@ export default function LandingPage() {
                 LE FRISSON DE <br />
                 LA <span className="text-[#ff3b8b]">RENCONTRE</span>, <br />
                 LE PLAISIR DU <br />
-                <span className="text-[#ff3b8b]">RÉEL </span> <span className="text-4xl">🔥</span>
+                <span className="text-[#ff3b8b]">RÉEL</span> <span className="text-4xl">🔥</span>
               </h1>
 
               <p className="text-gray-300 text-base md:text-lg max-w-xl">
