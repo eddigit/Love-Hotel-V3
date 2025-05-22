@@ -4,6 +4,11 @@ import type { OnboardingData } from "@/components/onboarding-form"
 
 // Sauvegarder les données d'onboarding
 export async function saveOnboardingData(userId: string, data: OnboardingData): Promise<boolean> {
+  // Vérifier que l'userId est un UUID valide
+  const isValidUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId)
+  if (!isValidUUID) {
+    throw new Error("L'identifiant utilisateur n'est pas un UUID valide.")
+  }
   try {
     // 1. Mettre à jour le profil utilisateur
     await executeQuery(

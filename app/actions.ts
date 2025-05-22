@@ -7,6 +7,11 @@ import { createUser, verifyUserCredentials } from "@/lib/user-service"
 import { executeQuery, sql } from "@/lib/db"
 
 export async function getNotifications(userId: string) {
+  // Only query if userId is a valid UUID
+  const isValidUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId)
+  if (!isValidUUID) {
+    return { notifications: [] }
+  }
   // Fetch notifications for the user from the database
   const rows = await sql`
     SELECT id, user_id, type, title, description, image, link, read, created_at

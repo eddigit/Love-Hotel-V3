@@ -32,10 +32,10 @@ export async function createUser(
     `
     const params = [userId, email, hashedPassword, name, role]
     console.log(params)
-  const result = (await executeQuery<User[]>(query, params)) ?? []   
+  const result = (await executeQuery<User[]>(query, params)) ?? []
   console.log(result)
-  return result.length ? result[0] : null                            
-     
+  return result.length ? result[0] : null
+
 
   } catch (error) {
     console.error("Erreur lors de la création de l'utilisateur:", error)
@@ -91,6 +91,22 @@ export async function getUserById(id: string): Promise<User | null> {
   }
 }
 
+// Récupérer un utilisateur par son email
+export async function getUserByEmail(email: string): Promise<User | null> {
+  try {
+    const query = `
+      SELECT id, email, name, role, avatar, onboarding_completed, created_at, updated_at
+      FROM users
+      WHERE email = $1
+    `
+    const users = await executeQuery<User[]>(query, [email])
+    return users[0] || null
+  } catch (error) {
+    console.error("Erreur lors de la récupération de l'utilisateur par email:", error)
+    return null
+  }
+}
+
 // Mettre à jour le statut d'onboarding d'un utilisateur
 export async function updateOnboardingStatus(userId: string, completed: boolean): Promise<boolean> {
   try {
@@ -106,4 +122,31 @@ export async function updateOnboardingStatus(userId: string, completed: boolean)
     console.error("Erreur lors de la mise à jour du statut d'onboarding:", error)
     return false
   }
+}
+
+// Créer un utilisateur (ou le récupérer) à partir d'un email (pour OAuth)
+export async function getOrCreateOAuthUser({ email, name, avatar }: { email: string, name?: string, avatar?: string }) {
+  // Vérifier si l'utilisateur existe déjà
+  const existing = await executeQuery<User[]>(
+    `SELECT id, email, name, role, avatar, onboarding_completed, created_at, updated_at FROM users WHERE email = $1`,
+    [email]
+  )
+  if (existing.length > 0) {
+    return existing[0]
+  }
+  // Créer un nouvel utilisateur avec un UUID, sans mot de passe
+  const userId = uuidv4()
+  const query = `
+    INSERT INTO users (id, email, name, role, avatar)
+    VALUES ($1, $2, $3, $4, $5)
+    RETURNING id, email, name, role, avatar, onboarding_completed, created_at, updated_at
+  `
+  const params = [userId, email, name || "", "user", avatar || null]
+  const result = (await executeQuery<User[]>(query, params)) ?? []
+  // Créer un profil vide associé
+  await executeQuery(
+    `INSERT INTO user_profiles (id, user_id) VALUES ($1, $2) ON CONFLICT DO NOTHING`,
+    [uuidv4(), userId]
+  )
+  return result.length ? result[0] : null
 }

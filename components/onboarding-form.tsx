@@ -113,6 +113,12 @@ export function OnboardingForm({ onComplete }: { onComplete: (data: OnboardingDa
     } else {
       // À la dernière étape, sauvegarder les données dans la base de données
       if (user) {
+        // Vérifier que l'ID utilisateur est un UUID avant de sauvegarder
+        const isValidUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(user.id)
+        if (!isValidUUID) {
+          alert("Votre compte n'est pas encore prêt pour l'onboarding. Merci de vous reconnecter ou de contacter le support.")
+          return
+        }
         try {
           const result = await saveUserPreferences(user.id, formData)
           if (result.success) {
@@ -122,11 +128,11 @@ export function OnboardingForm({ onComplete }: { onComplete: (data: OnboardingDa
             onComplete(formData)
           } else {
             console.error("Erreur lors de la sauvegarde des préférences")
-            // Gérer l'erreur ici (afficher un message, etc.)
+            alert("Erreur lors de la sauvegarde des préférences. Merci de réessayer ou de contacter le support.")
           }
         } catch (error) {
           console.error("Erreur lors de la sauvegarde des préférences:", error)
-          // Gérer l'erreur ici (afficher un message, etc.)
+          alert("Erreur lors de la sauvegarde des préférences. Merci de réessayer ou de contacter le support.")
         }
       } else {
         // Si l'utilisateur n'est pas connecté, simplement appeler onComplete

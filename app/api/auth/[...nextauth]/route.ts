@@ -1,9 +1,24 @@
 import NextAuth, { NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
-import { verifyUserCredentials, getUserById } from "@/lib/user-service" // Added getUserById
+import GoogleProvider from "next-auth/providers/google"
+import FacebookProvider from "next-auth/providers/facebook"
+import { verifyUserCredentials, getUserById, getOrCreateOAuthUser, getUserByEmail } from "@/lib/user-service" // Added getUserById and getUserByEmail
 
 export const authOptions: NextAuthOptions = {
   providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      authorization: {
+        params: {
+          scope: "openid email profile",
+        },
+      },
+    }),
+    FacebookProvider({
+      clientId: process.env.FACEBOOK_CLIENT_ID!,
+      clientSecret: process.env.FACEBOOK_CLIENT_SECRET!,
+    }),
     CredentialsProvider({
       name: "Credentials",
       credentials: {
@@ -36,6 +51,18 @@ export const authOptions: NextAuthOptions = {
     signIn: "/login",
   },
   callbacks: {
+    async signIn({ user, account, profile }) {
+      // Pour les logins OAuth (Google, Facebook)
+      if (account?.provider && account.provider !== "credentials") {
+        // Crée l'utilisateur et le profil s'ils n'existent pas
+        await getOrCreateOAuthUser({
+          email: user.email!,
+          name: user.name ?? undefined,
+          avatar: user.image ?? undefined,
+        })
+      }
+      return true
+    },
     async session({ session, token }) {
       // Attach user id, role, avatar, and onboardingCompleted to session
       if (session.user) {
@@ -46,25 +73,26 @@ export const authOptions: NextAuthOptions = {
       }
       return session
     },
-    async jwt({ token, user, trigger, session: sessionFromUpdate }) { // Added trigger and sessionFromUpdate
-      // user is only passed on initial sign in. It's the object from authorize.
-      if (user) {
-        token.sub = user.id // Ensure sub is set from user.id on initial login
-        token.role = user.role
-        token.avatar = user.avatar
-        token.onboardingCompleted = user.onboarding_completed
+    async jwt({ token, user, account, profile, trigger, session: sessionFromUpdate }) {
+      // Toujours récupérer l'utilisateur depuis la base par email pour obtenir le vrai UUID
+      if (user?.email) {
+        const dbUser = await getUserByEmail(user.email) // <-- FIX: fetch by email, not by id
+        if (dbUser) {
+          token.sub = dbUser.id // Toujours le vrai UUID
+          token.role = dbUser.role
+          token.avatar = dbUser.avatar
+          token.onboardingCompleted = dbUser.onboarding_completed
+        }
       }
-
       // If session was updated (e.g., by calling useSession().update())
       // and we want to refresh data from the DB:
       if (trigger === "update" && token.sub) {
         const dbUser = await getUserById(token.sub as string)
         if (dbUser) {
-          token.name = dbUser.name // Update name if it can change
+          token.name = dbUser.name
           token.role = dbUser.role
           token.avatar = dbUser.avatar
           token.onboardingCompleted = dbUser.onboarding_completed
-          // Update any other fields you want to refresh in the token
         }
       }
       return token

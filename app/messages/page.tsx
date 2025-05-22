@@ -75,9 +75,9 @@ export default function MessagesPage() {
     yesterday.setDate(yesterday.getDate() - 1)
     const twoDaysAgo = new Date(today)
     twoDaysAgo.setDate(twoDaysAgo.getDate() - 2)
-    
+
     const timeString = date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-    
+
     if (date >= today) {
       // Today: just show the time
       return timeString
@@ -92,7 +92,7 @@ export default function MessagesPage() {
       const daysDiff = Math.floor((today.getTime() - date.getTime()) / (1000 * 60 * 60 * 24))
       const monthsDiff = (today.getFullYear() - date.getFullYear()) * 12 + today.getMonth() - date.getMonth()
       const yearsDiff = today.getFullYear() - date.getFullYear()
-      
+
       if (yearsDiff >= 1) {
         // More than a year ago: "Il y a # ans"
         return yearsDiff === 1 ? `Il y a 1 an` : `Il y a ${yearsDiff} ans`

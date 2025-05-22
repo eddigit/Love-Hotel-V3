@@ -81,12 +81,12 @@ export function ProfileCard({ id, name, age, location, image, online, featured, 
             {/* Popularity badge - shows only for profiles with 3+ matches */}
             {popularity !== undefined && popularity >= 3 && (
               <div className={`absolute ${featured ? 'top-10' : 'top-2'} right-2`}>
-                <Badge 
+                <Badge
                   className={`
                     flex items-center gap-1.5 text-xs border-0
-                    ${popularity >= 10 
-                      ? 'bg-gradient-to-r from-pink-500 to-rose-600' 
-                      : popularity >= 5 
+                    ${popularity >= 10
+                      ? 'bg-gradient-to-r from-pink-500 to-rose-600'
+                      : popularity >= 5
                         ? 'bg-gradient-to-r from-pink-400 to-pink-600'
                         : 'bg-gradient-to-r from-pink-300 to-pink-500'
                     }

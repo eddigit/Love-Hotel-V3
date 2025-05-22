@@ -55,6 +55,17 @@ export async function getUserMatches(userId: string) {
 }
 
 export async function getDiscoverProfiles(currentUserId: string, page: number = 1, pageSize: number = 50) {
+  // Vérifier que l'ID utilisateur est un UUID valide
+  const isValidUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(currentUserId)
+  if (!isValidUUID) {
+    return {
+      profiles: [],
+      totalCount: 0,
+      currentPage: page,
+      totalPages: 0,
+      hasMore: false
+    }
+  }
   const offset = (page - 1) * pageSize;
 
   // First get total count
@@ -90,7 +101,7 @@ export async function getDiscoverProfiles(currentUserId: string, page: number = 
     FROM users u
     JOIN user_profiles up ON u.id = up.user_id
     WHERE u.id != ${currentUserId}
-    ORDER BY 
+    ORDER BY
       (CASE WHEN u.avatar IS NOT NULL AND u.avatar != '' THEN 1 ELSE 0 END) DESC,
       match_count DESC,
       u.created_at DESC

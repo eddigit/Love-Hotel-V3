@@ -1,6 +1,5 @@
 "use client"
 
-import { type User } from '@/lib/types';
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
@@ -14,38 +13,29 @@ import { motion } from "framer-motion"
 import MainLayout from "@/components/layout/main-layout"
 import { useRouter } from "next/navigation"
 import { getDiscoverProfiles } from "@/actions/user-actions";
-
-interface FilterOptions {
-  ageRange: { min: number; max: number };
-  location: string;
-  gender: string[];
-  interests: string[];
-  relationshipType: string[];
-}
-
-interface ProfileType {
-  id: string;
-  name: string;
-  age: number;
-  location: string;
-  interests: string[];
-  gender: string;
-  relationshipType: string;
-}
+import { FilterOptions } from "@/components/advanced-filters"
 
 export default function DiscoverPage() {
-  const { user } = useAuth()
+  const { user, isLoading } = useAuth()
   const router = useRouter()
 
   const [filters, setFilters] = useState<FilterOptions>({
-    ageRange: { min: 18, max: 99 },
-    location: '',
-    gender: [],
-    interests: [],
-    relationshipType: []
+    ageRange: [18, 99],
+    distance: 50,
+    onlineOnly: false,
+    status: "all",
+    orientation: "all",
+    meetingTypes: {
+      friendly: false,
+      romantic: false,
+      playful: false,
+      openCurtains: false,
+      libertine: false,
+    },
+    curtainPreference: "all",
   });
 
-  const [profiles, setProfiles] = useState<ProfileType[]>([]);
+  const [profiles, setProfiles] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -57,7 +47,7 @@ export default function DiscoverPage() {
     setLoading(true);
     try {
       const result = await getDiscoverProfiles(user.id, page);
-      
+
       setProfiles(prev => page === 1 ? result.profiles : [...prev, ...result.profiles]);
       setTotalPages(result.totalPages);
       setHasMore(result.hasMore);
@@ -69,13 +59,14 @@ export default function DiscoverPage() {
   }, [user?.id]);
 
   useEffect(() => {
+    if (isLoading) return; // Wait for session to load
     if (!user) {
       router.push('/login');
       return;
     }
     fetchProfiles(currentPage);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, router, fetchProfiles, currentPage]);
+  }, [user, isLoading, router, fetchProfiles, currentPage]);
 
   const handleFilterChange = (newFilters: FilterOptions) => {
     setFilters(newFilters);
@@ -114,7 +105,6 @@ export default function DiscoverPage() {
         <h1 className="text-3xl font-bold mb-8">Discover</h1>
         <div className="mb-8">
           <AdvancedFilters
-            filters={filters}
             onFilterChange={handleFilterChange}
           />
         </div>
@@ -126,8 +116,8 @@ export default function DiscoverPage() {
               name={profile.name}
               age={profile.age}
               location={profile.location}
-              image={profile.image}
-              popularity={profile.popularity}
+              image={profile.image || ""}
+              popularity={profile.popularity || 0}
             />
           ))}
         </div>
