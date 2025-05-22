@@ -1,21 +1,24 @@
 "use client"
-import { ThemeProvider } from "@/components/theme-provider"
+
+import type React from "react"
+
+import { SessionProvider } from "next-auth/react"
+import { ThemeProvider } from "next-themes"
 import { NotificationProvider } from "@/contexts/notification-context"
 import { AuthProvider } from "@/contexts/auth-context"
-import { SessionProvider } from "next-auth/react"
 import { LoolyyBWidget } from "@/components/loolyyb-widget"
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} disableTransitionOnChange>
-      <SessionProvider>
+    <SessionProvider refetchInterval={0} refetchOnWindowFocus={false}>
+      <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} disableTransitionOnChange>
         <AuthProvider>
           <NotificationProvider>
             {children}
             <LoolyyBWidget />
           </NotificationProvider>
         </AuthProvider>
-      </SessionProvider>
-    </ThemeProvider>
+      </ThemeProvider>
+    </SessionProvider>
   )
 }

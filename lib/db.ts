@@ -1,6 +1,3 @@
-import { config } from 'dotenv';
-config();
-
 import { neon } from "@neondatabase/serverless"
 
 // Créer une instance de connexion à la base de données
