@@ -1,45 +1,49 @@
-import type { Metadata } from "next"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { redirect } from "next/navigation"
-import MainLayout from "@/components/layout/main-layout"
-import { neon } from "@neondatabase/serverless"
-import { put } from "@vercel/blob"
-import { revalidatePath } from "next/cache"
-import { ok } from "assert"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"
-import { UserProfileEditor } from "@/components/UserProfileEditor"
-import { PreferencesEditor } from "@/components/PreferencesEditor"
+import type { Metadata } from 'next'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { redirect } from 'next/navigation'
+import MainLayout from '@/components/layout/main-layout'
+import { neon } from '@neondatabase/serverless'
+import { put } from '@vercel/blob'
+import { revalidatePath } from 'next/cache'
+import { ok } from 'assert'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/app/api/auth/[...nextauth]/route'
+import { UserProfileEditor } from '@/components/UserProfileEditor'
+import { PreferencesEditor } from '@/components/PreferencesEditor'
 
 export const metadata: Metadata = {
-  title: "Profil | Love Hotel Rencontre",
-  description: "Gérez votre profil Love Hotel Rencontre",
+  title: 'Profil | Love Hotel Rencontre',
+  description: 'Gérez votre profil Love Hotel Rencontre'
 }
 
 // Add this server action for handling profile image uploads
-async function uploadProfileImage(formData: FormData) {
-  "use server"
+async function uploadProfileImage (formData: FormData) {
+  'use server'
 
   const session = await getServerSession(authOptions)
   const user = session?.user
   if (!user) {
-    redirect("/login")
+    redirect('/login')
   }
 
-  const file = formData.get("profileImage") as File
+  const file = formData.get('profileImage') as File
 
   if (!file || file.size === 0) {
-    return { error: "Aucun fichier sélectionné" }
+    return { error: 'Aucun fichier sélectionné' }
   }
 
   try {
     // Upload to Vercel Blob
-    const blob = await put(`user-photos/${user.id}-${Date.now()}.${file.name.split(".").pop()}`, file, {
-      access: "public",
-    })
+    const blob = await put(
+      `user-photos/${user.id}-${Date.now()}.${file.name.split('.').pop()}`,
+      file,
+      {
+        access: 'public'
+      }
+    )
 
     // Update the database with the new photo URL
-    const sql = neon(process.env.DATABASE_URL || process.env.POSTGRES_URL || "")
+    const sql = neon(process.env.DATABASE_URL || process.env.POSTGRES_URL || '')
 
     // Update the photo column in the users table
     await sql`
@@ -48,24 +52,24 @@ async function uploadProfileImage(formData: FormData) {
       WHERE id = ${user.id}
     `
 
-    revalidatePath("/profile")
+    revalidatePath('/profile')
     return { success: true, url: blob.url }
   } catch (error) {
-    console.error("Error uploading image:", error)
+    console.error('Error uploading image:', error)
     return { error: "Échec du téléchargement de l'image" }
   }
 }
 
-async function updateUserProfile(userData: any) {
-  "use server"
+async function updateUserProfile (userData: any) {
+  'use server'
 
   const session = await getServerSession(authOptions)
   const user = session?.user
   if (!user) {
-    redirect("/login")
+    redirect('/login')
   }
 
-  const sql = neon(process.env.DATABASE_URL || process.env.POSTGRES_URL || "")
+  const sql = neon(process.env.DATABASE_URL || process.env.POSTGRES_URL || '')
 
   // Update user table
   await sql`
@@ -95,21 +99,27 @@ async function updateUserProfile(userData: any) {
   } else {
     await sql`
       INSERT INTO user_profiles (id, user_id, age, orientation, location, bio, gender, birthday, interests, status, featured)
-      VALUES (gen_random_uuid(), ${user.id}, ${userData.age || null}, ${userData.orientation || null}, ${userData.location || null}, ${userData.bio || null}, ${userData.gender || null}, ${userData.birthday ? userData.birthday : null}, ${JSON.stringify(userData.interests || [])}, 'active', false)
+      VALUES (gen_random_uuid(), ${user.id}, ${userData.age || null}, ${
+      userData.orientation || null
+    }, ${userData.location || null}, ${userData.bio || null}, ${
+      userData.gender || null
+    }, ${userData.birthday ? userData.birthday : null}, ${JSON.stringify(
+      userData.interests || []
+    )}, 'active', false)
     `
   }
 }
 
-async function updateUserPreferences(preferencesData: any) {
-  "use server"
+async function updateUserPreferences (preferencesData: any) {
+  'use server'
 
   const session = await getServerSession(authOptions)
   const user = session?.user
   if (!user) {
-    redirect("/login")
+    redirect('/login')
   }
 
-  const sql = neon(process.env.DATABASE_URL || process.env.POSTGRES_URL || "")
+  const sql = neon(process.env.DATABASE_URL || process.env.POSTGRES_URL || '')
 
   // Update or insert user_preferences
   const existingPreferences = await sql`
@@ -190,14 +200,14 @@ async function updateUserPreferences(preferencesData: any) {
   }
 }
 
-export default async function ProfilePage() {
+export default async function ProfilePage () {
   const session = await getServerSession(authOptions)
   const sessionUser = session?.user // Renamed to avoid conflict
   if (!sessionUser) {
-    redirect("/login")
+    redirect('/login')
   }
 
-  const sql = neon(process.env.DATABASE_URL || process.env.POSTGRES_URL || "")
+  const sql = neon(process.env.DATABASE_URL || process.env.POSTGRES_URL || '')
 
   // Fetch the latest user data directly from the database
   const dbUserResult = await sql`
@@ -209,8 +219,8 @@ export default async function ProfilePage() {
 
   if (!dbUser) {
     // This case should ideally not happen if the user has a valid session
-    console.error("User from session not found in database for profile page.")
-    redirect("/login") // Or an error page
+    console.error('User from session not found in database for profile page.')
+    redirect('/login') // Or an error page
     return null // Return null to stop execution if redirecting
   }
 
@@ -223,35 +233,39 @@ export default async function ProfilePage() {
 
   const profile = profiles.length > 0 ? profiles[0] : {}
 
-  let formattedBirthday = "";
+  let formattedBirthday = ''
   if (profile.birthday) {
     try {
       // Assuming profile.birthday might be a Date object or an ISO string like YYYY-MM-DDTHH:mm:ss.sssZ
-      const date = new Date(profile.birthday);
-      if (!isNaN(date.getTime())) { // Check if date is valid
-        formattedBirthday = date.toISOString().split('T')[0];
-      } else if (typeof profile.birthday === 'string' && profile.birthday.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      const date = new Date(profile.birthday)
+      if (!isNaN(date.getTime())) {
+        // Check if date is valid
+        formattedBirthday = date.toISOString().split('T')[0]
+      } else if (
+        typeof profile.birthday === 'string' &&
+        profile.birthday.match(/^\d{4}-\d{2}-\d{2}$/)
+      ) {
         // If it's already a YYYY-MM-DD string from the DB (less common for DATE type, but possible)
-        formattedBirthday = profile.birthday;
+        formattedBirthday = profile.birthday
       }
     } catch (error) {
-      console.error("Error formatting birthday for display:", error);
+      console.error('Error formatting birthday for display:', error)
       // Keep formattedBirthday as "" or handle error appropriately
     }
   }
 
   // Helper to ensure all fields are present
-  function normalizePreferences(obj) {
+  function normalizePreferences (obj) {
     return {
       interested_in_restaurant: obj?.interested_in_restaurant ?? false,
       interested_in_events: obj?.interested_in_events ?? false,
       interested_in_dating: obj?.interested_in_dating ?? false,
       prefer_curtain_open: obj?.prefer_curtain_open ?? false,
       interested_in_lolib: obj?.interested_in_lolib ?? false,
-      suggestions: obj?.suggestions ?? "",
+      suggestions: obj?.suggestions ?? ''
     }
   }
-  function normalizeMeetingTypes(obj) {
+  function normalizeMeetingTypes (obj) {
     return {
       friendly: obj?.friendly ?? false,
       romantic: obj?.romantic ?? false,
@@ -259,13 +273,13 @@ export default async function ProfilePage() {
       open_curtains: obj?.open_curtains ?? false,
       libertine: obj?.libertine ?? false,
       open_to_other_couples: obj?.open_to_other_couples ?? false,
-      specific_preferences: obj?.specific_preferences ?? "",
+      specific_preferences: obj?.specific_preferences ?? ''
     }
   }
-  function normalizeAdditionalOptions(obj) {
+  function normalizeAdditionalOptions (obj) {
     return {
       join_exclusive_events: obj?.join_exclusive_events ?? false,
-      premium_access: obj?.premium_access ?? false,
+      premium_access: obj?.premium_access ?? false
     }
   }
 
@@ -280,45 +294,57 @@ export default async function ProfilePage() {
     orientation: profile.orientation,
     gender: profile.gender,
     birthday: formattedBirthday, // Use the formatted birthday string
-    interests: typeof profile.interests === 'string' ? JSON.parse(profile.interests) : (profile.interests || []),
+    interests:
+      typeof profile.interests === 'string'
+        ? JSON.parse(profile.interests)
+        : profile.interests || []
   }
 
   // Fetch user preferences
   const preferencesResult = await sql`
     SELECT * FROM user_preferences WHERE user_id = ${dbUser.id}
   `
-  const preferences = normalizePreferences(preferencesResult.length > 0 ? preferencesResult[0] : {})
+  const preferences = normalizePreferences(
+    preferencesResult.length > 0 ? preferencesResult[0] : {}
+  )
 
   // Fetch user meeting types
   const meetingTypesResult = await sql`
     SELECT * FROM user_meeting_types WHERE user_id = ${dbUser.id}
   `
-  const meetingTypes = normalizeMeetingTypes(meetingTypesResult.length > 0 ? meetingTypesResult[0] : {})
+  const meetingTypes = normalizeMeetingTypes(
+    meetingTypesResult.length > 0 ? meetingTypesResult[0] : {}
+  )
 
   // Fetch user additional options
   const additionalOptionsResult = await sql`
     SELECT * FROM user_additional_options WHERE user_id = ${dbUser.id}
   `
-  const additionalOptions = normalizeAdditionalOptions(additionalOptionsResult.length > 0 ? additionalOptionsResult[0] : {})
+  const additionalOptions = normalizeAdditionalOptions(
+    additionalOptionsResult.length > 0 ? additionalOptionsResult[0] : {}
+  )
 
   return (
     <MainLayout user={dbUser}>
-      <div className="container max-w-screen-xl mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-6">Mon Profil</h1>
-        <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="mb-6">
-            <TabsTrigger value="profile">Profil</TabsTrigger>
-            <TabsTrigger value="preferences">Préférences</TabsTrigger>
-            <TabsTrigger value="security">Sécurité</TabsTrigger>
+      <div className='container max-w-screen-xl mx-auto px-4 py-8'>
+        <h1 className='text-3xl font-bold mb-6'>Mon Profil</h1>
+        <Tabs defaultValue='profile' className='w-full'>
+          <TabsList className='mb-6'>
+            <TabsTrigger value='profile'>Profil</TabsTrigger>
+            <TabsTrigger value='preferences'>Préférences</TabsTrigger>
           </TabsList>
-          <TabsContent value="profile">
-            <div className="space-y-6">
-              <UserProfileEditor user={userData} onSave={updateUserProfile} onUploadImage={uploadProfileImage} />
+          <TabsContent value='profile'>
+            <div className='space-y-6'>
+              <UserProfileEditor
+                user={userData}
+                onSave={updateUserProfile}
+                onUploadImage={uploadProfileImage}
+              />
             </div>
           </TabsContent>
-          <TabsContent value="preferences">
-            <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
-              <h3 className="text-lg font-medium">Préférences de rencontre</h3>
+          <TabsContent value='preferences'>
+            <div className='rounded-lg border bg-card text-card-foreground shadow-sm p-6'>
+              <h3 className='text-lg font-medium'>Préférences de rencontre</h3>
               {/* PreferencesEditor will handle the form for preferences and meeting types */}
               <PreferencesEditor
                 preferences={preferences}
@@ -328,13 +354,15 @@ export default async function ProfilePage() {
               />
             </div>
           </TabsContent>
-          <TabsContent value="security">
-            <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
-              <h3 className="text-lg font-medium">Sécurité du compte</h3>
-              <p className="text-sm text-muted-foreground mt-2">Cette section sera bientôt disponible.</p>
-            </div>
-          </TabsContent>
         </Tabs>
+      </div>
+      <div className='mt-8 text-center'>
+        <a
+          href='/unsubscribe'
+          className='text-red-600 underline hover:text-red-800'
+        >
+          Se désinscrire / Supprimer mon compte
+        </a>
       </div>
     </MainLayout>
   )
