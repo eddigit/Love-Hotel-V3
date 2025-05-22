@@ -1,5 +1,0 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
-# Ce hook est maintenant remplacé par post-push
-# pour capturer le bon commit après le push
