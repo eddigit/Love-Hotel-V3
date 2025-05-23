@@ -4,6 +4,14 @@ import GoogleProvider from "next-auth/providers/google"
 import { sql } from "@/lib/db"
 import bcrypt from "bcryptjs"
 
+// Determine the base URL based on environment
+const baseUrl = process.env.VERCEL_URL
+  ? `https://${process.env.VERCEL_URL}`
+  : process.env.NEXTAUTH_URL || process.env.NEXTAUTH_URL_INTERNAL || "http://localhost:3000"
+
+// Check if running in v0.dev environment
+const isV0 = process.env.VERCEL_URL?.includes("lite.vusercontent.net")
+
 const handler = NextAuth({
   providers: [
     CredentialsProvider({
@@ -52,6 +60,8 @@ const handler = NextAuth({
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      // Add allowDangerousEmailAccountLinking for Google accounts with same email
+      allowDangerousEmailAccountLinking: true,
     }),
   ],
   callbacks: {
@@ -98,6 +108,14 @@ const handler = NextAuth({
       }
       return true
     },
+    // Add redirect callback to handle URLs properly
+    async redirect({ url, baseUrl }) {
+      // Allow relative URLs
+      if (url.startsWith("/")) return `${baseUrl}${url}`
+      // Allow callbacks to same domain
+      else if (new URL(url).origin === baseUrl) return url
+      return baseUrl
+    },
   },
   pages: {
     signIn: "/login",
@@ -106,6 +124,10 @@ const handler = NextAuth({
   session: {
     strategy: "jwt",
   },
+  // Add secret from environment variable
+  secret: process.env.NEXTAUTH_SECRET,
+  // Simplified debug mode for v0.dev environment
+  debug: isV0 || process.env.NODE_ENV === "development",
 })
 
 export { handler as GET, handler as POST }
