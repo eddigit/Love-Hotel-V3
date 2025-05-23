@@ -18,7 +18,10 @@ export function Footer () {
             >
               À propos
             </Link>
-            <Link href='#' className='hover:text-foreground transition-colors'>
+            <Link
+              href='/unsubscribe'
+              className='hover:text-foreground transition-colors'
+            >
               Confidentialité
             </Link>
             <Link
@@ -27,12 +30,12 @@ export function Footer () {
             >
               Conditions d'utilisation
             </Link>
-            <Link href='#' className='hover:text-foreground transition-colors'>
+            {/*<Link href='#' className='hover:text-foreground transition-colors'>
               Aide & Support
             </Link>
             <Link href='#' className='hover:text-foreground transition-colors'>
               Contact
-            </Link>
+            </Link>*/}
           </nav>
 
           <div className='text-sm text-muted-foreground'>

@@ -97,7 +97,7 @@ export async function verifyEmailToken(token: string): Promise<{ success: boolea
 export async function verifyUserCredentials(email: string, password: string): Promise<User | null> {
   try {
     const query = `
-      SELECT id, email, password_hash, name, role, avatar, onboarding_completed, created_at, updated_at
+      SELECT id, email, password_hash, name, role, avatar, onboarding_completed, email_verified, created_at, updated_at
       FROM users
       WHERE email = $1
     `

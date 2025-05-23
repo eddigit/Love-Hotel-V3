@@ -168,8 +168,30 @@ export async function sendMatchRequest(requesterId: string, receiverId: string) 
     const requesterProfile = await getUserProfile(requesterId)
     const receiverProfile = await getUserProfile(receiverId)
     let matchScore = null
-    if (requesterProfile.user && receiverProfile.user) {
-      matchScore = calculateMatchScore(requesterProfile.user, receiverProfile.user)
+    // Build UserProfile objects for matching algorithm
+    function buildUserProfile(profile: any): import("@/utils/matching-algorithm").UserProfile | null {
+      if (!profile.user || !profile.preferences) return null;
+      // Merge meetingTypes into preferences
+      const preferences = {
+        ...profile.preferences,
+        meetingTypes: profile.meetingTypes || {}
+      };
+      return {
+        id: profile.user.id,
+        name: profile.user.name,
+        age: profile.user.age,
+        location: profile.user.location,
+        image: profile.user.avatar || "",
+        online: true,
+        preferences,
+        lastActive: undefined,
+        featured: false
+      };
+    }
+    const requester = buildUserProfile(requesterProfile);
+    const receiver = buildUserProfile(receiverProfile);
+    if (requester && receiver) {
+      matchScore = calculateMatchScore(requester, receiver)
     }
     const result = await sql`
       INSERT INTO user_matches (user_id_1, user_id_2, status, match_score)
@@ -200,7 +222,7 @@ export async function acceptMatchRequest(requesterId: string, receiverId: string
       SET status = 'accepted', updated_at = CURRENT_TIMESTAMP
       WHERE user_id_1 = ${requesterId} AND user_id_2 = ${receiverId} AND status = 'pending'
     `
-    if (result.count === 0) return { success: false, error: "Aucune demande à accepter." }
+    if (result.length === 0) return { success: false, error: "Aucune demande à accepter." }
     // Send notification to requester
     await createNotification({
       userId: requesterId,
@@ -223,7 +245,7 @@ export async function declineMatchRequest(requesterId: string, receiverId: strin
       SET status = 'rejected', updated_at = CURRENT_TIMESTAMP
       WHERE user_id_1 = ${requesterId} AND user_id_2 = ${receiverId} AND status = 'pending'
     `
-    if (result.count === 0) return { success: false, error: "Aucune demande à refuser." }
+    if (result.length === 0) return { success: false, error: "Aucune demande à refuser." }
     return { success: true }
   } catch (error) {
     return { success: false, error: "Erreur lors du refus." }
