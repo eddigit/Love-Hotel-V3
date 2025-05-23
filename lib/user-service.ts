@@ -1,6 +1,8 @@
 import { executeQuery } from "./db"
 import { hash, compare } from "bcryptjs"
 import { v4 as uuidv4 } from "uuid"
+import nodemailer from "nodemailer"
+import { getOption } from "@/actions/user-actions"
 
 // Types
 export interface User {
@@ -10,8 +12,37 @@ export interface User {
   role: "user" | "admin"
   avatar?: string
   onboarding_completed: boolean
+  email_verified?: boolean // Add this line
   created_at: Date
   updated_at: Date
+}
+
+// Helper to send verification email
+async function sendVerificationEmail(email: string, token: string, name?: string) {
+  const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT),
+    secure: false,
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+    tls: { rejectUnauthorized: false }
+  })
+  const verifyUrl = `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/verify-email?token=${token}`
+  // Fetch email template
+  const subjectTemplate = (await getOption("verification_email_subject")) || "Vérifiez votre adresse email sur Love Hotel";
+  const bodyTemplate = (await getOption("verification_email_body")) ||
+    `Bonjour [name],\n\nMerci de vous être inscrit sur Love Hotel !\n\nVeuillez cliquer sur le lien ci-dessous pour vérifier votre adresse email :\n\n[verification-link]\n\nSi vous n'avez pas créé de compte, ignorez cet email.\n\nL'équipe Love Hotel`;
+  // Replace placeholders
+  const subject = subjectTemplate.replace(/\[name\]/g, name || "").replace(/\[verification-link\]/g, verifyUrl);
+  const body = bodyTemplate.replace(/\[name\]/g, name || "").replace(/\[verification-link\]/g, verifyUrl).replace(/\n/g, "<br>");
+  await transporter.sendMail({
+    from: process.env.SMTP_FROM || 'no-reply@lovehotel.app',
+    to: email,
+    subject,
+    html: body
+  })
 }
 
 // Créer un nouvel utilisateur
@@ -24,22 +55,41 @@ export async function createUser(
   try {
     const hashedPassword = await hash(password, 10)
     const userId = uuidv4()
-
+    const verificationToken = uuidv4()
     const query = `
-      INSERT INTO users (id, email, password_hash, name, role)
-      VALUES ($1, $2, $3, $4, $5)
+      INSERT INTO users (id, email, password_hash, name, role, email_verified, email_verification_token)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
       RETURNING id, email, name, role, avatar, onboarding_completed, created_at, updated_at
     `
-    const params = [userId, email, hashedPassword, name, role]
-    console.log(params)
-  const result = (await executeQuery<User[]>(query, params)) ?? []
-  console.log(result)
-  return result.length ? result[0] : null
-
-
+    const params = [userId, email, hashedPassword, name, role, false, verificationToken]
+    const result = (await executeQuery<User[]>(query, params)) ?? []
+    if (result.length) {
+      await sendVerificationEmail(email, verificationToken, name)
+    }
+    return result.length ? result[0] : null
   } catch (error) {
     console.error("Erreur lors de la création de l'utilisateur:", error)
     return null
+  }
+}
+
+// Vérifier le token de vérification d'email
+export async function verifyEmailToken(token: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const users = await executeQuery<User[]>(
+      `SELECT id FROM users WHERE email_verification_token = $1 AND email_verified = false`,
+      [token]
+    )
+    if (!users.length) {
+      return { success: false, error: "Token invalide ou déjà utilisé." }
+    }
+    await executeQuery(
+      `UPDATE users SET email_verified = true, email_verification_token = NULL WHERE id = $1`,
+      [users[0].id]
+    )
+    return { success: true }
+  } catch (error) {
+    return { success: false, error: "Erreur serveur." }
   }
 }
 

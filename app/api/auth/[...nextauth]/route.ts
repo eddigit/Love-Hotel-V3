@@ -70,6 +70,7 @@ export const authOptions: NextAuthOptions = {
         session.user.role = token.role as string
         session.user.avatar = token.avatar as string
         session.user.onboardingCompleted = token.onboardingCompleted as boolean // Assign from token
+        session.user.email_verified = token.email_verified as boolean // Add email_verified to session
       }
       return session
     },
@@ -82,6 +83,7 @@ export const authOptions: NextAuthOptions = {
           token.role = dbUser.role
           token.avatar = dbUser.avatar
           token.onboardingCompleted = dbUser.onboarding_completed
+          token.email_verified = dbUser.email_verified // Add email_verified to JWT
         }
       }
       // If session was updated (e.g., by calling useSession().update())
@@ -93,6 +95,7 @@ export const authOptions: NextAuthOptions = {
           token.role = dbUser.role
           token.avatar = dbUser.avatar
           token.onboardingCompleted = dbUser.onboarding_completed
+          token.email_verified = dbUser.email_verified // Add email_verified to JWT
         }
       }
       return token

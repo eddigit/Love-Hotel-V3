@@ -9,6 +9,7 @@ declare module "next-auth" {
       role?: string | null;
       avatar?: string | null;
       onboardingCompleted?: boolean | null;
+      email_verified?: boolean | null;
     } & DefaultSession["user"]; // Keep existing properties
   }
 

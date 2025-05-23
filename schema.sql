@@ -10,6 +10,10 @@ CREATE TABLE users
     role VARCHAR(50) NOT NULL DEFAULT 'user',
     avatar VARCHAR(255),
     onboarding_completed BOOLEAN DEFAULT FALSE,
+    email_verified BOOLEAN DEFAULT FALSE,
+    -- Added for email verification
+    email_verification_token VARCHAR(255),
+    -- Added for email verification
     created_at TIMESTAMP
     WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP
