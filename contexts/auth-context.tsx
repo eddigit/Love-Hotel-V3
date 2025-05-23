@@ -1,3 +1,4 @@
+// Update the AuthContext to properly leverage NextAuth.js
 "use client"
 
 import { createContext, useContext, type ReactNode } from "react"
@@ -14,34 +15,7 @@ export type User = {
   role: UserRole
   avatar: string
   onboardingCompleted?: boolean
-}
-
-// Utilisateurs de test prédéfinis
-export const TEST_USERS = {
-  user: {
-    id: "user-123",
-    email: "user@test.com",
-    name: "Alex Durand",
-    role: "user" as UserRole,
-    avatar: "/mystical-forest-spirit.png",
-    onboardingCompleted: false,
-  },
-  admin: {
-    id: "admin-456",
-    email: "admin@test.com",
-    name: "Admin Système",
-    role: "admin" as UserRole,
-    avatar: "/contemplative-portrait.png",
-    onboardingCompleted: true,
-  },
-  demo: {
-    id: "demo-789",
-    email: "demo@test.com",
-    name: "Sophie Martin",
-    role: "user" as UserRole,
-    avatar: "/serene-woman.png",
-    onboardingCompleted: true,
-  },
+  email_verified?: boolean
 }
 
 type AuthContextType = {
@@ -55,7 +29,7 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const { data: session, status, update } = useSession() // Added update from useSession
+  const { data: session, status, update } = useSession()
   const router = useRouter()
   const isLoading = status === "loading"
   const user = session?.user ?? null
