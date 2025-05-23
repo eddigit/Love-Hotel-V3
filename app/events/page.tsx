@@ -26,6 +26,20 @@ export default function EventsPage (props) {
   >([])
   const [activeTab, setActiveTab] = useState('all')
 
+  // Compute the correct Tailwind grid-cols class for the TabsList
+  const gridColsClass =
+    {
+      1: 'grid-cols-2',
+      2: 'grid-cols-3',
+      3: 'grid-cols-4',
+      4: 'grid-cols-5',
+      5: 'grid-cols-6',
+      6: 'grid-cols-7',
+      7: 'grid-cols-8',
+      8: 'grid-cols-9',
+      9: 'grid-cols-10'
+    }[categories.length + 1] || 'grid-cols-2'
+
   // Redirect if not logged in
   useEffect(() => {
     if (!authUser?.id) {
@@ -36,7 +50,7 @@ export default function EventsPage (props) {
     async function fetchEventsAndCategories () {
       setLoading(true)
       const [result, rawCategories] = await Promise.all([
-        getUpcomingEvents(authUser.id),
+        getUpcomingEvents(authUser.id!), // Non-null assertion since we check above
         getOption('event_categories')
       ])
       setEvents(result)
@@ -46,9 +60,9 @@ export default function EventsPage (props) {
       ).split('\n')
       setCategories(
         lines
-          .map(line => line.trim())
+          .map((line: string) => line.trim())
           .filter(Boolean)
-          .map(line => {
+          .map((line: string) => {
             const [value, label] = line.split('|')
             return value && label
               ? { value: value.trim(), label: label.trim() }
@@ -61,12 +75,12 @@ export default function EventsPage (props) {
 
     fetchEventsAndCategories()
 
-    const eventNotifications = [
+    const eventNotifications: string[] = [
       // Only push real notification UUIDs here if available
     ]
     const uuidRegex =
       /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
-    eventNotifications.forEach(id => {
+    eventNotifications.forEach((id: string) => {
       if (uuidRegex.test(id)) markAsRead(id)
     })
   }, [markAsRead, authUser, router])
@@ -107,11 +121,7 @@ export default function EventsPage (props) {
             onValueChange={setActiveTab}
             className='w-full'
           >
-            <TabsList
-              className={`grid w-full grid-cols-${
-                categories.length + 1
-              } mb-4 md:mb-6`}
-            >
+            <TabsList className={`grid w-full ${gridColsClass} mb-4 md:mb-6`}>
               <TabsTrigger value='all'>Tous</TabsTrigger>
               {categories.map(cat => (
                 <TabsTrigger key={cat.value} value={cat.value}>
