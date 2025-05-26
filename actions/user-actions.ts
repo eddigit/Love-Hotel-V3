@@ -284,7 +284,7 @@ export async function getOutgoingMatchRequests(userId: string) {
 
 export async function getAllUsers() {
   const users = await sql`
-    SELECT u.id, u.name, u.email, u.role, u.avatar, up.location, up.age
+    SELECT u.id, u.name, u.email, u.role, u.avatar, up.location, up.age, u.is_banned, u.status
     FROM users u
     LEFT JOIN user_profiles up ON u.id = up.user_id
     ORDER BY u.created_at DESC

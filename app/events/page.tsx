@@ -48,9 +48,10 @@ export default function EventsPage (props) {
     }
 
     async function fetchEventsAndCategories () {
+      if (!authUser?.id) return
       setLoading(true)
       const [result, rawCategories] = await Promise.all([
-        getUpcomingEvents(authUser.id!), // Non-null assertion since we check above
+        getUpcomingEvents(authUser.id),
         getOption('event_categories')
       ])
       setEvents(result)
