@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { Heart, Menu, Search, X, MessageCircle } from 'lucide-react'
+import { Heart, Menu, Search, X, MessageCircle, Settings } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { NotificationsButton } from '@/components/notifications-button'
@@ -19,6 +19,7 @@ export function Header ({ session, user }: HeaderProps) {
   const pathname = usePathname()
   const { logout } = useAuth()
   const isLoggedIn = !!user
+  const isAdmin = user?.role === 'admin'
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   // Vérifier si nous sommes sur la landing page, une page de présentation, la page de login ou la page d'inscription
@@ -86,15 +87,26 @@ export function Header ({ session, user }: HeaderProps) {
                   Messages
                 </Button>
               </Link>
+              {isAdmin && (
+                <Link href='/admin'>
+                  <Button
+                    variant='ghost'
+                    size='sm'
+                    className={pathname === '/admin' ? 'text-[#ff3b8b]' : ''}
+                  >
+                    <Settings className='h-5 w-5' />
+                  </Button>
+                </Link>
+              )}
             </div>
             <div className='flex items-center gap-2'>
-              <Button
+              {/*<Button
                 variant='outline'
                 size='icon'
                 className='rounded-full md:flex hidden border-purple-800/30 bg-[#2d1155]/50'
               >
                 <Search className='h-4 w-4' />
-              </Button>
+              </Button>*/}
               <NotificationsButton />
               <Link href='/profile' className='hidden md:block'>
                 <Button
@@ -210,6 +222,21 @@ export function Header ({ session, user }: HeaderProps) {
                       <MessageCircle className='h-5 w-5' />
                       <span>Messages</span>
                     </Link>
+                    {isAdmin && (
+                      <Link
+                        href='/admin'
+                        className={cn(
+                          'flex items-center gap-3 p-3 rounded-lg',
+                          pathname === '/admin'
+                            ? 'bg-[#ff3b8b]/10 text-[#ff3b8b]'
+                            : 'hover:bg-[#2d1155]/50'
+                        )}
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <Settings className='h-5 w-5' />
+                        <span>Admin</span>
+                      </Link>
+                    )}
                   </div>
                   <div className='mt-auto pt-4 border-t border-purple-800/30'>
                     <Button
