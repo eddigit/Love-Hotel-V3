@@ -144,6 +144,16 @@ CREATE TABLE messages
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Table des photos utilisateurs
+CREATE TABLE photos
+(
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    is_primary BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    url VARCHAR(255) NOT NULL
+);
+
 -- Index pour améliorer les performances
 CREATE INDEX idx_user_profiles_user_id ON user_profiles(user_id);
 CREATE INDEX idx_user_preferences_user_id ON user_preferences(user_id);

@@ -10,6 +10,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 import { UserProfileEditor } from '@/components/UserProfileEditor'
 import { PreferencesEditor } from '@/components/PreferencesEditor'
+import { UserPhotosManager } from '@/components/UserPhotosManager'
 
 export const metadata: Metadata = {
   title: 'Profil | Love Hotel Rencontre',
@@ -200,6 +201,51 @@ async function updateUserPreferences (preferencesData: any) {
   }
 }
 
+// Add server actions for user photos
+async function uploadUserPhoto (formData: FormData) {
+  'use server'
+  const session = await getServerSession(authOptions)
+  const user = session?.user
+  if (!user) redirect('/login')
+  const file = formData.get('photo') as File
+  if (!file || file.size === 0) return { error: 'Aucun fichier sélectionné' }
+  try {
+    const blob = await put(
+      `user-photos/${user.id}-${Date.now()}.${file.name.split('.').pop()}`,
+      file,
+      { access: 'public' }
+    )
+    const sql = neon(process.env.DATABASE_URL || process.env.POSTGRES_URL || '')
+    // Count current photos
+    const countRes =
+      await sql`SELECT COUNT(*) FROM photos WHERE user_id = ${user.id}`
+    if (parseInt(countRes[0].count) >= 10)
+      return { error: 'Maximum 10 photos autorisées' }
+    // Insert photo
+    await sql`
+      INSERT INTO photos (user_id, url, is_primary)
+      VALUES (${user.id}, ${blob.url}, false)
+    `
+    revalidatePath('/profile')
+    return { success: true, url: blob.url }
+  } catch (error) {
+    console.error('Error uploading photo:', error)
+    return { error: 'Échec du téléchargement de la photo' }
+  }
+}
+
+async function deleteUserPhoto (photoId: string) {
+  'use server'
+  const session = await getServerSession(authOptions)
+  const user = session?.user
+  if (!user) redirect('/login')
+  const sql = neon(process.env.DATABASE_URL || process.env.POSTGRES_URL || '')
+  // Only allow deleting user's own photo
+  await sql`DELETE FROM photos WHERE id = ${photoId} AND user_id = ${user.id}`
+  revalidatePath('/profile')
+  return { success: true }
+}
+
 export default async function ProfilePage () {
   const session = await getServerSession(authOptions)
   const sessionUser = session?.user // Renamed to avoid conflict
@@ -255,7 +301,7 @@ export default async function ProfilePage () {
   }
 
   // Helper to ensure all fields are present
-  function normalizePreferences (obj) {
+  function normalizePreferences (obj: any) {
     return {
       interested_in_restaurant: obj?.interested_in_restaurant ?? false,
       interested_in_events: obj?.interested_in_events ?? false,
@@ -265,7 +311,7 @@ export default async function ProfilePage () {
       suggestions: obj?.suggestions ?? ''
     }
   }
-  function normalizeMeetingTypes (obj) {
+  function normalizeMeetingTypes (obj: any) {
     return {
       friendly: obj?.friendly ?? false,
       romantic: obj?.romantic ?? false,
@@ -276,7 +322,7 @@ export default async function ProfilePage () {
       specific_preferences: obj?.specific_preferences ?? ''
     }
   }
-  function normalizeAdditionalOptions (obj) {
+  function normalizeAdditionalOptions (obj: any) {
     return {
       join_exclusive_events: obj?.join_exclusive_events ?? false,
       premium_access: obj?.premium_access ?? false
@@ -324,6 +370,16 @@ export default async function ProfilePage () {
     additionalOptionsResult.length > 0 ? additionalOptionsResult[0] : {}
   )
 
+  // Fetch user photos
+  const photosResult = await sql`
+    SELECT * FROM photos WHERE user_id = ${dbUser.id} ORDER BY created_at ASC
+  `
+  const userPhotos = photosResult.map((p: any) => ({
+    id: p.id,
+    url: p.url,
+    is_primary: p.is_primary
+  }))
+
   return (
     <MainLayout user={dbUser}>
       <div className='container max-w-screen-xl mx-auto px-4 py-8'>
@@ -332,6 +388,7 @@ export default async function ProfilePage () {
           <TabsList className='mb-6'>
             <TabsTrigger value='profile'>Profil</TabsTrigger>
             <TabsTrigger value='preferences'>Préférences</TabsTrigger>
+            <TabsTrigger value='photos'>Photos</TabsTrigger>
           </TabsList>
           <TabsContent value='profile'>
             <div className='space-y-6'>
@@ -352,6 +409,13 @@ export default async function ProfilePage () {
                 additionalOptions={additionalOptions}
                 onSave={updateUserPreferences}
               />
+            </div>
+          </TabsContent>
+          <TabsContent value='photos'>
+            <div className='rounded-lg border bg-card text-card-foreground shadow-sm p-6'>
+              <h3 className='text-lg font-medium mb-4'>Mes photos</h3>
+              {/* UserPhotosManager handles upload/delete UI */}
+              <UserPhotosManager photos={userPhotos} maxPhotos={10} />
             </div>
           </TabsContent>
         </Tabs>
