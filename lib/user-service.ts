@@ -200,3 +200,67 @@ export async function getOrCreateOAuthUser({ email, name, avatar }: { email: str
   )
   return result.length ? result[0] : null
 }
+
+// Mettre à jour le token de réinitialisation du mot de passe d'un utilisateur
+export async function updateUserResetToken(userId: string, resetToken: string | null, resetTokenExpires?: Date | null ): Promise<boolean> {
+  try {
+    const query = `
+      UPDATE users
+      SET password_reset_token = $1, password_reset_token_expires_at = $2, updated_at = CURRENT_TIMESTAMP
+      WHERE id = $3
+    `;
+    await executeQuery(query, [resetToken, resetTokenExpires, userId]);
+    return true;
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour du token de réinitialisation de mot de passe:", error);
+    return false;
+  }
+}
+
+// Récupérer un utilisateur par son token de réinitialisation de mot de passe
+export async function getUserByResetToken(token: string): Promise<(User & { password_reset_token_expires_at: Date | null }) | null> {
+  try {
+    const query = `
+      SELECT id, email, name, role, avatar, onboarding_completed, created_at, updated_at, password_reset_token_expires_at
+      FROM users
+      WHERE password_reset_token = $1
+    `;
+    const users = await executeQuery<(User & { password_reset_token_expires_at: Date | null })[]>(query, [token]);
+
+    if (users.length === 0) {
+      return null;
+    }
+
+    const user = users[0];
+    // Check for token expiry
+    if (user.password_reset_token_expires_at && new Date() > new Date(user.password_reset_token_expires_at)) {
+      // Optionally, clear the expired token here
+      // await updateUserResetToken(user.id, null, null);
+      return null; // Token expired
+    }
+
+    return user;
+  } catch (error) {
+    console.error("Erreur lors de la récupération de l'utilisateur par token de réinitialisation:", error);
+    return null;
+  }
+}
+
+// Mettre à jour le mot de passe d'un utilisateur et effacer le token de réinitialisation
+export async function updateUserPassword(userId: string, newPasswordHash: string): Promise<boolean> {
+  try {
+    const query = `
+      UPDATE users
+      SET password_hash = $1,
+          password_reset_token = NULL,
+          password_reset_token_expires_at = NULL,
+          updated_at = CURRENT_TIMESTAMP
+      WHERE id = $2
+    `;
+    await executeQuery(query, [newPasswordHash, userId]);
+    return true;
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour du mot de passe:", error);
+    return false;
+  }
+}

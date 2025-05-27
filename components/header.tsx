@@ -9,6 +9,13 @@ import { usePathname } from 'next/navigation'
 import { useAuth } from '@/contexts/auth-context'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator
+} from '@/components/ui/dropdown-menu'
 
 interface HeaderProps {
   session?: any
@@ -108,21 +115,42 @@ export function Header ({ session, user }: HeaderProps) {
                 <Search className='h-4 w-4' />
               </Button>*/}
               <NotificationsButton />
-              <Link href='/profile' className='hidden md:block'>
-                <Button
-                  variant='outline'
-                  size='sm'
-                  className='rounded-full border-purple-800/30 bg-[#2d1155]/50'
-                >
-                  <Image
-                    src={user?.avatar || '/mystical-forest-spirit.png'}
-                    alt='Avatar'
-                    width={32}
-                    height={32}
-                    className='rounded-full'
-                  />
-                </Button>
-              </Link>
+              <div className='hidden md:block'>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant='outline'
+                      size='sm'
+                      className='rounded-full border-purple-800/30 bg-[#2d1155]/50 p-0' // p-0 to make image fit better
+                    >
+                      <Image
+                        src={user?.avatar || '/mystical-forest-spirit.png'}
+                        alt='Avatar'
+                        width={36}
+                        height={36}
+                        className='rounded-full'
+                      />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    className='w-48 bg-[#1a0d2e] border-purple-800/50 text-white'
+                    align='end'
+                  >
+                    <DropdownMenuItem
+                      asChild
+                      className='cursor-pointer hover:bg-[#2d1155]/50 focus:bg-[#2d1155]/80'
+                    >
+                      <Link href='/profile'>Mon profil</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      asChild
+                      className='cursor-pointer hover:bg-[#2d1155]/50 focus:bg-[#2d1155]/80'
+                    >
+                      <Link href='/matches'>Mes matchs</Link>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
               <Button
                 variant='ghost'
                 size='sm'
@@ -182,6 +210,19 @@ export function Header ({ session, user }: HeaderProps) {
                     >
                       <Search className='h-5 w-5' />
                       <span>Découvrir</span>
+                    </Link>
+                    <Link
+                      href='/matches'
+                      className={cn(
+                        'flex items-center gap-3 p-3 rounded-lg',
+                        pathname === '/matches'
+                          ? 'bg-[#ff3b8b]/10 text-[#ff3b8b]'
+                          : 'hover:bg-[#2d1155]/50'
+                      )}
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <Heart className='h-5 w-5' />
+                      <span>Matchs</span>
                     </Link>
                     <Link
                       href='/events'

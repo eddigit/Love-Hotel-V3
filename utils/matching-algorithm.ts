@@ -10,6 +10,7 @@ export interface UserProfile {
   preferences: OnboardingData
   lastActive?: string
   featured?: boolean
+  matchScore?: number;
 }
 
 // Calcule un score de compatibilité entre deux utilisateurs (0-100)
@@ -26,13 +27,63 @@ export function calculateMatchScore(userA: UserProfile, userB: UserProfile): num
     score += 15
   }
 
-  // Vérifier la compatibilité d'orientation
-  if (
-    userA.preferences.orientation === userB.preferences.orientation ||
-    userA.preferences.orientation === "bi" ||
-    userB.preferences.orientation === "bi"
-  ) {
-    score += 15
+  // Vérifier la compatibilité d'orientation et de genre
+  const userAGender = userA.preferences.gender;
+  const userAAorientation = userA.preferences.orientation;
+  const userBGender = userB.preferences.gender;
+  const userBOrientation = userB.preferences.orientation;
+
+  let orientationMatch = false;
+
+  if (userAAorientation === "hetero") {
+    if (userAGender === "male" && userBGender === "female" && (userBOrientation === "hetero" || userBOrientation === "bi")) {
+      orientationMatch = true;
+    }
+    if (userAGender === "female" && userBGender === "male" && (userBOrientation === "hetero" || userBOrientation === "bi")) {
+      orientationMatch = true;
+    }
+  } else if (userAAorientation === "homo") {
+    if (userAGender === "male" && userBGender === "male" && (userBOrientation === "homo" || userBOrientation === "bi")) {
+      orientationMatch = true;
+    }
+    if (userAGender === "female" && userBGender === "female" && (userBOrientation === "homo" || userBOrientation === "bi")) {
+      orientationMatch = true;
+    }
+  } else if (userAAorientation === "bi") {
+    if (userAGender === "male") {
+      if (userBGender === "female" && (userBOrientation === "hetero" || userBOrientation === "bi")) orientationMatch = true; // Bi male interested in female (hetero or bi)
+      if (userBGender === "male" && (userBOrientation === "homo" || userBOrientation === "bi")) orientationMatch = true; // Bi male interested in male (homo or bi)
+    }
+    if (userAGender === "female") {
+      if (userBGender === "male" && (userBOrientation === "hetero" || userBOrientation === "bi")) orientationMatch = true; // Bi female interested in male (hetero or bi)
+      if (userBGender === "female" && (userBOrientation === "homo" || userBOrientation === "bi")) orientationMatch = true; // Bi female interested in female (homo or bi)
+    }
+    // If userB is also bi, it's a potential match regardless of userA's gender, assuming userB's preferences align.
+    // The above conditions for userA being bi already cover cases where userB is hetero or homo.
+    // If userB is bi, they are generally open, and the specific gender match is handled.
+  }
+
+  // Symmetrical check for user B's orientation (if not already covered by user A being bi)
+  if (!orientationMatch && userBOrientation === "hetero") {
+    if (userBGender === "male" && userAGender === "female" && (userAAorientation === "hetero" || userAAorientation === "bi")) {
+      orientationMatch = true;
+    }
+    if (userBGender === "female" && userAGender === "male" && (userAAorientation === "hetero" || userAAorientation === "bi")) {
+      orientationMatch = true;
+    }
+  } else if (!orientationMatch && userBOrientation === "homo") {
+    if (userBGender === "male" && userAGender === "male" && (userAAorientation === "homo" || userAAorientation === "bi")) {
+      orientationMatch = true;
+    }
+    if (userBGender === "female" && userAGender === "female" && (userAAorientation === "homo" || userAAorientation === "bi")) {
+      orientationMatch = true;
+    }
+  }
+  // Note: If userA is not bi, and userB is bi, the above symmetrical checks will handle it.
+  // If both are bi, the initial checks for userA being bi would have covered it.
+
+  if (orientationMatch) {
+    score += 25; // Increased score for better orientation match
   }
 
   // Vérifier la compatibilité des types de rencontres recherchées
@@ -154,6 +205,8 @@ export function createFeaturedProfiles(): UserProfile[] {
         status: "single_male",
         age: 32,
         orientation: "hetero",
+        gender: "male", // Added gender
+        birthday: "1992-01-01", // Added birthday
         interestedInRestaurant: true,
         interestedInEvents: true,
         interestedInDating: true,
@@ -187,6 +240,8 @@ export function createFeaturedProfiles(): UserProfile[] {
         status: "single_male",
         age: 34,
         orientation: "bi",
+        gender: "male", // Added gender
+        birthday: "1990-01-01", // Added birthday
         interestedInRestaurant: true,
         interestedInEvents: true,
         interestedInDating: true,
@@ -220,6 +275,8 @@ export function createFeaturedProfiles(): UserProfile[] {
         status: "single_male",
         age: 29,
         orientation: "hetero",
+        gender: "male", // Added gender
+        birthday: "1995-01-01", // Added birthday
         interestedInRestaurant: true,
         interestedInEvents: true,
         interestedInDating: true,
@@ -253,6 +310,8 @@ export function createFeaturedProfiles(): UserProfile[] {
         status: "couple",
         age: 31,
         orientation: "bi",
+        gender: "other", // Added gender (assuming 'other' for couple)
+        birthday: "1993-01-01", // Added birthday
         interestedInRestaurant: true,
         interestedInEvents: true,
         interestedInDating: true,
@@ -286,6 +345,8 @@ export function createFeaturedProfiles(): UserProfile[] {
         status: "single_female",
         age: 25,
         orientation: "bi",
+        gender: "female", // Added gender
+        birthday: "1999-01-01", // Added birthday
         interestedInRestaurant: true,
         interestedInEvents: true,
         interestedInDating: true,
@@ -327,6 +388,11 @@ export function generateMockProfiles(count = 20): UserProfile[] {
     const statusIndex = Math.floor(Math.random() * statuses.length)
     const status = statuses[statusIndex] as "couple" | "single_male" | "single_female"
     const age = Math.floor(Math.random() * 30) + 20 // 20-50 ans
+    const randomGender = ["male", "female", "other"][Math.floor(Math.random() * 3)] as "male" | "female" | "other";
+    const randomYear = 2024 - age;
+    const randomMonth = Math.floor(Math.random() * 12) + 1;
+    const randomDay = Math.floor(Math.random() * 28) + 1; // Keep it simple, assume all months have 28 days
+    const randomBirthday = `${randomYear}-${String(randomMonth).padStart(2, '0')}-${String(randomDay).padStart(2, '0')}`;
 
     // Sélectionner l'image en fonction du statut
     let image = ""
@@ -425,6 +491,8 @@ export function generateMockProfiles(count = 20): UserProfile[] {
         status,
         age,
         orientation: orientations[Math.floor(Math.random() * orientations.length)] as "hetero" | "homo" | "bi",
+        gender: randomGender, // Added gender
+        birthday: randomBirthday, // Added birthday
 
         interestedInRestaurant: Math.random() > 0.5,
         interestedInEvents: Math.random() > 0.4,

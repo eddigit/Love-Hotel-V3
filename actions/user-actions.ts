@@ -3,6 +3,7 @@
 import { sql } from "@/lib/db"
 import { calculateMatchScore } from "@/utils/matching-algorithm"
 import { createNotification } from "@/actions/notification-actions"
+import { FilterOptions } from "@/components/advanced-filters";
 
 export async function getUserProfile(userId: string) {
   const user = await sql`
@@ -47,42 +48,218 @@ export async function getUserMatches(userId: string) {
     FROM user_matches um
     JOIN users u1 ON um.user_id_1 = u1.id
     JOIN users u2 ON um.user_id_2 = u2.id
-    WHERE um.user_id_1 = ${userId} OR um.user_id_2 = ${userId}
+    WHERE (um.user_id_1 = ${userId} OR um.user_id_2 = ${userId}) AND um.status = 'accepted'
     ORDER BY um.match_score DESC
   `
 
   return matches || []
 }
 
-export async function getDiscoverProfiles(currentUserId: string, page: number = 1, pageSize: number = 50) {
-  // Vérifier que l'ID utilisateur est un UUID valide
-  const isValidUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(currentUserId)
+export async function getDiscoverProfiles(currentUserId: string, page: number = 1, pageSize: number = 50, filters?: FilterOptions) {
+  console.log(`[getDiscoverProfiles] Called for user: ${currentUserId}, page: ${page}, filters:`, JSON.stringify(filters, null, 2));
+
+  const isValidUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(currentUserId);
   if (!isValidUUID) {
+    console.error(`[getDiscoverProfiles] Invalid currentUserId: ${currentUserId}`);
     return {
       profiles: [],
       totalCount: 0,
       currentPage: page,
       totalPages: 0,
       hasMore: false
+    };
+  }
+
+  let currentUserProfileGender: string | undefined;
+  let currentUserProfileOrientation: string | undefined;
+  // console.log(`[getDiscoverProfiles] Initializing currentUserProfileGender and currentUserProfileOrientation.`);
+
+  try {
+    const currentUserProfileResult = await sql`
+      SELECT gender, orientation
+      FROM user_profiles
+      WHERE user_id = ${currentUserId}
+      LIMIT 1;
+    `;
+    // console.log(`[getDiscoverProfiles] Raw currentUserProfileResult from DB:`, currentUserProfileResult);
+    if (currentUserProfileResult && currentUserProfileResult.length > 0) {
+      currentUserProfileGender = currentUserProfileResult[0].gender?.toLowerCase(); // Ensure lowercase
+      currentUserProfileOrientation = currentUserProfileResult[0].orientation?.toLowerCase(); // Ensure lowercase
+      console.log(`[getDiscoverProfiles] Current user (${currentUserId}) profile fetched: Gender=${currentUserProfileGender}, Orientation=${currentUserProfileOrientation}`);
+    } else {
+      console.warn(`[getDiscoverProfiles] User ${currentUserId} has no profile set in user_profiles or gender/orientation is missing.`);
+    }
+  } catch (error) {
+    console.error("[getDiscoverProfiles] Error fetching current user profile:", error);
+  }
+
+  const offset = (page - 1) * pageSize;
+  // console.log(`[getDiscoverProfiles] Calculated offset: ${offset}`);
+
+  let baseParams: any[] = [currentUserId];
+  let whereClauses = [`u.id != $1`];
+  // console.log(`[getDiscoverProfiles] Initial baseParams:`, JSON.stringify(baseParams));
+  // console.log(`[getDiscoverProfiles] Initial whereClauses:`, JSON.stringify(whereClauses));
+
+
+  if (currentUserProfileGender && currentUserProfileOrientation) {
+    // console.log(`[getDiscoverProfiles] Applying primary gender/orientation compatibility logic for current user: ${currentUserProfileGender}/${currentUserProfileOrientation}.`);
+    const genderOrientationMatchingClauses: string[] = [];
+
+    const cUserPGender = currentUserProfileGender; // Already lowercased
+    const cUserOrientation = currentUserProfileOrientation; // Already lowercased
+
+    // Define SQL conditions for target profile genders based on user clarification
+    const targetMaleEntitiesSQL = `(LOWER(up.gender) IN ('male', 'single_male', 'married_male', 'couple_mm', 'couple_mf'))`;
+    const targetFemaleEntitiesSQL = `(LOWER(up.gender) IN ('female', 'single_female', 'married_female', 'couple_ff', 'couple_mf'))`;
+
+    // Define SQL conditions for target profile orientations (reusable parts)
+    const targetOrientationHeteroBiCompatibleSQL = `(LOWER(up.orientation) = 'hetero' OR LOWER(up.orientation) = 'straight' OR LOWER(up.orientation) = 'bisexual' OR up.orientation IS NULL OR up.orientation = '')`;
+    const targetOrientationGayBiCompatibleSQL = `(LOWER(up.orientation) = 'gay' OR LOWER(up.orientation) = 'homo' OR LOWER(up.orientation) = 'bisexual' OR up.orientation IS NULL OR up.orientation = '')`;
+
+    // Determine current user's effective searching role (male/female)
+    const isCurrentUserEffectivelyMale = (cUserPGender === 'male' || cUserPGender === 'single_male' || cUserPGender === 'married_male' || cUserPGender === 'couple_mm');
+    const isCurrentUserEffectivelyFemale = (cUserPGender === 'female' || cUserPGender === 'single_female' || cUserPGender === 'married_female' || cUserPGender === 'couple_ff');
+    console.log(`[getDiscoverProfiles] Current user effective roles: isMale=${isCurrentUserEffectivelyMale}, isFemale=${isCurrentUserEffectivelyFemale}`);
+
+    if (cUserOrientation === 'hetero' || cUserOrientation === 'straight') {
+      if (isCurrentUserEffectivelyMale) {
+        genderOrientationMatchingClauses.push(targetFemaleEntitiesSQL); // Male hetero seeks Female entities
+        genderOrientationMatchingClauses.push(targetOrientationHeteroBiCompatibleSQL);
+      } else if (isCurrentUserEffectivelyFemale) {
+        genderOrientationMatchingClauses.push(targetMaleEntitiesSQL); // Female hetero seeks Male entities
+        genderOrientationMatchingClauses.push(targetOrientationHeteroBiCompatibleSQL);
+      } else if (cUserPGender === 'couple_mf') {
+        // Hetero couple_mf: This logic is complex.
+        // Placeholder: assume they are open to male or female entities who are hetero/bi.
+        genderOrientationMatchingClauses.push(`(${targetMaleEntitiesSQL} OR ${targetFemaleEntitiesSQL})`);
+        genderOrientationMatchingClauses.push(targetOrientationHeteroBiCompatibleSQL);
+        console.warn(`[getDiscoverProfiles] Logic for current user 'couple_mf' hetero is a broad placeholder.`);
+      }
+    } else if (cUserOrientation === 'gay' || cUserOrientation === 'homo') {
+      if (isCurrentUserEffectivelyMale) {
+        genderOrientationMatchingClauses.push(targetMaleEntitiesSQL); // Male gay seeks Male entities
+        genderOrientationMatchingClauses.push(targetOrientationGayBiCompatibleSQL);
+      } else if (isCurrentUserEffectivelyFemale) {
+        genderOrientationMatchingClauses.push(targetFemaleEntitiesSQL); // Female gay seeks Female entities
+        genderOrientationMatchingClauses.push(targetOrientationGayBiCompatibleSQL);
+      } else if (cUserPGender === 'couple_mf') {
+        // Gay/Homo couple_mf: Contradictory for the unit's orientation.
+        console.warn(`[getDiscoverProfiles] Logic for current user 'couple_mf' gay/homo is undefined as it's contradictory.`);
+      }
+    } else if (cUserOrientation === 'bisexual' || cUserOrientation === 'bi') {
+      if (isCurrentUserEffectivelyMale) { // Bi Male
+        // Seeks (Male Gay/Bi) OR (Female Hetero/Bi)
+        genderOrientationMatchingClauses.push(`((${targetMaleEntitiesSQL} AND ${targetOrientationGayBiCompatibleSQL}) OR (${targetFemaleEntitiesSQL} AND ${targetOrientationHeteroBiCompatibleSQL}))`);
+      } else if (isCurrentUserEffectivelyFemale) { // Bi Female
+        // Seeks (Female Gay/Bi) OR (Male Hetero/Bi)
+        genderOrientationMatchingClauses.push(`((${targetFemaleEntitiesSQL} AND ${targetOrientationGayBiCompatibleSQL}) OR (${targetMaleEntitiesSQL} AND ${targetOrientationHeteroBiCompatibleSQL}))`);
+      } else if (cUserPGender === 'couple_mf') { // Bi couple_mf
+        // Placeholder: Open to (Male Gay/Bi) OR (Female Hetero/Bi) OR (Female Gay/Bi)
+        // This covers seeking males for the male part, females for the male part, females for the female part, males for the female part, with compatible orientations.
+        genderOrientationMatchingClauses.push(`((${targetMaleEntitiesSQL} AND ${targetOrientationGayBiCompatibleSQL}) OR (${targetFemaleEntitiesSQL} AND ${targetOrientationHeteroBiCompatibleSQL}) OR (${targetFemaleEntitiesSQL} AND ${targetOrientationGayBiCompatibleSQL}))`);
+        console.warn(`[getDiscoverProfiles] Logic for current user 'couple_mf' bisexual is a broad placeholder.`);
+      }
+    }
+    // console.log(`[getDiscoverProfiles] Generated genderOrientationMatchingClauses:`, JSON.stringify(genderOrientationMatchingClauses));
+    if (genderOrientationMatchingClauses.length > 0) {
+      whereClauses.push(`(${genderOrientationMatchingClauses.join(' AND ')})`);
+    }
+  } else {
+    console.log("[getDiscoverProfiles] Skipping primary gender/orientation compatibility clauses as current user data is insufficient.");
+  }
+
+  if (filters) {
+    // Age Range Filter
+    if (filters.ageRange) {
+      // console.log(`[getDiscoverProfiles] Applying ageRange filter: ${filters.ageRange[0]} - ${filters.ageRange[1]}`);
+      baseParams.push(filters.ageRange[0]);
+      const ageMinPlaceholder = `$${baseParams.length}`;
+      baseParams.push(filters.ageRange[1]);
+      const ageMaxPlaceholder = `$${baseParams.length}`;
+      // Profiles with NULL age are included if the filter range [minFilterAge, maxFilterAge]
+      // (represented by ageMinPlaceholder and ageMaxPlaceholder respectively)
+      // overlaps with the default assumed range for NULLs [18, 99].
+      // Overlap condition: minFilterAge <= 99 AND maxFilterAge >= 18.
+      whereClauses.push(`((up.age >= ${ageMinPlaceholder} AND up.age <= ${ageMaxPlaceholder}) OR (up.age IS NULL AND ${ageMinPlaceholder} <= 99 AND ${ageMaxPlaceholder} >= 18))`);
+    }
+
+    // Status Filter
+    if (filters.status && filters.status !== "all") {
+      // console.log(`[getDiscoverProfiles] Applying status filter: ${filters.status}`);
+      const filterStatus = filters.status.toLowerCase(); // Ensure filter value is lowercase
+      if (filterStatus === "single") {
+        whereClauses.push(`(LOWER(up.status) LIKE 'single_%' OR up.status IS NULL OR up.status = '')`);
+      } else if (filterStatus === "couple") {
+        baseParams.push('couple'); // Compare with lowercase 'couple'
+        const statusPlaceholder = `$${baseParams.length}`;
+        whereClauses.push(`(LOWER(up.status) = ${statusPlaceholder} OR up.status IS NULL OR up.status = '')`);
+      }
+    }
+
+    // Orientation Filter
+    if (filters.orientation && filters.orientation !== "all") {
+      // console.log(`[getDiscoverProfiles] Applying explicit orientation filter for others: ${filters.orientation}`);
+      baseParams.push(filters.orientation.toLowerCase()); // Ensure filter value is lowercase
+      const orientationPlaceholder = `$${baseParams.length}`;
+      // Compare with lowercase orientation from filter, and allow for NULL target orientation
+      whereClauses.push(`(LOWER(up.orientation) = ${orientationPlaceholder} OR up.orientation IS NULL OR up.orientation = '')`);
+    }
+
+    // Meeting Types Filter
+    if (filters.meetingTypes) {
+      // console.log(`[getDiscoverProfiles] Applying meetingTypes filter for others:`, JSON.stringify(filters.meetingTypes));
+      const activeMeetingTypes = Object.entries(filters.meetingTypes)
+        .filter(([, isActive]) => isActive)
+        .map(([type]) => type);
+      if (activeMeetingTypes.length > 0) {
+        activeMeetingTypes.forEach(type => {
+          if (['friendly', 'romantic', 'playful', 'open_curtains', 'libertine'].includes(type)) {
+             whereClauses.push(`umt_filter.${type.toLowerCase()} = TRUE`); // Assuming umt_filter columns are lowercase
+             // console.log(`[getDiscoverProfiles] Added meeting type clause for others: umt_filter.${type.toLowerCase()} = TRUE`);
+          }
+        });
+      }
+    }
+
+    // Curtain Preference Filter
+    if (filters.curtainPreference && filters.curtainPreference !== "all") {
+      // console.log(`[getDiscoverProfiles] Applying curtainPreference filter for others: ${filters.curtainPreference}`);
+      const curtainPref = filters.curtainPreference.toLowerCase();
+      if (curtainPref === "open") {
+        whereClauses.push(`(upref_filter.prefer_curtain_open = TRUE OR upref_filter.prefer_curtain_open IS NULL)`);
+      } else if (curtainPref === "closed") {
+        whereClauses.push(`upref_filter.prefer_curtain_open = FALSE`);
+      }
     }
   }
-  const offset = (page - 1) * pageSize;
 
-  // First get total count
-  const totalCountResult = await sql`
-    SELECT COUNT(*) as total
+  // console.log("[getDiscoverProfiles] Constructed whereClauses:", JSON.stringify(whereClauses, null, 2));
+  const baseFromClause = `
     FROM users u
     JOIN user_profiles up ON u.id = up.user_id
-    WHERE u.id != ${currentUserId}
+    LEFT JOIN user_meeting_types umt_filter ON u.id = umt_filter.user_id
+    LEFT JOIN user_preferences upref_filter ON u.id = upref_filter.user_id
   `;
+  const whereCondition = whereClauses.length > 1 ? `WHERE ${whereClauses.join(" AND ")}` : (whereClauses.length === 1 ? `WHERE ${whereClauses[0]}` : "");
 
-  const totalCount = parseInt(totalCountResult[0].total);
+  console.log(`[getDiscoverProfiles] Final whereCondition for SQL: ${whereCondition}`);
+  console.log("[getDiscoverProfiles] Final baseParams for count query:", JSON.stringify(baseParams, null, 2));
 
-  // Then get paginated profiles with improved sorting:
-  // 1. Prioritize profiles with avatar images
-  // 2. Then by popularity (number of matches)
-  // 3. Then by recent creation date
-  const profiles = await sql`
+  const totalCountQuery = `SELECT COUNT(DISTINCT u.id) as total ${baseFromClause} ${whereCondition}`;
+  console.log(`[getDiscoverProfiles] Total count query SQL: ${totalCountQuery}`);
+  const totalCountResult = await sql.query(totalCountQuery, baseParams);
+  const totalCount = totalCountResult && totalCountResult.length > 0 ? parseInt(totalCountResult[0].total, 10) : 0;
+  console.log(`[getDiscoverProfiles] Total count of profiles found: ${totalCount}`);
+
+  let profilesParams = [...baseParams];
+  profilesParams.push(pageSize);
+  const limitPlaceholder = `$${profilesParams.length}`;
+  profilesParams.push(offset);
+  const offsetPlaceholder = `$${profilesParams.length}`;
+  // console.log("[getDiscoverProfiles] Final profilesParams for profiles query:", JSON.stringify(profilesParams, null, 2)); // Existing log
+
+  const profilesQuery = `
     SELECT
       u.id,
       u.name,
@@ -98,47 +275,45 @@ export async function getDiscoverProfiles(currentUserId: string, page: number = 
       true as online,
       false as featured,
       (SELECT COUNT(*) FROM user_matches WHERE (user_id_1 = u.id OR user_id_2 = u.id) AND status = 'accepted') as match_count
-    FROM users u
-    JOIN user_profiles up ON u.id = up.user_id
-    WHERE u.id != ${currentUserId}
+    ${baseFromClause}
+    ${whereCondition}
     ORDER BY
       (CASE WHEN u.avatar IS NOT NULL AND u.avatar != '' THEN 1 ELSE 0 END) DESC,
       match_count DESC,
       u.created_at DESC
-    LIMIT ${pageSize}
-    OFFSET ${offset}
+    LIMIT ${limitPlaceholder}
+    OFFSET ${offsetPlaceholder}
   `;
+  // console.log("[getDiscoverProfiles] Profiles Query:", profilesQuery); // Existing log
 
-  const mappedProfiles = profiles.map(profile => ({
+  const profilesResult = await sql.query(profilesQuery, profilesParams);
+  const profilesData = profilesResult || [];
+  console.log(`[getDiscoverProfiles] Fetched ${profilesData.length} raw profiles from DB.`);
+
+  const mappedProfiles = profilesData.map((profile: any) => ({
     ...profile,
     interests: profile.interests ? JSON.parse(profile.interests) : [],
+    // preferences object structure for ProfileCard compatibility, might not reflect all actual user_preferences
     preferences: {
       status: profile.status,
       age: profile.age,
       orientation: profile.orientation,
-      interestedInRestaurant: false,
-      interestedInEvents: false,
-      interestedInDating: true,
-      preferCurtainOpen: false,
-      interestedInLolib: false,
-      suggestions: "",
-      meetingTypes: { friendly: false, romantic: false, playful: false, openCurtains: false, libertine: false },
-      openToOtherCouples: false,
-      specificPreferences: "",
-      joinExclusiveEvents: false,
-      premiumAccess: false,
+      meetingTypes: {}, // Placeholder, actual meeting types are filtered in query
+      // other preference fields if needed by ProfileCard and available
     },
-    // Add popularity metric for frontend use
     popularity: profile.match_count || 0
   }));
+  console.log(`[getDiscoverProfiles] Mapped ${mappedProfiles.length} profiles for client.`);
 
-  return {
+  const result = {
     profiles: mappedProfiles,
     totalCount,
     currentPage: page,
     totalPages: Math.ceil(totalCount / pageSize),
-    hasMore: offset + profiles.length < totalCount
+    hasMore: (offset + mappedProfiles.length) < totalCount
   };
+  console.log("[getDiscoverProfiles] Returning final result object:", JSON.stringify(result, null, 2));
+  return result;
 }
 
 // Send a match request (creates a pending match if not already exists)
@@ -222,7 +397,9 @@ export async function acceptMatchRequest(requesterId: string, receiverId: string
       SET status = 'accepted', updated_at = CURRENT_TIMESTAMP
       WHERE user_id_1 = ${requesterId} AND user_id_2 = ${receiverId} AND status = 'pending'
     `
-    if (result.length === 0) return { success: false, error: "Aucune demande à accepter." }
+    if ((result as any).rowCount === 0) {
+      return { success: false, error: "Aucune demande à accepter." }
+    }
     // Send notification to requester
     await createNotification({
       userId: requesterId,
@@ -245,10 +422,35 @@ export async function declineMatchRequest(requesterId: string, receiverId: strin
       SET status = 'rejected', updated_at = CURRENT_TIMESTAMP
       WHERE user_id_1 = ${requesterId} AND user_id_2 = ${receiverId} AND status = 'pending'
     `
-    if (result.length === 0) return { success: false, error: "Aucune demande à refuser." }
+    if ((result as any).rowCount === 0) {
+      return { success: false, error: "Aucune demande à refuser." }
+    }
     return { success: true }
   } catch (error) {
     return { success: false, error: "Erreur lors du refus." }
+  }
+}
+
+// Remove an existing match (either user can initiate)
+export async function removeMatch(userId1: string, userId2: string) {
+  try {
+    // It doesn't matter who is userId1 or userId2 in the table, so check both combinations
+    const result = await sql`
+      DELETE FROM user_matches
+      WHERE (user_id_1 = ${userId1} AND user_id_2 = ${userId2} AND status = \'accepted\')
+         OR (user_id_1 = ${userId2} AND user_id_2 = ${userId1} AND status = \'accepted\')
+    `
+    // Assuming 'sql' result for DELETE has a 'rowCount' property.
+    // Using 'as any' to bypass potential overly generic typing from the sql tag.
+    if ((result as any).rowCount === 0) {
+      console.warn(`No accepted match found to remove between ${userId1} and ${userId2}`);
+      return { success: true, message: "No active match to remove or already removed." };
+    }
+    // Optionally, send notifications or perform other cleanup
+    return { success: true };
+  } catch (error) {
+    console.error("Erreur lors de la suppression du match:", error);
+    return { success: false, error: "Erreur lors de la suppression du match." };
   }
 }
 

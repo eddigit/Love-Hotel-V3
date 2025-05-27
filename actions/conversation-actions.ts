@@ -9,10 +9,21 @@ export async function getUserConversations(userId: string) {
       SELECT
         c.id,
         c.created_at,
-        c.updated_at
+        c.updated_at,
+        cp.user_id AS participant_user_id -- We need the other participant's ID here
       FROM conversations c
       JOIN conversation_participants cp ON c.id = cp.conversation_id
       WHERE cp.user_id = ${userId}
+    ),
+    -- Filter these conversations to only include those with an accepted match
+    valid_conversations AS (
+      SELECT uc.id, uc.created_at, uc.updated_at
+      FROM user_conversations uc
+      JOIN conversation_participants cp_other ON uc.id = cp_other.conversation_id AND cp_other.user_id != ${userId}
+      JOIN user_matches um ON
+        ((um.user_id_1 = ${userId} AND um.user_id_2 = cp_other.user_id) OR
+         (um.user_id_1 = cp_other.user_id AND um.user_id_2 = ${userId}))
+        AND um.status = 'accepted'
     ),
     last_messages AS (
       SELECT
@@ -22,7 +33,7 @@ export async function getUserConversations(userId: string) {
         m.sender_id,
         ROW_NUMBER() OVER (PARTITION BY m.conversation_id ORDER BY m.created_at DESC) as rn
       FROM messages m
-      JOIN user_conversations uc ON m.conversation_id = uc.id
+      JOIN valid_conversations vc ON m.conversation_id = vc.id -- Join with valid_conversations
     ),
     conversation_users AS (
       SELECT
@@ -33,20 +44,21 @@ export async function getUserConversations(userId: string) {
       FROM conversation_participants cp
       JOIN users u ON cp.user_id = u.id
       WHERE cp.user_id != ${userId}
+        AND cp.conversation_id IN (SELECT id FROM valid_conversations) -- Ensure we only get users for valid conversations
     )
     SELECT
-      uc.id,
-      uc.created_at,
-      uc.updated_at,
+      vc.id,
+      vc.created_at,
+      vc.updated_at,
       lm.content as last_message,
       lm.created_at as last_message_date,
       lm.sender_id as last_message_sender_id,
       cu.user_id as other_user_id,
       cu.name as other_user_name,
       cu.avatar as other_user_avatar
-    FROM user_conversations uc
-    LEFT JOIN last_messages lm ON uc.id = lm.conversation_id AND lm.rn = 1
-    LEFT JOIN conversation_users cu ON uc.id = cu.conversation_id
+    FROM valid_conversations vc
+    LEFT JOIN last_messages lm ON vc.id = lm.conversation_id AND lm.rn = 1
+    LEFT JOIN conversation_users cu ON vc.id = cu.conversation_id
     ORDER BY lm.created_at DESC NULLS LAST
   `
 

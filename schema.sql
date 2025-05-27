@@ -17,6 +17,10 @@ CREATE TABLE users
     status TEXT DEFAULT 'active' NULL,
     -- Made nullable
     email_verification_token VARCHAR(255) NULL,
+    password_reset_token VARCHAR(255) NULL,
+    -- Added for password reset
+    password_reset_token_expires_at TIMESTAMPTZ NULL,
+    -- Added for password reset token expiry
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NULL,
     -- Made nullable
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NULL
