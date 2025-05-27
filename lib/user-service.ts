@@ -187,11 +187,11 @@ export async function getOrCreateOAuthUser({ email, name, avatar }: { email: str
   // Créer un nouvel utilisateur avec un UUID, sans mot de passe
   const userId = uuidv4()
   const query = `
-    INSERT INTO users (id, email, name, role, avatar)
-    VALUES ($1, $2, $3, $4, $5)
+    INSERT INTO users (id, email, name, role, avatar, onboarding_completed)
+    VALUES ($1, $2, $3, $4, $5, $6)
     RETURNING id, email, name, role, avatar, onboarding_completed, created_at, updated_at
   `
-  const params = [userId, email, name || "", "user", avatar || null]
+  const params = [userId, email, name || "", "user", avatar || null, false]
   const result = (await executeQuery<User[]>(query, params)) ?? []
   // Créer un profil vide associé
   await executeQuery(

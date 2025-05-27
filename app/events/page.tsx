@@ -38,7 +38,7 @@ export default function EventsPage (props) {
       7: 'grid-cols-8',
       8: 'grid-cols-9',
       9: 'grid-cols-10'
-    }[categories.length + 1] || 'grid-cols-2'
+    }[categories.length] || 'grid-cols-2'
 
   // Redirect if not logged in
   useEffect(() => {
