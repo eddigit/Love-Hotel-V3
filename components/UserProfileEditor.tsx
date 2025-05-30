@@ -113,7 +113,7 @@ export function UserProfileEditor ({
             </button>
             <div className='w-32 h-32 md:w-60 md:h-60 rounded-full border-4 border-background overflow-hidden shadow-lg shadow-purple-900/30'>
               <Image
-                src={form.avatar || '/amethyst-portrait.png'}
+                src={form.avatar || '/logo-web-love-hotel.png'}
                 alt={form.name}
                 width={200}
                 height={200}

@@ -411,7 +411,7 @@ export default function LoveRoomsPage () {
                   </div>
                 </div>
 
-                {/* Section: Apéro Limousine Paris */}
+                {/* Section: Apéro Limousine Paris
                 <div className='flex flex-col md:flex-row items-center bg-[#1a0d2e] text-white rounded-lg shadow-lg p-6 md:p-8'>
                   <div className='flex-1 space-y-4'>
                     <h2 className='text-2xl font-bold'>
@@ -466,7 +466,7 @@ export default function LoveRoomsPage () {
                       className='rounded-lg shadow-md'
                     />
                   </div>
-                </div>
+                </div>*/}
 
                 {/* Section: Week-End Glamour */}
                 <div className='flex flex-col md:flex-row items-center bg-[#1a0d2e] text-white rounded-lg shadow-lg p-6 md:p-8'>
