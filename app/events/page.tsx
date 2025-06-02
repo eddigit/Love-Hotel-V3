@@ -10,11 +10,14 @@ import MainLayout from '@/components/layout/main-layout'
 import {
   getUpcomingEvents,
   subscribeToEvent,
-  unsubscribeFromEvent
+  unsubscribeFromEvent,
+  deleteEvent
 } from '@/actions/event-actions'
 import { getOption } from '@/actions/user-actions'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
 
-export default function EventsPage (props) {
+export default function EventsPage () {
   const { markAsRead } = useNotifications()
   const { user: authUser } = useAuth()
   const router = useRouter()
@@ -109,6 +112,15 @@ export default function EventsPage (props) {
     }
   }
 
+  const handleEdit = (eventId: string) => {
+    router.push(`/events/edit?id=${eventId}`)
+  }
+  const handleDelete = async (eventId: string) => {
+    if (!window.confirm('Supprimer cet événement ?')) return
+    await deleteEvent(eventId)
+    setEvents(events.filter(e => e.id !== eventId))
+  }
+
   return (
     <MainLayout user={authUser}>
       <div className='min-h-screen flex flex-col pb-16 md:pb-0'>
@@ -138,6 +150,7 @@ export default function EventsPage (props) {
                   events.map(event => (
                     <EventCard
                       key={event.id}
+                      id={event.id}
                       title={event.title}
                       location={event.location}
                       date={
@@ -148,11 +161,14 @@ export default function EventsPage (props) {
                           : ''
                       }
                       image={event.image}
-                      attendees={
-                        event.attendees || event.participant_count || 0
-                      }
+                      attendees={event.attendees || event.participant_count || 0}
                       isParticipating={!!event.is_participating}
                       onSubscribeToggle={() => handleSubscribeToggle(event)}
+                      creatorId={event.creator_id}
+                      currentUserId={authUser?.id}
+                      isAdmin={authUser?.role === 'admin'}
+                      onEdit={() => handleEdit(event.id)}
+                      onDelete={authUser?.role === 'admin' || event.creator_id === authUser?.id ? () => handleDelete(event.id) : undefined}
                     />
                   ))
                 )}
@@ -173,23 +189,25 @@ export default function EventsPage (props) {
                       .map(event => (
                         <EventCard
                           key={event.id}
+                          id={event.id}
                           title={event.title}
                           location={event.location}
                           date={
                             event.event_date
                               ? typeof event.event_date === 'string'
                                 ? event.event_date
-                                : new Date(event.event_date).toLocaleString(
-                                    'fr-FR'
-                                  )
+                                : new Date(event.event_date).toLocaleString('fr-FR')
                               : ''
                           }
                           image={event.image}
-                          attendees={
-                            event.attendees || event.participant_count || 0
-                          }
+                          attendees={event.attendees || event.participant_count || 0}
                           isParticipating={!!event.is_participating}
                           onSubscribeToggle={() => handleSubscribeToggle(event)}
+                          creatorId={event.creator_id}
+                          currentUserId={authUser?.id}
+                          isAdmin={authUser?.role === 'admin'}
+                          onEdit={() => handleEdit(event.id)}
+                          onDelete={authUser?.role === 'admin' || event.creator_id === authUser?.id ? () => handleDelete(event.id) : undefined}
                         />
                       ))
                   )}
@@ -198,7 +216,13 @@ export default function EventsPage (props) {
             ))}
           </Tabs>
         </div>
-
+        <div className="fixed bottom-0 left-0 right-0 flex justify-center pb-6 pointer-events-none z-40">
+          <Link href="/events/new" className="pointer-events-auto">
+            <Button className="bg-[#ff3b8b] hover:bg-[#ff3b8b]/90 text-white rounded-full px-8 py-3 shadow-lg text-lg font-bold">
+              Créer un évènement
+            </Button>
+          </Link>
+        </div>
         <MobileNavigation />
       </div>
     </MainLayout>

@@ -11,9 +11,16 @@ interface EventCardProps {
   attendees: number
   isParticipating?: boolean
   onSubscribeToggle?: () => void
+  id?: string
+  creatorId?: string
+  currentUserId?: string
+  isAdmin?: boolean
+  onEdit?: () => void
+  onDelete?: () => void
 }
 
-export function EventCard({ title, location, date, image, attendees, isParticipating, onSubscribeToggle }: EventCardProps) {
+export function EventCard({ title, location, date, image, attendees, isParticipating, onSubscribeToggle, id, creatorId, currentUserId, isAdmin, onEdit, onDelete }: EventCardProps) {
+  const canEdit = isAdmin || (creatorId && currentUserId && creatorId === currentUserId)
   return (
     <Card className="overflow-hidden card-hover border-0 shadow-lg shadow-purple-900/20">
       <div className="relative h-48 sm:h-56">
@@ -47,6 +54,12 @@ export function EventCard({ title, location, date, image, attendees, isParticipa
         >
           {isParticipating ? "Se désinscrire" : "Participer"}
         </Button>
+        {canEdit && (
+          <div className="flex gap-2 mt-2">
+            <Button size="sm" variant="outline" className="w-full" onClick={onEdit}>Modifier</Button>
+            {onDelete && <Button size="sm" variant="destructive" className="w-full" onClick={onDelete}>Supprimer</Button>}
+          </div>
+        )}
       </CardContent>
     </Card>
   )

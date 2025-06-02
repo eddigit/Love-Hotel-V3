@@ -6,7 +6,7 @@ export async function getUpcomingEvents(userId?: string) {
   if (userId) {
     const events = await sql`
       SELECT 
-        e.*,
+        e.*, e.creator_id,
         (SELECT COUNT(*) FROM event_participants ep2 WHERE ep2.event_id = e.id) as participant_count,
         CASE WHEN ep.id IS NOT NULL THEN true ELSE false END as is_participating
       FROM events e
@@ -18,7 +18,7 @@ export async function getUpcomingEvents(userId?: string) {
   } else {
     const events = await sql`
       SELECT 
-        e.*,
+        e.*, e.creator_id,
         (SELECT COUNT(*) FROM event_participants ep2 WHERE ep2.event_id = e.id) as participant_count
       FROM events e
       WHERE e.event_date > NOW()
@@ -44,17 +44,18 @@ export async function getEventParticipants(eventId: string) {
   return participants || []
 }
 
-export async function createEvent({ title, location, date, image, category, description }: {
+export async function createEvent({ title, location, date, image, category, description, creator_id }: {
   title: string;
   location: string;
   date: string; // ISO string or date
   image?: string;
   category?: string;
   description?: string;
+  creator_id: string;
 }) {
   const [event] = await sql`
-    INSERT INTO events (title, location, event_date, image, category, description)
-    VALUES (${title}, ${location}, ${date}, ${image || null}, ${category || null}, ${description || null})
+    INSERT INTO events (title, location, event_date, image, category, description, creator_id)
+    VALUES (${title}, ${location}, ${date}, ${image || null}, ${category || null}, ${description || null}, ${creator_id})
     RETURNING *
   `
   return event
