@@ -45,7 +45,9 @@ export function UserProfileEditor ({
       gender: user.gender || '',
       birthday: user.birthday || '',
       interests,
-      avatar: user.avatar || ''
+      avatar: user.avatar || '',
+      display_profile:
+        typeof user.display_profile === 'boolean' ? user.display_profile : true // default true
     }
   })
   const [saving, setSaving] = useState(false)
@@ -129,6 +131,23 @@ export function UserProfileEditor ({
             className='text-2xl font-bold text-center max-w-sm inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-secondary text-secondary-foreground hover:bg-secondary/80 h-10 px-4 py-2'
             style={{ display: form.avatar.length > 0 ? 'none' : 'block' }}
           />
+          {/* Admin-only: Switch to control display_profile */}
+          {user.role === 'admin' && (
+            <div className='flex items-center gap-2 max-w-sm'>
+              <label htmlFor='display_profile' className='font-medium'>
+                Afficher mon profil dans Découvrir
+              </label>
+              <input
+                id='display_profile'
+                type='checkbox'
+                checked={form.display_profile}
+                onChange={e =>
+                  setForm({ ...form, display_profile: e.target.checked })
+                }
+                className='accent-purple-600 scale-125'
+              />
+            </div>
+          )}
           <Input
             name='name'
             value={form.name}

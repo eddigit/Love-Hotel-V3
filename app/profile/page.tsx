@@ -94,19 +94,28 @@ async function updateUserProfile (userData: any) {
         bio = ${userData.bio || null},
         gender = ${userData.gender || null},
         birthday = ${userData.birthday ? userData.birthday : null},
-        interests = ${JSON.stringify(userData.interests || [])}
+        interests = ${JSON.stringify(userData.interests || [])},
+        display_profile = ${
+          typeof userData.display_profile === 'boolean'
+            ? userData.display_profile
+            : true
+        }
       WHERE user_id = ${user.id}
     `
   } else {
     await sql`
-      INSERT INTO user_profiles (id, user_id, age, orientation, location, bio, gender, birthday, interests, status, featured)
+      INSERT INTO user_profiles (id, user_id, age, orientation, location, bio, gender, birthday, interests, status, featured, display_profile)
       VALUES (gen_random_uuid(), ${user.id}, ${userData.age || null}, ${
       userData.orientation || null
     }, ${userData.location || null}, ${userData.bio || null}, ${
       userData.gender || null
     }, ${userData.birthday ? userData.birthday : null}, ${JSON.stringify(
       userData.interests || []
-    )}, 'active', false)
+    )}, 'active', false, ${
+      typeof userData.display_profile === 'boolean'
+        ? userData.display_profile
+        : true
+    })
     `
   }
 }
@@ -257,7 +266,7 @@ export default async function ProfilePage () {
 
   // Fetch the latest user data directly from the database
   const dbUserResult = await sql`
-    SELECT id, name, email, avatar
+    SELECT id, name, email, avatar, role
     FROM users
     WHERE id = ${sessionUser.id}
   `
@@ -334,6 +343,7 @@ export default async function ProfilePage () {
     name: dbUser.name, // Use name from dbUser
     email: dbUser.email, // Use email from dbUser
     avatar: dbUser.avatar, // CRITICAL: Use avatar from dbUser
+    role: dbUser.role, // <-- Add role to userData
     bio: profile.bio,
     age: profile.age,
     location: profile.location,
@@ -343,7 +353,11 @@ export default async function ProfilePage () {
     interests:
       typeof profile.interests === 'string'
         ? JSON.parse(profile.interests)
-        : profile.interests || []
+        : profile.interests || [],
+    display_profile:
+      typeof profile.display_profile === 'boolean'
+        ? profile.display_profile
+        : true // propagate display_profile
   }
 
   // Fetch user preferences

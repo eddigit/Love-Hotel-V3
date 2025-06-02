@@ -9,7 +9,7 @@ import { getOption } from '@/actions/user-actions'
 import MainLayout from '@/components/layout/main-layout'
 import { useAuth } from '@/contexts/auth-context'
 
-export default function EditEventPage() {
+export default function EditEventPage () {
   const router = useRouter()
   const searchParams = useSearchParams()
   const eventId = searchParams.get('id')
@@ -24,10 +24,12 @@ export default function EditEventPage() {
   })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [categories, setCategories] = useState<{ value: string; label: string }[]>([])
+  const [categories, setCategories] = useState<
+    { value: string; label: string }[]
+  >([])
 
   useEffect(() => {
-    async function fetchEvent() {
+    async function fetchEvent () {
       setLoading(true)
       const events = await getUpcomingEvents(user?.id)
       const event = events.find((e: any) => String(e.id) === String(eventId))
@@ -35,7 +37,11 @@ export default function EditEventPage() {
         setForm({
           title: event.title || '',
           location: event.location || '',
-          date: event.event_date ? (typeof event.event_date === 'string' ? event.event_date.slice(0, 16) : new Date(event.event_date).toISOString().slice(0, 16)) : '',
+          date: event.event_date
+            ? typeof event.event_date === 'string'
+              ? event.event_date.slice(0, 16)
+              : new Date(event.event_date).toISOString().slice(0, 16)
+            : '',
           image: event.image || '',
           category: event.category || '',
           description: event.description || ''
@@ -43,16 +49,21 @@ export default function EditEventPage() {
       }
       setLoading(false)
     }
-    async function fetchCategories() {
+    async function fetchCategories () {
       const raw = await getOption('event_categories')
-      const lines = (raw || 'speed-dating|Speed Dating\njacuzzi|Jacuzzi\nrestaurant|Restaurant').split('\n')
+      const lines = (
+        raw ||
+        'speed-dating|Speed Dating\njacuzzi|Jacuzzi\nrestaurant|Restaurant'
+      ).split('\n')
       setCategories(
         lines
           .map(line => line.trim())
           .filter(Boolean)
           .map(line => {
             const [value, label] = line.split('|')
-            return value && label ? { value: value.trim(), label: label.trim() } : null
+            return value && label
+              ? { value: value.trim(), label: label.trim() }
+              : null
           })
           .filter(Boolean) as { value: string; label: string }[]
       )
@@ -61,7 +72,11 @@ export default function EditEventPage() {
     fetchCategories()
   }, [eventId, user?.id])
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
 
@@ -81,7 +96,7 @@ export default function EditEventPage() {
 
   return (
     <MainLayout user={user}>
-      <div className="container py-10 max-w-xl">
+      <div className='container py-10 max-w-xl'>
         <Card>
           <CardHeader>
             <CardTitle>Modifier l'événement</CardTitle>
@@ -90,20 +105,65 @@ export default function EditEventPage() {
             {loading ? (
               <div>Chargement...</div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <input name="title" placeholder="Titre" value={form.title} onChange={handleChange} className="w-full border rounded p-2" required />
-                <input name="location" placeholder="Lieu" value={form.location} onChange={handleChange} className="w-full border rounded p-2" required />
-                <input name="date" type="datetime-local" placeholder="Date" value={form.date} onChange={handleChange} className="w-full border rounded p-2" required />
-                <input name="image" placeholder="Image (URL)" value={form.image} onChange={handleChange} className="w-full border rounded p-2" />
-                <select name="category" value={form.category} onChange={handleChange} className="w-full border rounded p-2">
-                  <option value="">Catégorie</option>
+              <form onSubmit={handleSubmit} className='space-y-4'>
+                <input
+                  name='title'
+                  placeholder='Titre'
+                  value={form.title}
+                  onChange={handleChange}
+                  className='w-full border rounded p-2'
+                  required
+                />
+                <input
+                  name='location'
+                  placeholder='Lieu'
+                  value={form.location}
+                  onChange={handleChange}
+                  className='w-full border rounded p-2'
+                  required
+                />
+                <input
+                  name='date'
+                  type='datetime-local'
+                  placeholder='Date'
+                  value={form.date}
+                  onChange={handleChange}
+                  className='w-full border rounded p-2'
+                  required
+                />
+                <input
+                  name='image'
+                  placeholder='Image (URL)'
+                  value={form.image}
+                  onChange={handleChange}
+                  className='w-full border rounded p-2'
+                />
+                <select
+                  name='category'
+                  value={form.category}
+                  onChange={handleChange}
+                  className='w-full border rounded p-2'
+                >
+                  <option value=''>Catégorie</option>
                   {categories.map(cat => (
-                    <option key={cat.value} value={cat.value}>{cat.label}</option>
+                    <option key={cat.value} value={cat.value}>
+                      {cat.label}
+                    </option>
                   ))}
                 </select>
-                <textarea name="description" placeholder="Description" value={form.description} onChange={handleChange} className="w-full border rounded p-2" />
-                {error && <div className="text-red-500 text-sm">{error}</div>}
-                <Button type="submit" className="w-full" disabled={loading}>{loading ? "Modification..." : "Enregistrer les modifications"}</Button>
+                <textarea
+                  name='description'
+                  placeholder='Description'
+                  value={form.description}
+                  onChange={handleChange}
+                  className='w-full border rounded p-2'
+                />
+                {error && <div className='text-red-500 text-sm'>{error}</div>}
+                <Button type='submit' className='w-full' disabled={loading}>
+                  {loading
+                    ? 'Modification...'
+                    : 'Enregistrer les modifications'}
+                </Button>
               </form>
             )}
           </CardContent>

@@ -102,6 +102,9 @@ export async function getDiscoverProfiles(currentUserId: string, page: number = 
   // console.log(`[getDiscoverProfiles] Initial whereClauses:`, JSON.stringify(whereClauses));
 
 
+  // Only show profiles with display_profile = TRUE
+  whereClauses.push("up.display_profile = TRUE");
+
   if (currentUserProfileGender && currentUserProfileOrientation) {
     // console.log(`[getDiscoverProfiles] Applying primary gender/orientation compatibility logic for current user: ${currentUserProfileGender}/${currentUserProfileOrientation}.`);
     const genderOrientationMatchingClauses: string[] = [];

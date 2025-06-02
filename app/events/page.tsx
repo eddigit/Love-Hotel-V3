@@ -161,14 +161,21 @@ export default function EventsPage () {
                           : ''
                       }
                       image={event.image}
-                      attendees={event.attendees || event.participant_count || 0}
+                      attendees={
+                        event.attendees || event.participant_count || 0
+                      }
                       isParticipating={!!event.is_participating}
                       onSubscribeToggle={() => handleSubscribeToggle(event)}
                       creatorId={event.creator_id}
                       currentUserId={authUser?.id}
                       isAdmin={authUser?.role === 'admin'}
                       onEdit={() => handleEdit(event.id)}
-                      onDelete={authUser?.role === 'admin' || event.creator_id === authUser?.id ? () => handleDelete(event.id) : undefined}
+                      onDelete={
+                        authUser?.role === 'admin' ||
+                        event.creator_id === authUser?.id
+                          ? () => handleDelete(event.id)
+                          : undefined
+                      }
                     />
                   ))
                 )}
@@ -196,18 +203,27 @@ export default function EventsPage () {
                             event.event_date
                               ? typeof event.event_date === 'string'
                                 ? event.event_date
-                                : new Date(event.event_date).toLocaleString('fr-FR')
+                                : new Date(event.event_date).toLocaleString(
+                                    'fr-FR'
+                                  )
                               : ''
                           }
                           image={event.image}
-                          attendees={event.attendees || event.participant_count || 0}
+                          attendees={
+                            event.attendees || event.participant_count || 0
+                          }
                           isParticipating={!!event.is_participating}
                           onSubscribeToggle={() => handleSubscribeToggle(event)}
                           creatorId={event.creator_id}
                           currentUserId={authUser?.id}
                           isAdmin={authUser?.role === 'admin'}
                           onEdit={() => handleEdit(event.id)}
-                          onDelete={authUser?.role === 'admin' || event.creator_id === authUser?.id ? () => handleDelete(event.id) : undefined}
+                          onDelete={
+                            authUser?.role === 'admin' ||
+                            event.creator_id === authUser?.id
+                              ? () => handleDelete(event.id)
+                              : undefined
+                          }
                         />
                       ))
                   )}
@@ -216,9 +232,9 @@ export default function EventsPage () {
             ))}
           </Tabs>
         </div>
-        <div className="fixed bottom-0 left-0 right-0 flex justify-center pb-6 pointer-events-none z-40">
-          <Link href="/events/new" className="pointer-events-auto">
-            <Button className="bg-[#ff3b8b] hover:bg-[#ff3b8b]/90 text-white rounded-full px-8 py-3 shadow-lg text-lg font-bold">
+        <div className='fixed bottom-0 left-0 right-0 flex justify-center pb-6 pointer-events-none z-40'>
+          <Link href='/events/new' className='pointer-events-auto'>
+            <Button className='bg-[#ff3b8b] hover:bg-[#ff3b8b]/90 text-white rounded-full px-8 py-3 shadow-lg text-lg font-bold'>
               Créer un évènement
             </Button>
           </Link>

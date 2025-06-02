@@ -11,6 +11,7 @@ export interface UserProfile {
   lastActive?: string
   featured?: boolean
   matchScore?: number;
+  display_profile?: boolean // Add display_profile for discover/mock filtering
 }
 
 // Calcule un score de compatibilité entre deux utilisateurs (0-100)
@@ -493,21 +494,19 @@ export function generateMockProfiles(count = 20): UserProfile[] {
         orientation: orientations[Math.floor(Math.random() * orientations.length)] as "hetero" | "homo" | "bi",
         gender: randomGender, // Added gender
         birthday: randomBirthday, // Added birthday
-
         interestedInRestaurant: Math.random() > 0.5,
         interestedInEvents: Math.random() > 0.4,
         interestedInDating: true,
         preferCurtainOpen: Math.random() > 0.6,
         interestedInLolib: Math.random() > 0.5,
         suggestions: "",
-
         meetingTypes,
         openToOtherCouples: Math.random() > 0.5,
         specificPreferences: "",
-
         joinExclusiveEvents: Math.random() > 0.7,
         premiumAccess: Math.random() > 0.8,
       },
+      display_profile: true // Always display mock profiles by default
     })
   }
 

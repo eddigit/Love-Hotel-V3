@@ -5,7 +5,7 @@ import { sql } from "@/lib/db"
 export async function getUpcomingEvents(userId?: string) {
   if (userId) {
     const events = await sql`
-      SELECT 
+      SELECT
         e.*, e.creator_id,
         (SELECT COUNT(*) FROM event_participants ep2 WHERE ep2.event_id = e.id) as participant_count,
         CASE WHEN ep.id IS NOT NULL THEN true ELSE false END as is_participating
@@ -17,7 +17,7 @@ export async function getUpcomingEvents(userId?: string) {
     return events || []
   } else {
     const events = await sql`
-      SELECT 
+      SELECT
         e.*, e.creator_id,
         (SELECT COUNT(*) FROM event_participants ep2 WHERE ep2.event_id = e.id) as participant_count
       FROM events e

@@ -89,6 +89,17 @@ export default function DiscoverPage () {
   const [searchQuery, setSearchQuery] = useState('')
   const [activeTab, setActiveTab] = useState('nearby')
 
+  // Filtered profiles based on search query (like /admin/users)
+  const filteredProfiles = searchQuery.trim()
+    ? profiles.filter(
+        p =>
+          (p.name &&
+            p.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
+          (p.location &&
+            p.location.toLowerCase().includes(searchQuery.toLowerCase()))
+      )
+    : profiles
+
   if (!user?.onboardingCompleted) {
     return (
       <MainLayout user={user}>
@@ -111,11 +122,21 @@ export default function DiscoverPage () {
     <MainLayout user={user}>
       <div className='container mx-auto px-4 py-8'>
         <h1 className='text-3xl font-bold mb-8'>Discover</h1>
-        <div className='mb-8'>
+        <div className='flex items-center gap-2 mb-8'>
           <AdvancedFilters onFilterChange={handleFilterChange} />
+          <div className='relative w-full max-w-md'>
+            <Input
+              type='text'
+              placeholder='Rechercher par nom ou lieu...'
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              className='pl-10'
+            />
+            <Search className='absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground' />
+          </div>
         </div>
         <div className='grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6'>
-          {profiles.map(profile => (
+          {filteredProfiles.map(profile => (
             <ProfileCard
               key={profile.id}
               id={profile.id}
