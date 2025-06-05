@@ -41,7 +41,7 @@ export default function EventsPage () {
       7: 'grid-cols-8',
       8: 'grid-cols-9',
       9: 'grid-cols-10'
-    }[categories.length] || 'grid-cols-2'
+    }[categories.length + 1] || 'grid-cols-2'
 
   // Redirect if not logged in
   useEffect(() => {
@@ -141,6 +141,7 @@ export default function EventsPage () {
                   {cat.label}
                 </TabsTrigger>
               ))}
+              <TabsTrigger value='rideaux-ouverts'>Rideaux ouverts</TabsTrigger>
             </TabsList>
             <TabsContent value='all' className='space-y-4 md:space-y-6'>
               <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
@@ -230,6 +231,19 @@ export default function EventsPage () {
                 </div>
               </TabsContent>
             ))}
+            <TabsContent
+              value='rideaux-ouverts'
+              className='space-y-4 md:space-y-6'
+            >
+              <div className='grid grid-cols-1'>
+                <iframe
+                  src='https://lovehotelaparis.fr/wp-json/zlhu_api/v3/rideaux_ouverts/'
+                  title='Rideaux Ouverts'
+                  className='w-full h-[1600px] border-0'
+                  frameBorder='0'
+                />
+              </div>
+            </TabsContent>
           </Tabs>
         </div>
         <div className='fixed bottom-0 left-0 right-0 flex justify-center pb-6 pointer-events-none z-40'>
