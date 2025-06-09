@@ -7,9 +7,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { createEvent } from "@/actions/event-actions"
 import { ProtectedRoute } from "@/components/protected-route"
 import { getOption } from "@/actions/user-actions"
+import { useAuth } from "@/contexts/auth-context" // Ajouté pour récupérer l'admin connecté
 
 export default function AdminCreateEventPage() {
   const router = useRouter()
+  const { user } = useAuth() // Récupère l'utilisateur/admin connecté
   const [form, setForm] = useState({
     title: "",
     location: "",
@@ -48,6 +50,11 @@ export default function AdminCreateEventPage() {
     e.preventDefault()
     setLoading(true)
     setError("")
+    if (!user?.id) {
+      setError("Vous devez être connecté pour créer un événement.")
+      setLoading(false)
+      return
+    }
     try {
       await createEvent({
         title: form.title,
@@ -55,7 +62,8 @@ export default function AdminCreateEventPage() {
         date: form.date,
         image: form.image,
         category: form.category,
-        description: form.description
+        description: form.description,
+        creator_id: user.id // Correction : on passe bien l'admin comme créateur
       })
       router.push("/admin/events")
     } catch (err) {
