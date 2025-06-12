@@ -154,6 +154,34 @@ CREATE TABLE photos
     url VARCHAR(255) NOT NULL
 );
 
+-- Table des événements
+CREATE TABLE events
+(
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    event_date DATE NOT NULL,
+    event_time TIME NOT NULL,
+    location VARCHAR(255) NOT NULL,
+    price DECIMAL(10,2) DEFAULT 0,
+    max_participants INTEGER DEFAULT 50,
+    image VARCHAR(500),
+    category VARCHAR(100),
+    creator_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Table des participants aux événements
+CREATE TABLE event_participants
+(
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    event_id UUID NOT NULL REFERENCES events(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    joined_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT unique_event_participation UNIQUE (event_id, user_id)
+);
+
 -- Index pour améliorer les performances
 CREATE INDEX idx_user_profiles_user_id ON user_profiles(user_id);
 CREATE INDEX idx_user_preferences_user_id ON user_preferences(user_id);
@@ -165,3 +193,7 @@ CREATE INDEX idx_conversation_participants_conversation_id ON conversation_parti
 CREATE INDEX idx_conversation_participants_user_id ON conversation_participants(user_id);
 CREATE INDEX idx_messages_conversation_id ON messages(conversation_id);
 CREATE INDEX idx_messages_sender_id ON messages(sender_id);
+CREATE INDEX idx_events_date ON events(event_date);
+CREATE INDEX idx_events_creator ON events(creator_id);
+CREATE INDEX idx_event_participants_event_id ON event_participants(event_id);
+CREATE INDEX idx_event_participants_user_id ON event_participants(user_id);

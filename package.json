@@ -2,13 +2,13 @@
   "name": "my-v0-project",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
-  "scripts": {
+  "type": "module",  "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "import-users": "ts-node lib/import-users.ts",
+    "create-test-events": "ts-node scripts/create-test-events.ts",
     "version": "node scripts/update-version.js",
     "prepare": "husky install"
   },

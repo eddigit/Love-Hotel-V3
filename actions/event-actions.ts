@@ -44,7 +44,18 @@ export async function getEventParticipants(eventId: string) {
   return participants || []
 }
 
-export async function createEvent({ title, location, date, image, category, description, creator_id }: {
+export async function createEvent({ 
+  title, 
+  location, 
+  date, 
+  image, 
+  category, 
+  description, 
+  creator_id,
+  price = 0,
+  payment_mode = 'sur_place',
+  conditions
+}: {
   title: string;
   location: string;
   date: string; // ISO string or date
@@ -52,22 +63,64 @@ export async function createEvent({ title, location, date, image, category, desc
   category?: string;
   description?: string;
   creator_id: string;
+  price?: number;
+  payment_mode?: 'sur_place' | 'online';
+  conditions?: string;
 }) {
   const [event] = await sql`
-    INSERT INTO events (title, location, event_date, image, category, description, creator_id)
-    VALUES (${title}, ${location}, ${date}, ${image || null}, ${category || null}, ${description || null}, ${creator_id})
+    INSERT INTO events (
+      title, 
+      location, 
+      event_date, 
+      image, 
+      category, 
+      description, 
+      creator_id,
+      price,
+      payment_mode,
+      conditions,
+      created_at,
+      updated_at
+    )
+    VALUES (
+      ${title}, 
+      ${location}, 
+      ${date}, 
+      ${image || null}, 
+      ${category || null}, 
+      ${description || null}, 
+      ${creator_id},
+      ${price},
+      ${payment_mode},
+      ${conditions || null},
+      NOW(),
+      NOW()
+    )
     RETURNING *
   `
   return event
 }
 
-export async function updateEvent(eventId: string, { title, location, date, image, category, description }: {
+export async function updateEvent(eventId: string, { 
+  title, 
+  location, 
+  date, 
+  image, 
+  category, 
+  description, 
+  price, 
+  payment_mode, 
+  conditions 
+}: {
   title?: string;
   location?: string;
   date?: string;
   image?: string;
   category?: string;
   description?: string;
+  price?: number;
+  payment_mode?: 'sur_place' | 'online';
+  conditions?: string;
 }) {
   const [event] = await sql`
     UPDATE events
@@ -77,7 +130,11 @@ export async function updateEvent(eventId: string, { title, location, date, imag
       event_date = COALESCE(${date}, event_date),
       image = COALESCE(${image}, image),
       category = COALESCE(${category}, category),
-      description = COALESCE(${description}, description)
+      description = COALESCE(${description}, description),
+      price = COALESCE(${price}, price),
+      payment_mode = COALESCE(${payment_mode}, payment_mode),
+      conditions = COALESCE(${conditions}, conditions),
+      updated_at = NOW()
     WHERE id = ${eventId}
     RETURNING *
   `
@@ -132,4 +189,59 @@ export async function getEventSubscriptionsStats({ startDate, endDate, scale }: 
   `;
   const stats = await sql.query(query, [startDate, endDate]);
   return stats;
+}
+
+export async function getEventById(eventId: string, userId?: string) {
+  try {
+    const [event] = await sql`
+      SELECT 
+        e.*,
+        (SELECT COUNT(*) FROM event_participants ep WHERE ep.event_id = e.id) as participant_count,
+        u.name as creator_name,
+        ${userId ? sql`CASE WHEN ep.id IS NOT NULL THEN true ELSE false END as is_participating` : sql`false as is_participating`}
+      FROM events e
+      LEFT JOIN users u ON e.creator_id = u.id
+      ${userId ? sql`LEFT JOIN event_participants ep ON e.id = ep.event_id AND ep.user_id = ${userId}` : sql``}
+      WHERE e.id = ${eventId}
+    `
+
+    if (!event) {
+      return null
+    }
+
+    // Récupérer les participants
+    const participants = await sql`
+      SELECT 
+        u.id,
+        u.name,
+        u.avatar,
+        ep.joined_at
+      FROM event_participants ep
+      JOIN users u ON ep.user_id = u.id
+      WHERE ep.event_id = ${eventId}
+      ORDER BY ep.joined_at ASC
+      LIMIT 20
+    `
+
+    return {
+      ...event,
+      participants: participants || []
+    }
+  } catch (error) {
+    console.error('Erreur lors de la récupération de l\'événement:', error)
+    return null
+  }
+}
+
+export async function checkUserParticipation(eventId: string, userId: string) {
+  try {
+    const [participation] = await sql`
+      SELECT id FROM event_participants 
+      WHERE event_id = ${eventId} AND user_id = ${userId}
+    `
+    return !!participation
+  } catch (error) {
+    console.error('Erreur lors de la vérification de participation:', error)
+    return false
+  }
 }

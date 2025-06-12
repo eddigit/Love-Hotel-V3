@@ -141,7 +141,7 @@ export default function EventsPage () {
                   {cat.label}
                 </TabsTrigger>
               ))}
-              <TabsTrigger value='rideaux-ouverts'>Rideaux ouverts</TabsTrigger>
+              <TabsTrigger value='planning-rideaux-ouverts'>Agenda Rideaux ouverts</TabsTrigger>
             </TabsList>
             <TabsContent value='all' className='space-y-4 md:space-y-6'>
               <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
@@ -232,7 +232,7 @@ export default function EventsPage () {
               </TabsContent>
             ))}
             <TabsContent
-              value='rideaux-ouverts'
+              value='planning-rideaux-ouverts'
               className='space-y-4 md:space-y-6'
             >
               <div className='grid grid-cols-1'>

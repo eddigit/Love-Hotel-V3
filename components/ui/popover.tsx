@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import * as PopoverPrimitive from "@radix-ui/react-popover"
+console.log("PopoverPrimitive from @radix-ui/react-popover:", PopoverPrimitive) // Ajouter ce log
 
 import { cn } from "@/lib/utils"
 

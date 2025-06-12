@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Calendar, MapPin, Users } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
 
 interface EventCardProps {
   title: string
@@ -65,14 +66,20 @@ export function EventCard ({
             <Users className='h-3 w-3 flex-shrink-0' />
             <span>{attendees} participants</span>
           </div>
-        </div>
-        <Button
+        </div>        <Button
           className={`w-full bg-gradient-to-r from-[#ff3b8b] to-[#ff8cc8] border-0 hover:opacity-90`}
           variant={isParticipating ? 'secondary' : 'default'}
           onClick={onSubscribeToggle}
         >
           {isParticipating ? 'Se désinscrire' : 'Participer'}
         </Button>
+        
+        {/* Bouton pour voir les détails */}
+        <Link href={`/events/${id}`}>
+          <Button variant="outline" className="w-full mt-2">
+            Voir les détails
+          </Button>
+        </Link>
         {canEdit && (
           <div className='flex gap-2 mt-2'>
             <Button
