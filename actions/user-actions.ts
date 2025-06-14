@@ -497,6 +497,43 @@ export async function getAllUsers() {
   return users || []
 }
 
+export async function getTotalUsersCount() {
+  try {
+    const result = await sql`SELECT COUNT(*) as count FROM users`;
+    return result[0].count as number;
+  } catch (error) {
+    console.error("Error fetching total users count:", error);
+    return 0;
+  }
+}
+
+export async function getUserCountsByGender(): Promise<{ gender: string; count: number }[] | null> {
+  console.log('Récupération des comptes utilisateurs par genre');
+  try {
+    const result = await sql`
+      SELECT 
+        up.gender, 
+        COUNT(u.id) as count 
+      FROM users u
+      JOIN user_profiles up ON u.id = up.user_id
+      WHERE up.gender IS NOT NULL AND up.gender <> ''
+      GROUP BY up.gender
+      ORDER BY up.gender;
+    `;
+    console.log('Comptes par genre récupérés:', result);
+    // La structure de 'result' peut varier selon votre client SQL.
+    // Si 'result' est un tableau directement, utilisez-le. Si c'est un objet avec une propriété 'rows', utilisez result.rows.
+    // Pour cet exemple, je suppose que 'result' est directement le tableau des lignes.
+    return result.map((row: any) => ({
+      gender: row.gender as string,
+      count: parseInt(row.count as string, 10)
+    }));
+  } catch (error) {
+    console.error('Erreur lors de la récupération des comptes par genre:', error);
+    return null;
+  }
+}
+
 export async function updateUserByAdmin(userId: string, { name, email, role, avatar }: { name?: string, email?: string, role?: string, avatar?: string }) {
   const [user] = await sql`
     UPDATE users
