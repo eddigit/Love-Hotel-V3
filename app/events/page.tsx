@@ -32,16 +32,16 @@ export default function EventsPage () {
   // Compute the correct Tailwind grid-cols class for the TabsList
   const gridColsClass =
     {
-      1: 'grid-cols-2',
-      2: 'grid-cols-3',
-      3: 'grid-cols-4',
-      4: 'grid-cols-5',
-      5: 'grid-cols-6',
-      6: 'grid-cols-7',
-      7: 'grid-cols-8',
-      8: 'grid-cols-9',
-      9: 'grid-cols-10'
-    }[categories.length + 1] || 'grid-cols-2'
+      1: 'md:grid-cols-2',
+      2: 'md:grid-cols-3',
+      3: 'md:grid-cols-4',
+      4: 'md:grid-cols-5',
+      5: 'md:grid-cols-6',
+      6: 'md:grid-cols-7',
+      7: 'md:grid-cols-8',
+      8: 'md:grid-cols-9',
+      9: 'md:grid-cols-10'
+    }[categories.length + 1] || 'md:grid-cols-2'
 
   // Redirect if not logged in
   useEffect(() => {
@@ -146,12 +146,29 @@ export default function EventsPage () {
             </div>
           </div>
 
+          {/* Mobile category filter */}
+          <div className="mb-4 md:hidden px-4">
+            <select
+              className="w-full border border-gray-300 rounded-md p-2"
+              value={activeTab}
+              onChange={e => setActiveTab(e.target.value)}
+            >
+              <option value="all">Tous</option>
+              {categories.map(cat => (
+                <option key={cat.value} value={cat.value}>
+                  {cat.label}
+                </option>
+              ))}
+              <option value="planning-rideaux-ouverts">Agenda Rideaux ouverts</option>
+            </select>
+          </div>
+
           <Tabs
             value={activeTab}
             onValueChange={setActiveTab}
             className='w-full'
           >
-            <TabsList className={`grid w-full ${gridColsClass} mb-4 md:mb-6`}>
+            <TabsList className={`hidden md:grid w-full ${gridColsClass} mb-4 md:mb-6`}>
               <TabsTrigger value='all'>Tous</TabsTrigger>
               {categories.map(cat => (
                 <TabsTrigger key={cat.value} value={cat.value}>
