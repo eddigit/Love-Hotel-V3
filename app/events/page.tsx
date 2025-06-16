@@ -129,9 +129,18 @@ export default function EventsPage () {
             <h1 className='text-2xl md:text-3xl font-bold'>
               Événements
             </h1>
-            <div className='flex items-center gap-2 text-sm text-muted-foreground bg-muted/50 px-3 py-2 rounded-lg'>
-              <span className='hidden md:inline'>Pour toute aide à la réservation ou informations complémentaires :</span>
-              <a href='tel:+33144826305' className='font-medium text-primary hover:underline whitespace-nowrap ml-2'>
+          </div>
+
+          <div className="flex justify-center mb-6">
+            <div className="flex flex-col md:flex-row items-center gap-2 px-6 py-4 rounded-xl bg-pink-600/90 shadow-lg">
+              <span className="text-white text-lg md:text-xl font-semibold">
+                Pour toute aide à la réservation ou informations complémentaires :
+              </span>
+              <a
+                href="tel:+33144826305"
+                className="text-white text-xl md:text-2xl font-bold underline ml-2"
+                style={{ letterSpacing: '1px' }}
+              >
                 +33 1 44 82 63 05
               </a>
             </div>
