@@ -16,12 +16,26 @@ import { useEffect as useEffectReact } from "react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import type { ChangeEvent } from 'react'
+
+// Définition du type pour le formulaire
+interface Form {
+  title: string
+  location: string
+  date: string
+  image: string
+  category: string
+  description: string
+  price: number
+  payment_mode: 'sur_place' | 'online'
+  conditions: string
+}
 
 export default function AdminEditEventPage() {
   const router = useRouter()
   const params = useParams()
   const eventId = params?.id as string
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<Form>({
     title: "",
     location: "",
     date: "",
@@ -83,8 +97,17 @@ export default function AdminEditEventPage() {
     fetchCategories()
   }, [])
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value })
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target
+    setForm(prev => ({
+      ...prev,
+      [name]:
+        name === 'price'
+          ? parseFloat(value) || 0
+          : name === 'payment_mode'
+          ? (value as 'sur_place' | 'online')
+          : value
+    }))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
