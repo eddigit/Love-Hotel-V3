@@ -13,6 +13,9 @@ import { AdminTabs } from "@/components/admin-tabs"
 import { AdminHeader } from "@/components/admin-header"
 import { useAuth } from "@/contexts/auth-context"
 import { useEffect as useEffectReact } from "react"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
 
 export default function AdminEditEventPage() {
   const router = useRouter()
@@ -24,7 +27,10 @@ export default function AdminEditEventPage() {
     date: "",
     image: "",
     category: "",
-    description: ""
+    description: "",
+    price: 0,
+    payment_mode: 'sur_place',
+    conditions: ""
   })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
@@ -48,7 +54,10 @@ export default function AdminEditEventPage() {
             : "",
           image: event.image || "",
           category: event.category || "",
-          description: event.description || ""
+          description: event.description || "",
+          price: event.price || 0,
+          payment_mode: event.payment_mode || 'sur_place',
+          conditions: event.conditions || ""
         })
       }
       setLoading(false)
@@ -62,9 +71,9 @@ export default function AdminEditEventPage() {
       const lines = (raw || "speed-dating|Speed Dating\njacuzzi|Jacuzzi\nrestaurant|Restaurant").split("\n")
       setCategories(
         lines
-          .map(line => line.trim())
+          .map((line: string) => line.trim())
           .filter(Boolean)
-          .map(line => {
+          .map((line: string) => {
             const [value, label] = line.split("|")
             return value && label ? { value: value.trim(), label: label.trim() } : null
           })
@@ -89,7 +98,10 @@ export default function AdminEditEventPage() {
         date: form.date,
         image: form.image,
         category: form.category,
-        description: form.description
+        description: form.description,
+        price: form.price,
+        payment_mode: form.payment_mode,
+        conditions: form.conditions
       })
       router.push("/admin/events")
     } catch (err) {
@@ -128,6 +140,44 @@ export default function AdminEditEventPage() {
                     ))}
                   </select>
                   <textarea name="description" placeholder="Description" value={form.description} onChange={handleChange} className="w-full border rounded p-2" />
+                  <div className="space-y-2">
+                    <Label htmlFor="price">Prix (€)</Label>
+                    <Input
+                      id="price"
+                      name="price"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={form.price}
+                      onChange={handleChange}
+                      className="w-full border rounded p-2"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="payment_mode">Mode de paiement</Label>
+                    <select
+                      id="payment_mode"
+                      name="payment_mode"
+                      value={form.payment_mode}
+                      onChange={handleChange}
+                      className="w-full border rounded p-2"
+                    >
+                      <option value="sur_place">Sur place</option>
+                      <option value="online">En ligne</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="conditions">Conditions et informations complémentaires</Label>
+                    <Textarea
+                      id="conditions"
+                      name="conditions"
+                      value={form.conditions}
+                      onChange={handleChange}
+                      className="w-full border rounded p-2"
+                      rows={3}
+                    />
+                  </div>
                   {error && <div className="text-red-500 text-sm">{error}</div>}
                   <Button type="submit" className="w-full" disabled={loading}>{loading ? "Modification..." : "Enregistrer les modifications"}</Button>
                 </form>
