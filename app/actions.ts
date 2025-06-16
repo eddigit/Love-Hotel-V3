@@ -7,31 +7,36 @@ import { createUser, verifyUserCredentials } from "@/lib/user-service"
 import { executeQuery, sql } from "@/lib/db"
 
 export async function getNotifications(userId: string) {
-  // Only query if userId is a valid UUID
-  const isValidUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId)
-  if (!isValidUUID) {
+  try {
+    // Only query if userId is a valid UUID
+    const isValidUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId)
+    if (!isValidUUID) {
+      return { notifications: [] }
+    }
+    // Fetch notifications for the user from the database
+    const rows = await sql`
+      SELECT id, user_id, type, title, description, image, link, read, created_at
+      FROM notifications
+      WHERE user_id = ${userId}
+      ORDER BY created_at DESC
+      LIMIT 50
+    `
+    // Map DB rows to Notification type expected by the frontend
+    const notifications = rows.map((row: any) => ({
+      id: row.id,
+      type: row.type,
+      title: row.title,
+      description: row.description,
+      image: row.image,
+      link: row.link,
+      read: row.read,
+      time: new Date(row.created_at).toLocaleString(),
+    }))
+    return { notifications }
+  } catch (error) {
+    console.error('Erreur dans getNotifications:', error)
     return { notifications: [] }
   }
-  // Fetch notifications for the user from the database
-  const rows = await sql`
-    SELECT id, user_id, type, title, description, image, link, read, created_at
-    FROM notifications
-    WHERE user_id = ${userId}
-    ORDER BY created_at DESC
-    LIMIT 50
-  `
-  // Map DB rows to Notification type expected by the frontend
-  const notifications = rows.map((row: any) => ({
-    id: row.id,
-    type: row.type,
-    title: row.title,
-    description: row.description,
-    image: row.image,
-    link: row.link,
-    read: row.read,
-    time: new Date(row.created_at).toLocaleString(),
-  }))
-  return { notifications }
 }
 
 export async function markNotificationAsRead(id: string) {
