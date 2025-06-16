@@ -125,9 +125,17 @@ export default function EventsPage () {
     <MainLayout user={authUser}>
       <div className='min-h-screen flex flex-col pb-16 md:pb-0'>
         <div className='container py-4 md:py-6 flex-1'>
-          <h1 className='text-2xl md:text-3xl font-bold mb-4 md:mb-6'>
-            Événements
-          </h1>
+          <div className='flex items-center justify-between mb-4 md:mb-6'>
+            <h1 className='text-2xl md:text-3xl font-bold'>
+              Événements
+            </h1>
+            <div className='flex items-center gap-2 text-sm text-muted-foreground bg-muted/50 px-3 py-2 rounded-lg'>
+              <span className='hidden md:inline'>Pour toute aide à la réservation ou informations complémentaires :</span>
+              <a href='tel:+33144826305' className='font-medium text-primary hover:underline whitespace-nowrap ml-2'>
+                +33 1 44 82 63 05
+              </a>
+            </div>
+          </div>
 
           <Tabs
             value={activeTab}
