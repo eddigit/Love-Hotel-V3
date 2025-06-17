@@ -15,6 +15,7 @@ import { useRouter } from 'next/navigation'
 
 // Ajouter l'import du widget de réservation en haut du fichier
 import { LoveHotelBookingWidget } from '@/components/love-hotel-booking'
+import ConciergerieForm from '@/components/ConciergerieForm'
 
 export default function LoveRoomsPage () {
   const [activeTab, setActiveTab] = useState('reserve')
@@ -102,9 +103,7 @@ export default function LoveRoomsPage () {
               value='my-reservations'
               className='space-y-4 md:space-y-6'
             >
-              <div className='text-center py-8 md:py-12'>
-                <p className='text-lg font-semibold'>Bientôt disponible...</p>
-              </div>
+              <ConciergerieForm />
             </TabsContent>
             <TabsContent value='offers'>
               <div className='p-4 md:p-6'>
