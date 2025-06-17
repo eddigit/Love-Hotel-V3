@@ -46,12 +46,27 @@ export default function LoveRoomsPage () {
             </p>
           </div>
 
+          <div className="flex justify-center mb-6">
+            <div className="flex flex-col md:flex-row items-center gap-2 px-6 py-4 rounded-xl bg-pink-600/90 shadow-lg">
+              <span className="text-white text-lg md:text-xl font-semibold">
+                Pour toute aide à la réservation ou informations complémentaires :
+              </span>
+              <a
+                href="tel:+33144826305"
+                className="text-white text-xl md:text-2xl font-bold underline ml-2"
+                style={{ letterSpacing: '1px' }}
+              >
+                +33 1 44 82 63 05
+              </a>
+            </div>
+          </div>
+
           <Tabs
             value={activeTab}
             onValueChange={setActiveTab}
             className='w-full'
           >
-            <TabsList className='grid w-full grid-cols-2 mb-4 md:mb-6'>
+            <TabsList className='grid w-full grid-cols-3 mb-4 md:mb-6'>
               <TabsTrigger value='reserve' className='text-xs sm:text-sm'>
                 Réserver une Love-Room
               </TabsTrigger>
@@ -60,6 +75,9 @@ export default function LoveRoomsPage () {
                 className='text-xs sm:text-sm'
               >
                 Conciergerie
+              </TabsTrigger>
+              <TabsTrigger value='offers' className='text-xs sm:text-sm'>
+                Nos Offres
               </TabsTrigger>
             </TabsList>
 
@@ -86,6 +104,33 @@ export default function LoveRoomsPage () {
             >
               <div className='text-center py-8 md:py-12'>
                 <p className='text-lg font-semibold'>Bientôt disponible...</p>
+              </div>
+            </TabsContent>
+            <TabsContent value='offers'>
+              <div className='p-4 md:p-6'>
+                <h3 className='text-xl font-bold mb-4'>Nos Offres</h3>
+                <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
+                  <img
+                    src='https://lovehotelaparis.fr/wp-content/uploads/2025/01/petit-dejeuner-et-love-room-V2-1.webp'
+                    alt='Petit-déjeuner & Love Room'
+                    className='w-full h-auto rounded-lg'
+                  />
+                  <img
+                    src='https://lovehotelaparis.fr/wp-content/uploads/2025/01/lunch-et-love-room-v2.jpg'
+                    alt='Lunch & Love Room'
+                    className='w-full h-auto rounded-lg'
+                  />
+                  <img
+                    src='https://lovehotelaparis.fr/wp-content/uploads/2025/01/drink-et-love-room-v2-1.webp'
+                    alt='Drink & Love Room'
+                    className='w-full h-auto rounded-lg'
+                  />
+                  <img
+                    src='https://lovehotelaparis.fr/wp-content/uploads/2025/01/eat-et-love-room-v2-1.webp'
+                    alt='Eat & Love Room'
+                    className='w-full h-auto rounded-lg'
+                  />
+                </div>
               </div>
             </TabsContent>
           </Tabs>
