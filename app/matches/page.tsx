@@ -304,7 +304,7 @@ export default function MatchesPage () {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className='grid gap-4 md:grid-cols-2'
+                    className='grid grid-cols-1 md:grid-cols-2 gap-4 w-full'
                   >
                     {matches.map((match, index) => (
                       <motion.div
@@ -348,7 +348,7 @@ export default function MatchesPage () {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className='grid gap-4 md:grid-cols-2'
+                    className='grid grid-cols-1 md:grid-cols-2 gap-4 w-full'
                   >
                     {pendingMatches.map((match, index) => (
                       <motion.div
@@ -385,7 +385,7 @@ export default function MatchesPage () {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className='grid gap-4 md:grid-cols-2'
+                    className='grid grid-cols-1 md:grid-cols-2 gap-4 w-full'
                   >
                     {outgoingPendingMatches.map((match, index) => (
                       <motion.div
@@ -397,9 +397,9 @@ export default function MatchesPage () {
                       >
                         <PendingMatchCard
                           profile={match}
-                          onAccept={() => {}} // Placeholder - will be handled by isOutgoing prop
-                          onReject={() => {}} // Placeholder - will be handled by isOutgoing prop
-                          isOutgoing={true} // New prop to indicate this is an outgoing request card
+                          onAccept={() => {}}
+                          onReject={() => {}}
+                          isOutgoing={true}
                         />
                       </motion.div>
                     ))}
