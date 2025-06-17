@@ -62,12 +62,26 @@ export default function LoveRoomsPage () {
             </div>
           </div>
 
+          {/* Sélecteur mobile pour les onglets */}
+          <div className="mb-4 md:hidden">
+            <select
+              className="w-full rounded-lg border border-purple-300 bg-white/90 p-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/60 transition"
+              value={activeTab}
+              onChange={e => setActiveTab(e.target.value)}
+            >
+              <option value="reserve">Réserver une Love-Room</option>
+              <option value="my-reservations">Conciergerie</option>
+              <option value="offers">Nos Offres</option>
+            </select>
+          </div>
+
           <Tabs
             value={activeTab}
             onValueChange={setActiveTab}
             className='w-full'
           >
-            <TabsList className='grid w-full grid-cols-3 mb-4 md:mb-6'>
+            {/* Onglets classiques desktop */}
+            <TabsList className='hidden md:grid w-full grid-cols-3 mb-4 md:mb-6'>
               <TabsTrigger value='reserve' className='text-xs sm:text-sm'>
                 Réserver une Love-Room
               </TabsTrigger>
