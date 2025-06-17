@@ -122,7 +122,7 @@ export default function DiscoverPage () {
     <MainLayout user={user}>
       <div className='container mx-auto px-4 py-8'>
         <h1 className='text-3xl font-bold mb-8'>Discover</h1>
-        <div className='flex items-center gap-2 mb-8'>
+        <div className='flex flex-col sm:flex-row items-stretch gap-2 mb-8'>
           <AdvancedFilters onFilterChange={handleFilterChange} />
           <div className='relative w-full max-w-md'>
             <Input
@@ -135,7 +135,7 @@ export default function DiscoverPage () {
             <Search className='absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground' />
           </div>
         </div>
-        <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6'>
+        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6'>
           {filteredProfiles.map(profile => (
             <ProfileCard
               key={profile.id}
