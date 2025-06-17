@@ -6,6 +6,18 @@ export async function POST(request: Request) {
   try {
     const { nom, email, besoin, budget } = await request.json()
 
+    // Assurer que la table existe
+    await sql`
+      CREATE TABLE IF NOT EXISTS conciergerie_requests (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        nom VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        besoin TEXT NOT NULL,
+        budget VARCHAR(100),
+        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+      )
+    `
+
     // Stockage en base
     await sql`
       INSERT INTO conciergerie_requests (nom, email, besoin, budget, created_at)

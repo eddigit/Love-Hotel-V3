@@ -182,6 +182,16 @@ CREATE TABLE event_participants
     CONSTRAINT unique_event_participation UNIQUE (event_id, user_id)
 );
 
+-- Table des demandes de conciergerie
+CREATE TABLE IF NOT EXISTS conciergerie_requests (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  nom VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  besoin TEXT NOT NULL,
+  budget VARCHAR(100),
+  created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Index pour améliorer les performances
 CREATE INDEX idx_user_profiles_user_id ON user_profiles(user_id);
 CREATE INDEX idx_user_preferences_user_id ON user_preferences(user_id);

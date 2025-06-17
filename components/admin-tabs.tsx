@@ -6,7 +6,8 @@ const tabs = [
   { label: 'Dashboard', href: '/admin' },
   { label: 'Utilisateurs', href: '/admin/users' },
   { label: 'Événements', href: '/admin/events' },
-  { label: 'Messages', href: '/admin/messages' }, // Added new tab
+  { label: 'Messages', href: '/admin/messages' },
+  { label: 'Conciergerie', href: '/admin/conciergerie' },
   { label: 'Paramètres', href: '/admin/options' }
   // Add more admin sections here as needed
   // { label: "Statistiques", href: "/admin/stats" },
