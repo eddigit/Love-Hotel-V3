@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { Providers } from '@/components/providers'
+import PwaUpdateNotification from '@/components/PwaUpdateNotification'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -26,7 +27,10 @@ export default function RootLayout ({
       <body
         className={`${inter.className} bg-gradient-to-br from-[#1a0d2e] to-[#3d1155]`}
       >
-        <Providers>{children}</Providers>
+        <Providers>
+          {children}
+          <PwaUpdateNotification />
+        </Providers>
       </body>
     </html>
   )
