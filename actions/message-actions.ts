@@ -134,3 +134,63 @@ export async function unbanUser(userId: string): Promise<void> {
     throw new Error("Could not unban user.");
   } // Remove finally block if client.release() is no longer needed
 }
+
+// Ajout d'une fonction pour rechercher des messages par mots-clés (modération)
+/**
+ * Recherche les messages contenant un ou plusieurs mots-clés (modération)
+ * @param keywords Tableau de mots-clés à rechercher (insensible à la casse)
+ * @param page Pagination (optionnel)
+ * @param limit Pagination (optionnel)
+ */
+export async function searchMessagesByKeywords({ keywords, page = 1, limit = 50 }: { keywords: string[], page?: number, limit?: number }): Promise<{ messages: ModerationMessage[], total: number }> {
+  if (!keywords || keywords.length === 0) return { messages: [], total: 0 };
+  const offset = (page - 1) * limit;
+  // Construction de la clause WHERE pour chaque mot-clé (insensible à la casse)
+  const whereClauses = keywords.map((k, i) => `LOWER(m.content) LIKE $${i + 3}`);
+  const params = [limit, offset, ...keywords.map(k => `%${k.toLowerCase()}%`)];
+  const where = whereClauses.length > 0 ? `WHERE ${whereClauses.join(' OR ')}` : '';
+  const messagesQuery = `
+    SELECT
+      m.id,
+      m.conversation_id,
+      m.sender_id,
+      m.content,
+      m.created_at,
+      m.updated_at,
+      u.name AS sender_name,
+      u.email AS sender_email
+    FROM messages m
+    JOIN users u ON m.sender_id = u.id
+    LEFT JOIN user_profiles up ON u.id = up.user_id
+    ${where}
+    ORDER BY m.created_at DESC
+    LIMIT $1 OFFSET $2;
+  `;
+  const messagesFromDB = await executeQuery<MessageFromDB[]>(messagesQuery, params);
+  // Correction : pour le COUNT, il faut que les paramètres commencent à $1
+  const countWhereClauses = keywords.map((k, i) => `LOWER(m.content) LIKE $${i + 1}`);
+  const countWhere = countWhereClauses.length > 0 ? `WHERE ${countWhereClauses.join(' OR ')}` : '';
+  const countParams = keywords.map(k => `%${k.toLowerCase()}%`);
+  const totalRows = await executeQuery<{count: string}[]>(`SELECT COUNT(*) FROM messages m ${countWhere};`, countParams);
+  const total = totalRows.length > 0 ? parseInt(totalRows[0].count, 10) : 0;
+  // Récupérer les protagonistes pour chaque message
+  const messagesWithProtagonists: ModerationMessage[] = [];
+  for (const msg of messagesFromDB) {
+    const protagonistsQuery = `
+      SELECT
+        cp.user_id,
+        u_p.name,
+        u_p.email
+      FROM conversation_participants cp
+      JOIN users u_p ON cp.user_id = u_p.id
+      LEFT JOIN user_profiles up_p ON u_p.id = up_p.user_id
+      WHERE cp.conversation_id = $1;
+    `;
+    const protagonists = await executeQuery<ConversationProtagonist[]>(protagonistsQuery, [msg.conversation_id]);
+    messagesWithProtagonists.push({
+      ...msg,
+      protagonists: protagonists,
+    });
+  }
+  return { messages: messagesWithProtagonists, total };
+}
