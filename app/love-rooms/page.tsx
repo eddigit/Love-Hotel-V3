@@ -18,7 +18,7 @@ import { LoveHotelBookingWidget } from '@/components/love-hotel-booking'
 import ConciergerieForm from '@/components/ConciergerieForm'
 
 export default function LoveRoomsPage () {
-  const [activeTab, setActiveTab] = useState('reserve')
+  const [activeTab, setActiveTab] = useState('offers')
   const { user: authUser } = useAuth()
   const router = useRouter()
 
@@ -63,15 +63,15 @@ export default function LoveRoomsPage () {
           </div>
 
           {/* Sélecteur mobile pour les onglets */}
-          <div className="mb-4 md:hidden">
+          <div className="mb-4 md:hidden flex justify-center">
             <select
-              className="w-full rounded-lg border border-purple-300 bg-white/90 p-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/60 transition"
+              className="w-full max-w-xs mx-auto rounded-lg border border-purple-300 bg-white/90 p-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/60 transition"
               value={activeTab}
               onChange={e => setActiveTab(e.target.value)}
             >
-              <option value="reserve">Réserver une Love-Room</option>
-              <option value="my-reservations">Conciergerie</option>
               <option value="offers">Nos Offres</option>
+              <option value="my-reservations">Conciergerie coquine</option>
+              <option value="reserve">Réserver une Love-Room</option>
             </select>
           </div>
 
@@ -81,18 +81,15 @@ export default function LoveRoomsPage () {
             className='w-full'
           >
             {/* Onglets classiques desktop */}
-            <TabsList className='hidden md:grid w-full grid-cols-3 mb-4 md:mb-6'>
-              <TabsTrigger value='reserve' className='text-xs sm:text-sm'>
-                Réserver une Love-Room
-              </TabsTrigger>
-              <TabsTrigger
-                value='my-reservations'
-                className='text-xs sm:text-sm'
-              >
-                Conciergerie
-              </TabsTrigger>
-              <TabsTrigger value='offers' className='text-xs sm:text-sm'>
+            <TabsList className='hidden md:flex w-full mb-4 md:mb-6 justify-between gap-2'>
+              <TabsTrigger value='offers' className='text-xs sm:text-sm w-full'>
                 Nos Offres
+              </TabsTrigger>
+              <TabsTrigger value='my-reservations' className='text-xs sm:text-sm w-full'>
+                Conciergerie coquine
+              </TabsTrigger>
+              <TabsTrigger value='reserve' className='text-xs sm:text-sm w-full'>
+                Réserver une Love-Room
               </TabsTrigger>
             </TabsList>
 
