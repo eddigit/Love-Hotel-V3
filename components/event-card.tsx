@@ -10,6 +10,9 @@ interface EventCardProps {
   date: string
   image: string
   attendees: number
+  prix_personne_seule?: number
+  prix_couple?: number
+  price?: number
   isParticipating?: boolean
   onSubscribeToggle?: () => void
   id?: string
@@ -26,6 +29,9 @@ export function EventCard ({
   date,
   image,
   attendees,
+  prix_personne_seule,
+  prix_couple,
+  price,
   isParticipating,
   onSubscribeToggle,
   id,
@@ -66,7 +72,17 @@ export function EventCard ({
             <Users className='h-3 w-3 flex-shrink-0' />
             <span>{attendees} participants</span>
           </div>
-        </div>        <Button
+        </div>
+        {(prix_personne_seule > 0 || prix_couple > 0) && (
+          <div className='flex flex-col gap-1 text-pink-300 font-semibold'>
+            {prix_personne_seule > 0 && <span>Pers. seule : {prix_personne_seule}€</span>}
+            {prix_couple > 0 && <span>Couple : {prix_couple}€</span>}
+          </div>
+        )}
+        {((!prix_personne_seule || prix_personne_seule === 0) && (!prix_couple || prix_couple === 0) && price) && (
+          <div className='text-pink-300 font-semibold'>{price}€</div>
+        )}
+        <Button
           className={`w-full bg-gradient-to-r from-[#ff3b8b] to-[#ff8cc8] border-0 hover:opacity-90`}
           variant={isParticipating ? 'secondary' : 'default'}
           onClick={onSubscribeToggle}

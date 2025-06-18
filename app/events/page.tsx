@@ -199,6 +199,8 @@ export default function EventsPage () {
                       attendees={
                         event.attendees || event.participant_count || 0
                       }
+                      prix_personne_seule={event.prix_personne_seule ?? 0}
+                      prix_couple={event.prix_couple ?? 0}
                       isParticipating={!!event.is_participating}
                       onSubscribeToggle={() => handleSubscribeToggle(event)}
                       creatorId={event.creator_id}
@@ -247,6 +249,8 @@ export default function EventsPage () {
                           attendees={
                             event.attendees || event.participant_count || 0
                           }
+                          prix_personne_seule={event.prix_personne_seule ?? 0}
+                          prix_couple={event.prix_couple ?? 0}
                           isParticipating={!!event.is_participating}
                           onSubscribeToggle={() => handleSubscribeToggle(event)}
                           creatorId={event.creator_id}

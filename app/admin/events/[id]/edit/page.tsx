@@ -27,6 +27,8 @@ interface Form {
   category: string
   description: string
   price: number
+  prix_personne_seule: number
+  prix_couple: number
   payment_mode: 'sur_place' | 'online'
   conditions: string
 }
@@ -35,7 +37,7 @@ export default function AdminEditEventPage() {
   const router = useRouter()
   const params = useParams()
   const eventId = params?.id as string
-  const [form, setForm] = useState<Form>({
+  const [form, setForm] = useState({
     title: "",
     location: "",
     date: "",
@@ -43,7 +45,9 @@ export default function AdminEditEventPage() {
     category: "",
     description: "",
     price: 0,
-    payment_mode: 'sur_place',
+    prix_personne_seule: 0,
+    prix_couple: 0,
+    payment_mode: 'sur_place' as 'sur_place' | 'online',
     conditions: ""
   })
   const [loading, setLoading] = useState(true)
@@ -70,6 +74,8 @@ export default function AdminEditEventPage() {
           category: event.category || "",
           description: event.description || "",
           price: event.price || 0,
+          prix_personne_seule: event.prix_personne_seule || 0,
+          prix_couple: event.prix_couple || 0,
           payment_mode: event.payment_mode || 'sur_place',
           conditions: event.conditions || ""
         })
@@ -123,6 +129,8 @@ export default function AdminEditEventPage() {
         category: form.category,
         description: form.description,
         price: form.price,
+        prix_personne_seule: form.prix_personne_seule,
+        prix_couple: form.prix_couple,
         payment_mode: form.payment_mode,
         conditions: form.conditions
       })
@@ -175,6 +183,32 @@ export default function AdminEditEventPage() {
                       onChange={handleChange}
                       className="w-full border rounded p-2"
                       required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="prix_personne_seule">Prix par personne seule (€)</Label>
+                    <Input
+                      id="prix_personne_seule"
+                      name="prix_personne_seule"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={form.prix_personne_seule}
+                      onChange={handleChange}
+                      className="w-full border rounded p-2"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="prix_couple">Prix par couple (€)</Label>
+                    <Input
+                      id="prix_couple"
+                      name="prix_couple"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={form.prix_couple}
+                      onChange={handleChange}
+                      className="w-full border rounded p-2"
                     />
                   </div>
                   <div className="space-y-2">

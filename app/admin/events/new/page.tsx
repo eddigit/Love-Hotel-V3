@@ -18,7 +18,9 @@ export default function AdminCreateEventPage() {
     date: "",
     image: "",
     category: "",
-    description: ""
+    description: "",
+    prix_personne_seule: 0,
+    prix_couple: 0
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
@@ -63,6 +65,8 @@ export default function AdminCreateEventPage() {
         image: form.image,
         category: form.category,
         description: form.description,
+        prix_personne_seule: form.prix_personne_seule,
+        prix_couple: form.prix_couple,
         creator_id: user.id // Correction : on passe bien l'admin comme créateur
       })
       router.push("/admin/events")
@@ -93,6 +97,8 @@ export default function AdminCreateEventPage() {
                 ))}
               </select>
               <textarea name="description" placeholder="Description" value={form.description} onChange={handleChange} className="w-full border rounded p-2" />
+              <input name="prix_personne_seule" type="number" min="0" step="0.01" placeholder="Prix par personne seule (€)" value={form.prix_personne_seule} onChange={handleChange} className="w-full border rounded p-2" />
+              <input name="prix_couple" type="number" min="0" step="0.01" placeholder="Prix par couple (€)" value={form.prix_couple} onChange={handleChange} className="w-full border rounded p-2" />
               {error && <div className="text-red-500 text-sm">{error}</div>}
               <Button type="submit" className="w-full" disabled={loading}>{loading ? "Création..." : "Créer l'événement"}</Button>
             </form>

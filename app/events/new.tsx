@@ -25,6 +25,8 @@ export default function CreateEventPage() {
     category: '',
     description: '',
     price: 0,
+    prix_personne_seule: 0,
+    prix_couple: 0,
     payment_mode: 'sur_place' as 'sur_place' | 'online',
     conditions: ''
   })
@@ -203,6 +205,34 @@ export default function CreateEventPage() {
                   placeholder="Conditions d'annulation, prérequis, informations importantes..."
                   rows={4}
                 />
+              </div>
+
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                <div className='space-y-2'>
+                  <Label htmlFor='prix_personne_seule'>Prix par personne seule (€)</Label>
+                  <Input
+                    id='prix_personne_seule'
+                    type='number'
+                    min='0'
+                    step='0.01'
+                    value={form.prix_personne_seule}
+                    onChange={(e) => handleChange('prix_personne_seule', parseFloat(e.target.value) || 0)}
+                    placeholder='Prix par personne seule'
+                  />
+                </div>
+                
+                <div className='space-y-2'>
+                  <Label htmlFor='prix_couple'>Prix par couple (€)</Label>
+                  <Input
+                    id='prix_couple'
+                    type='number'
+                    min='0'
+                    step='0.01'
+                    value={form.prix_couple}
+                    onChange={(e) => handleChange('prix_couple', parseFloat(e.target.value) || 0)}
+                    placeholder='Prix par couple'
+                  />
+                </div>
               </div>
 
               {error && (

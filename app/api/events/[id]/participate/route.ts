@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { sql } from '@/lib/db'
+import { randomUUID } from 'crypto'
 
 export async function POST(
   request: NextRequest,
@@ -69,9 +70,10 @@ export async function POST(
       }
 
       // Ajouter la participation
+      const participantId = randomUUID();
       await sql`
-        INSERT INTO event_participants (event_id, user_id, joined_at)
-        VALUES (${eventId}, ${userId}, NOW())
+        INSERT INTO event_participants (id, event_id, user_id, joined_at)
+        VALUES (${participantId}, ${eventId}, ${userId}, NOW())
       `
 
       return NextResponse.json({ 

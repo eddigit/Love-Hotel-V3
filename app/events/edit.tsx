@@ -27,6 +27,8 @@ export default function EditEventPage() {
     category: '',
     description: '',
     price: 0,
+    prix_personne_seule: 0,
+    prix_couple: 0,
     payment_mode: 'sur_place' as 'sur_place' | 'online',
     conditions: ''
   })
@@ -56,6 +58,8 @@ export default function EditEventPage() {
           category: event.category || '',
           description: event.description || '',
           price: event.price || 0,
+          prix_personne_seule: event.prix_personne_seule || 0,
+          prix_couple: event.prix_couple || 0,
           payment_mode: event.payment_mode || 'sur_place',
           conditions: event.conditions || ''
         })
@@ -232,6 +236,29 @@ export default function EditEventPage() {
                     onChange={(e) => handleChange('conditions', e.target.value)}
                     placeholder="Conditions d'annulation, prérequis, informations importantes..."
                     rows={4}
+                  />
+                </div>
+
+                <div className='space-y-2'>
+                  <Label htmlFor='prix_personne_seule'>Prix par personne seule (€)</Label>
+                  <Input
+                    id='prix_personne_seule'
+                    type='number'
+                    min='0'
+                    step='0.01'
+                    value={form.prix_personne_seule}
+                    onChange={(e) => handleChange('prix_personne_seule', parseFloat(e.target.value) || 0)}
+                    placeholder='Prix par personne seule'
+                  />
+                  <Label htmlFor='prix_couple'>Prix par couple (€)</Label>
+                  <Input
+                    id='prix_couple'
+                    type='number'
+                    min='0'
+                    step='0.01'
+                    value={form.prix_couple}
+                    onChange={(e) => handleChange('prix_couple', parseFloat(e.target.value) || 0)}
+                    placeholder='Prix par couple'
                   />
                 </div>
 

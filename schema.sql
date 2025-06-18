@@ -164,6 +164,8 @@ CREATE TABLE events
     event_time TIME NOT NULL,
     location VARCHAR(255) NOT NULL,
     price DECIMAL(10,2) DEFAULT 0,
+    prix_personne_seule DECIMAL(10,2) DEFAULT 0, -- Ajouté
+    prix_couple DECIMAL(10,2) DEFAULT 0,        -- Ajouté
     max_participants INTEGER DEFAULT 50,
     image VARCHAR(500),
     category VARCHAR(100),

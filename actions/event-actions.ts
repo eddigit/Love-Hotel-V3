@@ -53,6 +53,8 @@ export async function createEvent({
   description, 
   creator_id,
   price = 0,
+  prix_personne_seule = 0,
+  prix_couple = 0,
   payment_mode = 'sur_place',
   conditions
 }: {
@@ -64,6 +66,8 @@ export async function createEvent({
   description?: string;
   creator_id: string;
   price?: number;
+  prix_personne_seule?: number;
+  prix_couple?: number;
   payment_mode?: 'sur_place' | 'online';
   conditions?: string;
 }) {
@@ -77,6 +81,8 @@ export async function createEvent({
       description, 
       creator_id,
       price,
+      prix_personne_seule,
+      prix_couple,
       payment_mode,
       conditions,
       created_at,
@@ -91,6 +97,8 @@ export async function createEvent({
       ${description || null}, 
       ${creator_id},
       ${price},
+      ${prix_personne_seule},
+      ${prix_couple},
       ${payment_mode},
       ${conditions || null},
       NOW(),
@@ -109,6 +117,8 @@ export async function updateEvent(eventId: string, {
   category, 
   description, 
   price, 
+  prix_personne_seule, 
+  prix_couple, 
   payment_mode, 
   conditions 
 }: {
@@ -119,6 +129,8 @@ export async function updateEvent(eventId: string, {
   category?: string;
   description?: string;
   price?: number;
+  prix_personne_seule?: number;
+  prix_couple?: number;
   payment_mode?: 'sur_place' | 'online';
   conditions?: string;
 }) {
@@ -132,6 +144,8 @@ export async function updateEvent(eventId: string, {
       category = COALESCE(${category}, category),
       description = COALESCE(${description}, description),
       price = COALESCE(${price}, price),
+      prix_personne_seule = COALESCE(${prix_personne_seule}, prix_personne_seule),
+      prix_couple = COALESCE(${prix_couple}, prix_couple),
       payment_mode = COALESCE(${payment_mode}, payment_mode),
       conditions = COALESCE(${conditions}, conditions),
       updated_at = NOW()

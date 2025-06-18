@@ -22,6 +22,8 @@ interface Event {
   event_time: string
   location: string
   price: number
+  prix_personne_seule?: number
+  prix_couple?: number
   payment_mode: 'sur_place' | 'online'
   conditions: string
   max_participants: number
@@ -47,14 +49,15 @@ export default function EventDetailPage({ event }: EventDetailPageProps) {
   const [isParticipating, setIsParticipating] = useState(false)
   const [participantCount, setParticipantCount] = useState(event.participant_count)
   const [loading, setLoading] = useState(false)
+  const [participants, setParticipants] = useState(event.participants)
 
   // Vérifier si l'utilisateur participe déjà
   useEffect(() => {
-    if (user && event.participants) {
-      const participating = event.participants.some(p => p.id === user.id)
+    if (user && participants) {
+      const participating = participants.some(p => p.id === user.id)
       setIsParticipating(participating)
     }
-  }, [user, event.participants])
+  }, [user, participants])
 
   // Rediriger si non connecté
   useEffect(() => {
@@ -93,7 +96,19 @@ export default function EventDetailPage({ event }: EventDetailPageProps) {
       if (response.ok) {
         setIsParticipating(!isParticipating)
         setParticipantCount(prev => isParticipating ? prev - 1 : prev + 1)
-        
+        if (!isParticipating) {
+          setParticipants(prev => [
+            ...prev,
+            {
+              id: user.id,
+              name: user.name,
+              avatar: user.avatar,
+              joined_at: new Date().toISOString()
+            }
+          ])
+        } else {
+          setParticipants(prev => prev.filter(p => p.id !== user.id))
+        }
         toast({
           title: "Succès",
           description: result.message,
@@ -287,8 +302,35 @@ export default function EventDetailPage({ event }: EventDetailPageProps) {
                 </CardTitle>
               </CardHeader>              <CardContent className="space-y-4">
                 <div className="text-center space-y-2">
-                  <div className="text-3xl font-bold text-primary">{event.price}€</div>
-                  <div className="text-sm text-gray-500">par personne</div>
+                  {/* Affichage des tarifs */}
+                  {((event.prix_personne_seule ?? 0) > 0 || (event.prix_couple ?? 0) > 0) ? (
+                    <>
+                      {(event.prix_personne_seule ?? 0) > 0 && (
+                        <div className="text-xl font-bold text-primary">
+                          {event.prix_personne_seule}€ <span className="text-sm text-gray-400">par personne seule</span>
+                        </div>
+                      )}
+                      {(event.prix_couple ?? 0) > 0 && (
+                        <div className="text-xl font-bold text-primary">
+                          {event.prix_couple}€ <span className="text-sm text-gray-400">par couple</span>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <div className="text-3xl font-bold text-primary">{event.price}€</div>
+                  )}
+                  {/* Mode de tarification */}
+                  <div className="text-xs text-gray-400">
+                    {(event.prix_personne_seule ?? 0) > 0 && (event.prix_couple ?? 0) > 0 && (
+                      <span>Tarifs disponibles : par personne seule et par couple</span>
+                    )}
+                    {(event.prix_personne_seule ?? 0) > 0 && ((event.prix_couple ?? 0) === 0) && (
+                      <span>Tarif par personne seule</span>
+                    )}
+                    {(event.prix_couple ?? 0) > 0 && ((event.prix_personne_seule ?? 0) === 0) && (
+                      <span>Tarif par couple</span>
+                    )}
+                  </div>
                   <div className="text-xs text-gray-400">
                     Paiement {event.payment_mode === 'sur_place' ? 'sur place' : 'en ligne'}
                   </div>
@@ -329,13 +371,14 @@ export default function EventDetailPage({ event }: EventDetailPageProps) {
             </Card>
             
             {/* Liste des participants */}
-            {event.participants && event.participants.length > 0 && (
+            {participants && participants.length > 0 && (
               <Card>
                 <CardHeader>
                   <CardTitle>Participants ({participantCount})</CardTitle>
-                </CardHeader>                <CardContent>
+                </CardHeader>
+                <CardContent>
                   <div className="space-y-3">
-                    {event.participants.slice(0, 10).map((participant) => (
+                    {participants.slice(0, 10).map((participant) => (
                       <ParticipantProfilePopup key={participant.id} participant={participant}>
                         <div className="flex items-center gap-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 p-2 rounded-lg transition-colors">
                           <Avatar className="w-8 h-8">
@@ -355,9 +398,9 @@ export default function EventDetailPage({ event }: EventDetailPageProps) {
                         </div>
                       </ParticipantProfilePopup>
                     ))}
-                    {event.participants.length > 10 && (
+                    {participants.length > 10 && (
                       <div className="text-sm text-gray-500 text-center">
-                        et {event.participants.length - 10} autres participants...
+                        et {participants.length - 10} autres participants...
                       </div>
                     )}
                   </div>
